@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Escape the Dungeon!</title>
+	<link href="https://fonts.googleapis.com/css?family=Catamaran" rel="stylesheet">
+	<link href="splashstyles.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		var fullscreen = false;
+		var iframe = null;
+
+		$(document).ready(function ()
+		{
+			iframe = $("iframe");
+
+			$("#startbutton").click(function()
+			{
+				iframe[0].requestFullscreen().then(function() 
+				{	
+					iframe.css("display","block");
+				}).catch(function(err) 
+				{
+					console.error("Error attempting to enable full-screen mode: ${err.message} (${err.name})");
+    			});
+			});
+
+			$(document).on("fullscreenchange", function()
+			{
+				fullscreen = !fullscreen;
+				if (!fullscreen)
+				{
+					iframe.css("display","none");
+				}
+			});
+		});
+	</script>
+
+</head>
+<body id="body">
+<div class="main">
+	<h1>Escape the Dungeon!</h1>
+	<p>Aragore the dragon has locked you in his nefarious dungeon. Only by fighting your way out of this labyrinth will you be able to escape. "Magics" and "Talk" do different things to different monsters. "Defend" will block the next attack, but it cannot be used multiple times in a row. "Heal" allows you to recover, but its effect diminishes the more it is used in a row. Press "Walk" to start your adventure!</p>
+	<button style="display:block; margin:32px auto;"id="startbutton" class="button">Start game!</button>
+	<iframe style="display:none;" id="game" src="game.html" allowfullscreen></iframe>
+
+</div>
+</body>
+</html>

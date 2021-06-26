@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>1000 Steps</title>
+	<link  href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+	<link  href="Styles/styles.css"     rel="stylesheet">
+	<link  href="Styles/animations.css" rel="stylesheet">
+	<link  href="Styles/player.css"     rel="stylesheet">
+	<link  href="Styles/monsters.css"   rel="stylesheet">
+	<link  href="Styles/faces.css"      rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/buzz/1.2.1/buzz.js"></script>
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="Scripts/classes.js"></script>
+
+	<script type="text/javascript" src="Scripts/text.js"    ></script>
+	<script type="text/javascript" src="Scripts/areas.js"   ></script>
+	<script type="text/javascript" src="Scripts/monsters.js"></script>
+	<script type="text/javascript" src="Scripts/script.js"  ></script>
+</head>
+<body id="body">
+
+	<div id="gamewindow">
+		<div id="main" class="box" style="visibility: hidden;">
+			<div id="hud">
+				<span class="bordered playerstat">HP: <span id="healthoutput"></span></span>
+				<span class="bordered playerstat">Steps Left: <span id="stepsoutput"></span></span>
+			</div>
+			<div id="dialogueBox1" class="dialogueBox bordered">
+				<div id="face1"></div>
+				<p   id="output1" style="visibility: hidden;">
+				</p>
+			</div>
+			<div id="dialogueBox2" class="dialogueBox bordered" style="bottom: 0px;">
+				<div id="face2" style="height: 36vh; width: 36vh;"></div>
+				<p   id="output2" style="visibility: hidden;">
+				</p>
+			</div>
+			<img id="back" src="Images/Backgrounds/back.png">
+			<div id="character">
+				<div id="spark" style="display: none;"></div>
+				<div id="flame" style="display: none;"></div>
+				<div id="aura"  style="display: none;"></div>
+			</div>
+			<div id="content"></div>
+			<img id="fore" style="display:none;">
+			<div id="battlebuttons">
+				<div id="lButtons"> 
+					<p id="b1" class="bordered" style="display:none;">Attack</p>
+					<p id="b2" class="bordered" style="display:none;">Defend</p>
+					<p id="b3" class="bordered" style="display:none;">Heal</p>
+				</div>
+				<div id="rButtons"> 
+					<p id="b4" class="bordered" style="display:none;">Magics</p>
+					<p id="b5" class="bordered" style="display:none;">Talk</p>
+					<p id="b6" class="bordered" style="display:none;">Run Away</p>
+				</div>
+			</div>
+		</div>
+		<div id="intro1" class="box flexcenterer">
+			<p id="introoutput"></p>
+			<p id="information">
+				-1000 Steps-<br>
+				Israel Ownbey<br>
+				Shift+F to toggle fullscreen.<br>
+				Shift+S to save.<br>
+				Shift+L to load.<br>
+			</p>
+		</div>
+		<div id="intro2" class="box" style="visibility: hidden;">
+			<div id="i2_back"   class="box" style="background-size: contain; background-image: url('./Images/Cutscenes/Intro/back.png')"></div>
+			<p   id="i2_output" class="box" style="z-index: 10; position: fixed; text-align: left; visibility:hidden;" class="bordered"></p>
+			<div id="i2_playerWalking" class="intro_playerWalkingDown"></div>
+			<div id="i2_playerStanding" class="box" style="visibility: hidden; background-size: contain; background-image: url('./Images/Cutscenes/Intro/playerstanding.png')"></div>
+			<div id="i2_playerSitting"  class="box" style="visibility: hidden; background-size: contain; background-image: url('./Images/Cutscenes/Intro/playersitting.png')"></div>
+			<div id="i2_shield" class="box" style="visibility: hidden; background-size: contain; background-image: url('./Images/Cutscenes/Intro/shield.png')"></div>
+			<div id="i2_sword" class="box"  style="visibility: hidden; background-size: contain; background-image: url('./Images/Cutscenes/Intro/sword.png')"></div>
+		</div>
+		<div id="gameover" class="box" style="visibility: hidden;">
+			<h2 style="font-size:4em;">All Alone</h2>
+			<div id="gameover_player" class="ghostPose"></div>
+			<p id="endflavor"></p>
+			<p>Shift + L to load.<br>Refresh to restart.</p>
+		</div>
+	</div>
+
+	<img id="hcursor" class="cursor" src="Images/cursor.png">
+	<img id="vcursor" class="cursor" src="Images/cursor.png">
+
+	<p id="notifier" class="bordered"></p>
+
+	<div id="cover" style="pointer-events: none;"></div>
+</body>
+</html>
