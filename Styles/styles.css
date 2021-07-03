@@ -9,6 +9,8 @@ html
 	image-rendering: crisp-edges;
 
 	font-variant: small-caps;
+
+	touch-action: none;
 }
 
 body
