@@ -238,6 +238,13 @@ const text = Object.freeze({
 	["Imagine what King Amadeus will say when I stop you...",expr.troll.default]
 	],
 
+	meetTroldiersText: [
+		["Greetings, Harbinger!",expr.troll.default],
+		["We are here on behalf of his majesty, Amadeus Trollvich."],
+		["He has instructed us to dispose of you as efficiently as possible, for his schedule is too rotund."],
+		["So without further ado:"]
+		],
+
 	meetAmadeusText: [
 	"!!!",
 	{text:"Well, well, well.", aExpr:expr.amadeus.smug},

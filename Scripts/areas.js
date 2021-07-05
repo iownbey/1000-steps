@@ -1,5 +1,5 @@
 
-const allMonsters = Object.freeze(["Troll","Sponge","IntrovertedGhost","Door","Decoy","Skeleton","Reaper"]);
+const allMonsters = Object.freeze(["Troll","Sponge","IntrovertedGhost","Door","Decoy","Skeleton","Reaper","Troldier"]);
 
 class Area
 {
@@ -152,7 +152,7 @@ class Area_Aorta extends Area
 			this.fillGrabBagThing(),
 			[Area.meetAmadeus],
 			this.fillGrabBagThing(9),
-			this.fillGrabBagThing(),
+			this.fillGrabBagThing(10,[Area.meetTroldiers]),
 			this.fillGrabBagThing(),
 			[Area.talkAmadeus],
 			this.fillGrabBagThing(9),
@@ -207,6 +207,21 @@ Area.meetTroll1 = Area.addPossibleEvent(function ()
 	currentDoer = new Doer([
 		w.getThing(),
 		{action: function() {currentBattle = new Battle("fight",[new Troll()],false)}}
+		]);
+	currentDoer.do();
+});
+
+Area.meetTroldiers = Area.addPossibleEvent(function ()
+{
+	sound.stop();
+	contentManager.clear();
+	contentManager.add($('<div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div>'));
+	contentManager.approach();
+	var w = new Writer(bottomWriter,text.meetTroldiersText);
+	currentDoer = new Doer([
+		{action: function() {sound.playFX("troll-fanfare")}, time:2000, waitForInput:false},
+		w.getThing(),
+		{action: function() {currentBattle = new Battle("fight",[new Troll_Soldier(), new Troll_Soldier, new Troll_Soldier],false)}}
 		]);
 	currentDoer.do();
 });

@@ -8,6 +8,16 @@
 	background-position-y: bottom; 
 }
 
+.monster > .troll-soldier
+{
+	background-image: url(../Images/troll3.png);
+	width: 100%;
+	height: 150%;
+	background-size: 400%;
+	background-position-x: 0vh;
+	background-position-y: bottom; 
+}
+
 .monster > .sponge
 {
 	background-image: url("../Images/sponge.png");

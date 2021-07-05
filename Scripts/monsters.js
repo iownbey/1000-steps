@@ -643,6 +643,133 @@ class Sponge extends Monster
     }
 }
 
+class Troldier extends Monster
+{
+    constructor()
+    {
+        super("Troldier", 10, 0, 0.4);
+        this.stamina = 3;
+        this.shielding = false;
+        this.charge = 0;
+        this.shiverAnim;
+        this.breatheAnim;
+        this.flavorer = new NonrepeatingGetter([
+            "For the king!",
+            "Yes, I am a member of the troll militia.",
+            "No, I will never surrender!",
+            "Yes, I like my sword.",
+            "No, I have not a faire maiden.",
+            "Yes, my stone tunic is very protective."
+            ]);
+    }
+
+    hit(d)
+    {
+        if (!this.shielding) return super.hit(d);
+    }
+
+    attack()
+    {
+        this.shielding = false;
+
+        //if exhausted
+        if (this.stamina == 0)
+        {
+            this.breatheAnim.start();
+            //Be exhausted
+            this.setPicture(1);
+
+            //recover
+            this.stamina = 3;
+            return {damage:0,text:"The Troldier is exhausted!"};
+        }
+        else //otherwise
+        {
+            //if the player is charged...
+            if (chargeAmount > 0)
+            {
+                //shield
+                this.charge = 0;
+                this.stamina--;
+                this.shielding = true;
+
+                this.setPicture(4);
+                this.breatheAnim.end();
+                this.shiverAnim.end();
+                return {damage:0,text:"The Troldier shields against an imminent blow."};
+            }
+            else
+            {
+                this.stamina = 3;
+                //attack if charged, otherwise charge.
+                if (this.charge == 1)
+                {
+                    this.charge = 0;
+
+                    this.shiverAnim.end();
+                    this.setPicture(3);
+                    var _this = this;
+                    setTimeout(function(){_this.setPicture(1); _this.breatheAnim.start();},300);
+                    
+                    return {damage:10,text:"The Troldier brings down his sword, dealing " + player.checkDamage(10) +" damage."}
+                }
+                else
+                {
+                    this.charge = 1;
+
+                    this.setPicture(2);
+                    this.breatheAnim.end();
+                    this.shiverAnim.start();
+                    return {damage:0,text:"The Troldier holds his sword in a position to strike!!!"};
+                }
+            }
+        }
+    }
+
+    html(root)
+    {
+        var h = $('<div class="troll-soldier"></div>');
+        root.append(h);
+        this.jobj = h;
+        this.shiverAnim = new CSSAnimation(h,"shiver");
+        this.breatheAnim = new CSSAnimation(h,"trollPose").start();
+    }
+
+    setPicture(image)
+    {
+        var width = -30;
+        this.jobj.css("background-position","bottom left " + width * (image-1) + "vh");
+    }
+
+    magic()
+    {
+        if (Math.random() < 0.99)
+        {
+            if (this.charge == 3) stopAnimation(this.jobj,"shiver");
+            this.setPicture(1);
+            this.charge = 0;
+            return "You confused the Troll with bright lights.";
+        }
+        return "The Troll ignored your distracting magics."
+    }
+
+    talk()
+    {
+        const _this = this;
+        return new Doer([{action:function() {topWriter.show(_this.flavorer.get(),expr.troll.default);}}]);
+    }
+
+    inspect()
+    {
+        var _this = this;
+        return [
+        "It's a green troll soldier.",
+        "It has a shield.",
+        "It has some health."
+        ]
+    }
+}
+
 class Troll extends Monster
 {
     constructor()
