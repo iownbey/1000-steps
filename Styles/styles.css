@@ -11,6 +11,8 @@ html
 	font-variant: small-caps;
 
 	touch-action: none;
+
+	user-select: none;
 }
 
 body
@@ -89,6 +91,14 @@ div
 	/*left:  0;/*7%;*/
 	/*right: 0;/*7%*/
 	margin: 0 auto;
+}
+
+#content-canvas
+{
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	z-index: 6;
 }
 
 #cover

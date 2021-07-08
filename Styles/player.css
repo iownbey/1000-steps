@@ -68,6 +68,7 @@
     height: 392px;
     left: 38.6%;
     top: 12%;
+	display: none;
 }
 
 @keyframes glow
