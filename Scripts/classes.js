@@ -1117,75 +1117,84 @@ class ScreenCover
 	}
 }
 
-class SoundManager
-{
-	constructor()
-	{
-		this.supportsWAV = buzz.isWAVSupported();
+
+class SoundManager {
+	constructor() {
 		this.persistants = [{}];
 	}
 
-	getFileName(song)
-	{
-		return "Sounds/" + song + ((this.supportsWAV)? ".wav" : ".mp3");
+	getFileName(song) {
+		return "Sounds/" + song;
 	}
 
-	playMusic(song)
-	{
+	playMusic(song) {
 		console.log("SOUND: Playing " + song);
 		song = this.getFileName(song);
-		if (this.job != null)
-		{
-			this.job.unloop().fadeWith(this.job = new buzz.sound(song).loop(),500);
+
+		var _this = this;
+		var startSong = () => {
+			//this.job = new buzz.sound(song).loop().play().fadeIn(500);
+			_this.job = new Howl({
+				src: [song + ".wav", song + ".mp3"],
+				loop: true,
+				volume: 0
+			});
+			_this.job.play();
+			_this.job.fade(0, 1, 500);
 		}
-		else
-		{
-			this.job = new buzz.sound(song).loop().play().fadeIn(500);
+
+		if (this.job != null) {
+
+			//this.job.unloop().fadeWith(this.job = new buzz.sound(song).loop(), 500);
+			this.job.fade(1, 0, 500);
+			this.job.onfade = startSong();
 		}
-		this.job.bind("error", function () {
-			var e = this.getErrorMessage();
-			console.warn("SOUND: " + e?e:"Undeterminable Error");
-		});
+		else startSong();
+
+		
 	}
 
-	loadPersistant(song)
-	{
+	loadPersistant(song) {
 		song = this.getFileName(song);
-		var i = this.persistants.push(new buzz.sound(song))-1;
+		var i = this.persistants.push(new Howl({src: [song + ".wav", song + ".mp3"]})) - 1;
 		return i;
 	}
 
-	playPersistant(persistant)
-	{
+	playPersistant(persistant) {
 		var b = this.persistants[persistant];
 		b.stop().play();
 	}
 
-	stop(fade = true)
-	{
-		if (this.job) 
-		{
-			this.job.unloop();
-			if (fade) this.job.fadeOut(500);
+	stop(fade = true) {
+		if (this.job) {
+			this.job.loop = false;
+
+			if (fade) 
+			{
+				var j = this.job;
+				j.fade(1,0,500);
+				j.onfade = () => {
+						j.stop();
+				}
+			}
 			else this.job.stop();
 			this.job = null;
 		}
 	}
 
-	pause()
-	{
+	pause() {
 		if (this.job) this.job.pause();
 	}
 
-	unpause()
-	{
+	unpause() {
 		if (this.job && this.job.isPaused()) this.job.play();
 	}
 
-	playFX(effect)
-	{
+	playFX(effect) {
 		effect = this.getFileName(effect);
-		new buzz.sound(effect).play();
+		new Howl({
+			src: [effect + ".wav", effect + ".mp3"]
+		}).play();
 	}
 }
 

@@ -84,8 +84,6 @@
 	bottom: 73.7%;
 }
 
-.fromLeft
-
 @keyframes fallOver
 {
 	from 	{transform: rotateX(0deg);}
