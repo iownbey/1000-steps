@@ -141,66 +141,63 @@ class Amadeus extends Monster {
         });
     }
 
-    attack() {
-        function logic() {
-            this.charge++;
-            switch (this.charge) {
-                case 1:
-                    {
-                        this.setPicture(2);
-                        return { damage: 0, text: "Amadeus lifts his wicked-cool mallet." };
-                    }; break;
+    async attack() {
+        this.charge++;
+        switch (this.charge) {
+            case 1:
+                {
+                    this.setPicture(2);
+                    return { damage: 0, text: "Amadeus lifts his wicked-cool mallet." };
+                }; break;
 
-                case 2:
-                    {
-                        this.setPicture(3);
-                        this.breatheAnim.end();
-                        this.shiverAnim.start();
-                        return { damage: 0, text: "Amadeus holds his mallet high above his head like a boss." };
-                    }; break;
+            case 2:
+                {
+                    this.setPicture(3);
+                    this.breatheAnim.end();
+                    this.shiverAnim.start();
+                    return { damage: 0, text: "Amadeus holds his mallet high above his head like a boss." };
+                }; break;
 
-                case 3:
-                    {
-                        if (player.defending) {
-                            if (this.intelligence == 0) {
+            case 3:
+                {
+                    if (player.defending) {
+                        if (this.intelligence == 0) {
+                            this.smack();
+                            this.intelligence = 1;
+                            this.say(text.amadeusFight.banter1);
+                            return { damage: 0, text: "Amadeus crashes his mallet upon you, dealing absolutely no damage." }
+                        }
+                        else if (this.intelligence == 1) {
+                            this.smack();
+                            this.intelligence = 2;
+                            this.say(text.amadeusFight.banter2);
+                            return { damage: 0, text: "Amadeus crashes his mallet upon you, dealing absolutely no damage..." }
+                        }
+                        else if (this.intelligence > 1) {
+                            if (this.waited) {
                                 this.smack();
-                                this.intelligence = 1;
-                                this.say(text.amadeusFight.banter1);
-                                return { damage: 0, text: "Amadeus crashes his mallet upon you, dealing absolutely no damage." }
-                            }
-                            else if (this.intelligence == 1) {
-                                this.smack();
-                                this.intelligence = 2;
-                                this.say(text.amadeusFight.banter2);
-                                return { damage: 0, text: "Amadeus crashes his mallet upon you, dealing absolutely no damage..." }
-                            }
-                            else if (this.intelligence > 1) {
-                                if (this.waited) {
-                                    this.smack();
-                                    this.waited = false;
-                                    if (this.intelligence == 2) {
-                                        this.intelligence = 3;
-                                        this.say(text.amadeusFight.banter4);
-                                    }
-                                    return { damage: 0, text: "Amadeus finally crashes down the mallet, dealing nothing." };
+                                this.waited = false;
+                                if (this.intelligence == 2) {
+                                    this.intelligence = 3;
+                                    this.say(text.amadeusFight.banter4);
                                 }
-                                else {
-                                    this.charge--;
-                                    this.say(text.amadeusFight.banter3);
-                                    this.waited = true;
-                                    return { damage: 0, text: "Amadeus hesitates." };
-                                }
+                                return { damage: 0, text: "Amadeus finally crashes down the mallet, dealing nothing." };
+                            }
+                            else {
+                                this.charge--;
+                                this.say(text.amadeusFight.banter3);
+                                this.waited = true;
+                                return { damage: 0, text: "Amadeus hesitates." };
                             }
                         }
+                    }
 
-                        this.smack();
+                    this.smack();
 
-                        return { damage: 9999, text: "Amadeus crashes his mallet upon you, dealing a ludicrous 9999 damage." }
-                    }; break;
-            }
-            return { text: "You broke Amadeus! The server cries out in agony." }
+                    return { damage: 9999, text: "Amadeus crashes his mallet upon you, dealing a ludicrous 9999 damage." }
+                }; break;
         }
-        return new Promise((resolve) => resolve(logic()));
+        return { text: "You broke Amadeus! The server cries out in agony." }
     }
 
     html(root) {
@@ -787,25 +784,25 @@ class Virgil extends Monster {
     }
 
     async attack() {
-        
+
         var points = [];
         var pointQuantity = 20;
         var delay = 0;
         for (let i = 0; i < pointQuantity; i++) {
-            
-            delay += 0.2 + ((Math.random() > 0.5)? 0 : 0.2);
+
+            delay += 0.2 + ((Math.random() > 0.5) ? 0 : 0.2);
             points.push(getPoint(delay));
         }
-        
+
         this.breatheAnim.end();
         this.shiverAnim.start();
-        this.renderer.setSprite(1,0);
+        this.renderer.setSprite(1, 0);
 
         var interaction = new TimingIndicator(document.getElementById("content-canvas"));
         interaction.renderers = points.slice(0);
         await interaction.getPromise();
 
-        this.renderer.setSprite(0,0);
+        this.renderer.setSprite(0, 0);
         this.shiverAnim.end();
         this.breatheAnim.start();
 
@@ -832,17 +829,17 @@ class Virgil extends Monster {
     }
 
     html(root) {
-		var $virgil = $('<canvas style="height:180%;width:180%;left:-40%;" id="virgil"></canvas>');
+        var $virgil = $('<canvas style="height:180%;width:180%;left:-40%;" id="virgil"></canvas>');
         this.jobj = $virgil;
         this.canvas = $virgil[0];
         $virgil.appendTo(root);
 
-        this.renderer = new SpriteRenderer($virgil[0],"./Images/virgil.png",64,64);
+        this.renderer = new SpriteRenderer($virgil[0], "./Images/virgil.png", 64, 64);
 
         var _this = this;
-		this.renderer.onload = () => {
-			_this.renderer.setSprite(0, 0);
-		};
+        this.renderer.onload = () => {
+            _this.renderer.setSprite(0, 0);
+        };
 
         this.breatheAnim = new CSSAnimation($virgil, "trollPose").start();
         this.shakeAnim = new CSSAnimation($virgil, "shake");

@@ -361,7 +361,7 @@ class Battle {
 			currentBattle = null;
 			player.defending = false;
 			playBackgroundMusic();
-			if (this.onfinish) this.onfinish();
+			if (_this.onfinish) _this.onfinish();
 			_this.finishAction();
 		}
 
@@ -1072,9 +1072,9 @@ class SequenceGetter {
 	get() {
 		var r = this.array[this.i];
 		if (this.loop) {
-			this.i = (i + 1) % this.array.length;
+			this.i = (this.i + 1) % this.array.length;
 		}
-		else if (this.i !== this.array.length - 1) i++;
+		else if (this.i !== this.array.length - 1) this.i++;
 		return r;
 	}
 }
