@@ -126,7 +126,7 @@ class Area_Aorta extends Area {
 			this.fillGrabBagThing(9),
 			this.fillGrabBagThing(),
 			[Area.meetAmadeus],
-			this.fillGrabBagThing(9),
+			this.fillGrabBagThing(9, [Area.fightEvent]),
 			this.fillGrabBagThing(10, [Area.meetTroldiers]),
 			this.fillGrabBagThing(),
 			[Area.talkAmadeus],
@@ -154,13 +154,12 @@ class Area_Aorta extends Area {
 		sound.playMusic(this.getBackgroundMusic());
 	}
 
-	fillGrabBagThing(length = 10) {
+	fillGrabBagThing(length = 10, a = [Area.fightEvent])
+	{
 		var _this = this;
-		var a = [
-			Area.fightEvent
-		];
 
-		while (a.length < length) {
+		while (a.length < length)
+		{
 			a.push(Area.flavorEvent);
 		}
 
