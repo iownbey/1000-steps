@@ -592,16 +592,12 @@ function init$() {
 
 doc.ready(function () {
 	doc.keydown(handleInput);
-	doc.mouseup(handleClick);
+	doc.on("pointerup",handleClick);
 	doc.contextmenu((e) => e.preventDefault());
 
 	doc.on("touchstart",(e) => e.preventDefault());
 	doc.on("touchmove",(e) => e.preventDefault());
-	doc.on("touchend",(e) => 
-	{
-		handleTap(e);
-		e.preventDefault();
-	});
+	doc.on("touchend",(e) => e.preventDefault());
 
 	init$();
 
