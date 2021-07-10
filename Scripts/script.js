@@ -591,7 +591,10 @@ function init$() {
 }
 
 doc.ready(function () {
-	screen.orientation.lock("landscape");
+	screen.orientation.lock("landscape").then(
+		() => console.log("Locked Orientation") ,
+		() => console.warn("Orientation lock failed")
+	);
 
 	doc.keydown(handleInput);
 	doc.on("pointerup",(e) => {
