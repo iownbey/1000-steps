@@ -311,7 +311,7 @@ Area.meetTroldiers = Area.addPossibleEvent(function () {
 	currentDoer = new Doer([
 		{ action: function () { sound.playFX("troll-fanfare") }, time: 2000, waitForInput: false },
 		w.getThing(),
-		{ action: function () { currentBattle = new Battle("fight", [new Troll_Soldier(), new Troll_Soldier, new Troll_Soldier], false) } }
+		{ action: function () { currentBattle = new Battle("fight", [new Troldier(), new Troldier(), new Troldier()], false) } }
 	]);
 	currentDoer.do();
 });
