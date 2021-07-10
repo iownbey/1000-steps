@@ -1148,7 +1148,12 @@ class SoundManager {
 	}
 
 	unpause() {
-		if (this.job && this.job.isPaused()) this.job.play();
+		if (this.job && !this.job.playing())
+		{
+			let sk = this.job.seek();
+			this.job.play();
+			this.job.seek(sk);
+		}
 	}
 
 	playFX(effect) {
