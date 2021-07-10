@@ -778,7 +778,8 @@ class Virgil extends Monster {
             "You want to know your past?",
             "You know more about it than I do, my friend.",
             "I'm sure you must share my inability to recall what happened BEFORE the crossing.",
-            "My friend, If you are to survive out there you must prove to me you can fight.",
+            "Well, if either of us want to find out where we came from, we can't die.",
+            "You must prove to me you can survive.",
             "Prove your ability"
         ]);
     }
@@ -855,10 +856,15 @@ class Virgil extends Monster {
     }
 
     inspect() {
-        return [
-            "This is Virgil, the master of blade and sorrow.",
-            "You don't remember much, but part of you recalls knowing him BEFORE you existed.",
-            "Is he friend? foe? family? You do not know.",
-        ]
+        if (this.inspected) {
+            return ["It's still Virgil"]
+        }
+        else {
+            return [
+                "This is Virgil, the master of blade and sorrow.",
+                "You don't remember much, but part of you recalls knowing him BEFORE you existed.",
+                "Is he friend? foe? family?",
+            ]
+        }
     }
 }
