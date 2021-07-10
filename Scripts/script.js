@@ -372,8 +372,7 @@ async function getChoice(options, cursor) {
 		var menu;
 		options.forEach((option) => {
 			text[x][y] = option;
-			callbacks[x][y] = () => 
-			{
+			callbacks[x][y] = () => {
 				resolve(option);
 				menu.setDisplay(false);
 			}
@@ -386,7 +385,7 @@ async function getChoice(options, cursor) {
 
 		menu = getGameMenu(callbacks, text, cursor);
 
-		doc.on("keydown.choiceInput", (e) => {menu.handleInput(e)});
+		doc.on("keydown.choiceInput", (e) => { menu.handleInput(e) });
 		menu.setDisplay(true);
 	});
 
@@ -460,8 +459,7 @@ function handleClick(event) {
 	}
 }
 
-function handleTap(event)
-{
+function handleTap(event) {
 	event.key = "Tap";
 	handleInput(event);
 }
@@ -577,27 +575,29 @@ function init$() {
 
 	let $health = $("#health-pop-in");
 	let $steps = $("#steps-pop-in");
-	
+
 	healthPopIn = new PopIn($health);
-	healthPopIn.setAnchor("top","0vh");
+	healthPopIn.setAnchor("top", "0vh");
 	healthPopIn.addActiveAnchor("left");
 	healthDisplay = new HealthDisplay(healthPopIn);
 	healthPopIn.$jobj.html("HP:<br/>" + player.health + "/" + player.maxHealth);
 
 	stepsPopIn = new PopIn($steps);
-	stepsPopIn.setAnchor("top","0vh");
+	stepsPopIn.setAnchor("top", "0vh");
 	stepsPopIn.addActiveAnchor("right");
 	stepsPopIn.$jobj.html("STEPS:<br/>" + file.get("Steps-Left", 1000));
 }
 
 doc.ready(function () {
-	screen.orientation.lock("landscape").then(
-		() => console.log("Locked Orientation") ,
-		() => console.warn("Orientation lock failed")
-	);
+	if (screen && screen.orientation && screen.orientation.lock) {
+		screen.orientation.lock("landscape").then(
+			() => console.log("Locked Orientation"),
+			() => console.warn("Orientation lock failed")
+		);
+	}
 
 	doc.keydown(handleInput);
-	doc.on("pointerup",(e) => {
+	doc.on("pointerup", (e) => {
 		handleClick(e);
 		e.preventDefault();
 	});
