@@ -1586,6 +1586,22 @@ class Vector2D {
 	magnitude() {
 		return Math.sqrt(this.sqrMagnitude());
 	}
+
+	rotate(rot) {
+		var cos = Math.cos(rot), sin = Math.sin(rot);
+		return new Vector2D(
+			(cos * this.x) - (sin * this.y),
+			(sin * this.x) + (cos * this.y));
+	}
+
+	normalize() {
+		return this.scale(1/this.magnitude());
+	}
+
+	static getNormalVector()
+	{
+		return new Vector2D(0,1);
+	}
 }
 
 class Writer {
