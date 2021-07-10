@@ -573,6 +573,10 @@ doc.ready(function () {
 	doc.click(handleClick);
 	doc.contextmenu((e) => e.preventDefault());
 
+	doc.on("touchstart",(e) => e.preventDefault());
+	doc.on("touchmove",(e) => e.preventDefault());
+	doc.on("touchend",(e) => e.preventDefault());
+
 	init$();
 
 	initSave();
