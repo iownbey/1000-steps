@@ -66,30 +66,38 @@ class Battle {
 		console.log("BATTLE: Battle started.");
 		SaveData.blockSaving = true;
 		this.monsters = monsters;
+		DialogueTypewriter.clearAll();
+		cover.flash("white",
+			() => {
+				contentManager.clear();
 
-		contentManager.clear();
+				monsters.forEach(function (element) {
+					var box = $('<div class="monster"></div>');
+					contentManager.add(box);
+					element.html(box);
+				}, this);
 
-		monsters.forEach(function (element) {
-			var box = $('<div class="monster"></div>');
-			contentManager.add(box);
-			element.html(box);
-		}, this);
+				contentManager.approach(dynamicIntro);
+				sound.playMusic(music);
+				backgroundCanvas.triggerBattle();
+			},
+			() => {
+				if (this.monsters.length == 1) {
+					topWriter.show(this.monsters[0].myName + " stands in the way!");
+				}
+				else {
+					var index = (this.monsters.length == 2) ? 0 : 1;
+					topWriter.show(this.monsters[index].myName + " and his friends block the path.");
+				}
+				mode = ModeEnum.fighting;
 
-		contentManager.approach(dynamicIntro)
-
-		if (this.monsters.length == 1) {
-			topWriter.show(this.monsters[0].myName + " stands in the way!");
-		}
-		else {
-			var index = (this.monsters.length == 2) ? 0 : 1;
-			topWriter.show(this.monsters[index].myName + " and his friends block the path.");
-		}
-		mode = ModeEnum.fighting;
-		sound.playMusic(music);
-		var _this = this;
-		this.charAnim = new CSSAnimation(player.$jobj, "battlePose").start();
-		this.eventQueue = new Queue();
-		setTimeout(this.startPlayerTurn);
+				var _this = this;
+				this.charAnim = new CSSAnimation(player.$jobj, "battlePose").start();
+				this.eventQueue = new Queue();
+				this.queueAction(this.startPlayerTurn);
+			},
+			1250
+		);
 	}
 
 	queueAction(action) {
@@ -363,6 +371,7 @@ class Battle {
 			playBackgroundMusic();
 			if (_this.onfinish) _this.onfinish();
 			_this.finishAction();
+			backgroundCanvas.triggerDefault();
 		}
 
 		if (currentBattle.monsters.length > 0) {
@@ -844,16 +853,17 @@ GrabBag.shuffle = function (array) {
 }
 
 class HealthDisplay {
-	constructor($jobj) {
-		this.$jobj = $jobj;
+	constructor(popin) {
+		this.popin = popin;
 	}
 
 	update(newValue, newMax) {
-		this.$jobj.text(newValue + "/" + newMax);
+		this.popin.show(5000);
+		this.popin.$jobj.html("HP<br/>" +  newValue + "/" + newMax);
 	}
 
 	flashRed() {
-		CSSAnimation.trigger(this.$jobj, "flashRed");
+		CSSAnimation.trigger(this.popin.$jobj, "flashRed");
 	}
 }
 
@@ -972,6 +982,39 @@ class Player {
 		if (change < 0) healthDisplay.flashRed();
 		this.wounded = wounded;
 		return wounded;
+	}
+}
+
+class PopIn {
+	constructor($jobj) {
+		this.$jobj = $jobj;
+		this.$jobj.addClass("transition-position");
+		this.$jobj.css("position", "absolute");
+		this.activeAnchors = [];
+	}
+
+	// left, right, top, and bottom are accepted values
+	addActiveAnchor(anchorDimension) {
+		this.activeAnchors.push(anchorDimension);
+		this.$jobj.css(anchorDimension, "-100%");
+	}
+
+	setAnchor(anchorDim, value) {
+		this.$jobj.css(anchorDim, value);
+	}
+
+	show(time) {
+		this.activeAnchors.forEach(a => this.$jobj.css(a, "0"));
+		if (this.timeout) clearTimeout(this.timeout);
+		this.timeout = setTimeout(() => this.hide(), time);
+	}
+
+	hide() {
+		this.activeAnchors.forEach(a => this.$jobj.css(a, "-100%"));
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+			delete this.timeout;
+		}
 	}
 }
 
@@ -1112,12 +1155,12 @@ class SoundManager {
 		}
 		else startSong();
 
-		
+
 	}
 
 	loadPersistant(song) {
 		song = this.getFileName(song);
-		var i = this.persistants.push(new Howl({src: [song + ".wav", song + ".mp3"]})) - 1;
+		var i = this.persistants.push(new Howl({ src: [song + ".wav", song + ".mp3"] })) - 1;
 		return i;
 	}
 
@@ -1130,12 +1173,11 @@ class SoundManager {
 		if (this.job) {
 			this.job.loop = false;
 
-			if (fade) 
-			{
+			if (fade) {
 				var j = this.job;
-				j.fade(1,0,500);
+				j.fade(1, 0, 500);
 				j.onfade = () => {
-						j.stop();
+					j.stop();
 				}
 			}
 			else this.job.stop();
@@ -1148,8 +1190,7 @@ class SoundManager {
 	}
 
 	unpause() {
-		if (this.job && !this.job.playing())
-		{
+		if (this.job && !this.job.playing()) {
 			let sk = this.job.seek();
 			this.job.play();
 			this.job.seek(sk);
@@ -1595,12 +1636,11 @@ class Vector2D {
 	}
 
 	normalize() {
-		return this.scale(1/this.magnitude());
+		return this.scale(1 / this.magnitude());
 	}
 
-	static getNormalVector()
-	{
-		return new Vector2D(0,1);
+	static getNormalVector() {
+		return new Vector2D(0, 1);
 	}
 }
 

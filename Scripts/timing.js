@@ -78,8 +78,8 @@ class TimingIndicator {
         //Update
         if (this.renderers.length > 0) {
             //check and update canvas size
-            var width = this.#canvas.clientWidth;
-            var height = this.#canvas.clientHeight;
+            var width = window.innerWidth;
+            var height = window.innerHeight;
             if (this.#canvas.width != width || this.#canvas.height != height) {
                 this.#canvas.width = width;
                 this.#canvas.height = height;
@@ -243,7 +243,6 @@ class EaseInOutPoint extends TimingPoint {
 
     update(timeDelta, context) {
         this.timeAlive += timeDelta;
-        console.log(this.timeAlive);
 
         if (this.timeAlive > this.delayTime) {
             if (this.timeAlive < this.lifetime) {

@@ -23,6 +23,9 @@ var bottomWriter;
 var sparkHandler;
 var healthDisplay;
 
+var healthPopIn;
+var stepsPopIn;
+
 var introDoer;
 var cover;
 var file;
@@ -100,7 +103,8 @@ function walk() {
 	}
 	stepsLeft--;
 	file.set("Steps-Left", stepsLeft);
-	$("#stepsoutput").text(stepsLeft);
+	stepsPopIn.$jobj.html("STEPS<br/>" + stepsLeft);
+	stepsPopIn.show(3000);
 
 	area.walk();
 }
@@ -383,6 +387,7 @@ async function getChoice(options, cursor) {
 		menu = getGameMenu(callbacks, text, cursor);
 
 		doc.on("keydown.choiceInput", (e) => {menu.handleInput(e)});
+		menu.setDisplay(true);
 	});
 
 	doc.off("keydown.choiceInput");
@@ -396,6 +401,7 @@ function shiftKeys(event) {
 		case "F": toggleFullscreen(); break;
 		case "N":
 			file.set("IntroComplete", true);
+			//area = new Area_Underworld();
 			StartMainGame();
 			break;
 	}
@@ -563,9 +569,19 @@ function init$() {
 	$("#endflavor").text(getRandom(text.gameOverFlavorText));
 	Player.sprites.setSprite($("#gameover_player"), 1, 8);
 
-	healthDisplay = new HealthDisplay($("#healthoutput"));
-	$("#healthoutput").text(player.health + "/" + player.maxHealth);
-	$("#stepsoutput").text(file.get("Steps-Left", 1000));
+	let $health = $("#health-pop-in");
+	let $steps = $("#steps-pop-in");
+	
+	healthPopIn = new PopIn($health);
+	healthPopIn.setAnchor("top","0vh");
+	healthPopIn.addActiveAnchor("left");
+	healthDisplay = new HealthDisplay(healthPopIn);
+	healthPopIn.$jobj.html("HP:<br/>" + player.health + "/" + player.maxHealth);
+
+	stepsPopIn = new PopIn($steps);
+	stepsPopIn.setAnchor("top","0vh");
+	stepsPopIn.addActiveAnchor("right");
+	stepsPopIn.$jobj.html("STEPS:<br/>" + file.get("Steps-Left", 1000));
 }
 
 doc.ready(function () {

@@ -25,13 +25,10 @@
 	<script src="Scripts/script.js"  ></script>
 </head>
 <body id="body">
+	<canvas id="back-canvas"></canvas>
 
 	<div id="gamewindow">
 		<div id="main" class="box" style="visibility: hidden;">
-			<div id="hud">
-				<span class="bordered playerstat">HP: <span id="healthoutput"></span></span>
-				<span class="bordered playerstat">Steps Left: <span id="stepsoutput"></span></span>
-			</div>
 			<div id="dialogueBox1" class="dialogueBox bordered">
 				<div id="face1"></div>
 				<p   id="output1" style="visibility: hidden;">
@@ -49,7 +46,6 @@
 				<div id="aura"  style="display: none;"></div>
 			</div>
 			<div id="content"></div>
-			<canvas id="content-canvas"></canvas>
 			<img id="fore" style="display:none;">
 			<div id="battlebuttons">
 				<div id="lButtons"> 
@@ -91,11 +87,17 @@
 		</div>
 	</div>
 
+	
+
 	<img id="hcursor" class="cursor" src="Images/cursor.png">
 	<img id="vcursor" class="cursor" src="Images/cursor.png">
 
 	<p id="notifier" class="bordered"></p>
 
+	<p id="health-pop-in" class="bordered big-text"></p>
+	<p id="steps-pop-in" class="bordered big-text"></p>
+
+	<canvas id="content-canvas" style="pointer-events: none;"></canvas>
 	<div id="cover" style="pointer-events: none;"></div>
 
 	<script src="Scripts/areas.js"   ></script>
@@ -103,7 +105,8 @@
 	<script src="Scripts/timing.js"  ></script>
 	<script src="Scripts/libraries/Controller.min.js"></script>
 	<script src="Scripts/libraries/Controller.layouts.min.js"></script>
-	<script src="Scripts/input.js"  ></script>
+	<script src="https://cdn.jsdelivr.net/npm/granim@2.0.0/dist/granim.min.js" integrity="sha256-79ATLdCUzg3BVrKHvdiOJY47UxdQ3viLUdvEsqh2apI=" crossorigin="anonymous"></script>
+	<script src="Scripts/afterwork.js"  ></script>
 
 </body>
 </html>

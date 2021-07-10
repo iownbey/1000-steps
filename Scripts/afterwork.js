@@ -58,3 +58,40 @@ class ControllerInput {
         await Promise.all(promises);
     }
 }
+
+var backgroundCanvas = new Granim({
+    element: '#back-canvas',
+    direction: 'diagonal',
+    isPausedWhenNotInView: true,
+    stateTransitionSpeed: 500,
+    states : {
+        "default-state": {
+            gradients: [
+                ['#000000', '#1F1F1F'],
+                ['#1F1F1F', '#000000'],
+            ]
+        },
+        "battle-state": {
+            gradients: [
+                ["#fe86ff","#1905d9"],
+                ["#34fd50","#be0457"],
+                ["#fe3218","#e100f5"],
+                ["#387dfc","#d5014c"],
+                ["#06f984","#ff00f9"],
+                ["#b4dafc","#7f51fd"]
+            ],
+            transitionSpeed: 500
+        }
+    }
+});
+
+backgroundCanvas.triggerDefault = () => {
+    $("#back").css("visibility","visible");
+    $("#fore").css("visibility","visible");
+    backgroundCanvas.changeState("default-state")
+};
+backgroundCanvas.triggerBattle  = () => {
+    $("#back").css("visibility","hidden");
+    $("#fore").css("visibility","hidden");
+    backgroundCanvas.changeState("battle-state")
+};

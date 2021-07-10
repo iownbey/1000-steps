@@ -80,6 +80,18 @@ div
 	color: darkgrey;
 }
 
+#back-canvas
+{
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: -2;
+}
+
 #content
 {
 	display: flex;
@@ -96,9 +108,13 @@ div
 
 #content-canvas
 {
-	height: 100%;
-	width: 100%;
 	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
 	z-index: 6;
 }
 
@@ -270,4 +286,15 @@ div
 {
 	width: 100%;
 	text-align: center;
+}
+
+.transition-position
+{
+	transition: left 1s, right 1s, top 1s, bottom 1s;
+}
+
+.big-text
+{
+	font-size: 2em;
+	padding: 1em;
 }
