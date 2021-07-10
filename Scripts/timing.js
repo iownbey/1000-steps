@@ -88,6 +88,8 @@ class TimingIndicator {
             }
             //clear for drawing
             this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+            this.#ctx.fillStyle = "#00000055";
+            this.#ctx.fillRect(0,0,this.#canvas.width, this.#canvas.height)
 
             //update points
             for (let renderer of this.renderers) {
