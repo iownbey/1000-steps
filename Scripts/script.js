@@ -591,13 +591,14 @@ function init$() {
 }
 
 doc.ready(function () {
-	doc.keydown(handleInput);
-	doc.on("pointerup",handleClick);
-	doc.contextmenu((e) => e.preventDefault());
+	screen.orientation.lock("landscape");
 
-	doc.on("touchstart",(e) => e.preventDefault());
-	doc.on("touchmove",(e) => e.preventDefault());
-	doc.on("touchend",(e) => e.preventDefault());
+	doc.keydown(handleInput);
+	doc.on("pointerup",(e) => {
+		handleClick(e);
+		e.preventDefault();
+	});
+	doc.contextmenu((e) => e.preventDefault());
 
 	init$();
 
