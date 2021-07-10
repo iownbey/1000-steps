@@ -460,6 +460,12 @@ function handleClick(event) {
 	}
 }
 
+function handleTap(event)
+{
+	event.key = "Tap";
+	handleInput(event);
+}
+
 function setCurrentScope(jobj) {
 	if (this.last != undefined) {
 		this.last.css("visibility", "hidden");
@@ -586,12 +592,16 @@ function init$() {
 
 doc.ready(function () {
 	doc.keydown(handleInput);
-	doc.click(handleClick);
+	doc.mouseup(handleClick);
 	doc.contextmenu((e) => e.preventDefault());
 
 	doc.on("touchstart",(e) => e.preventDefault());
 	doc.on("touchmove",(e) => e.preventDefault());
-	doc.on("touchend",(e) => e.preventDefault());
+	doc.on("touchend",(e) => 
+	{
+		handleTap(e);
+		e.preventDefault();
+	});
 
 	init$();
 
