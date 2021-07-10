@@ -372,7 +372,7 @@ Area.fightAmadeus = Area.addPossibleEvent(function () {
 
 class Area_Underworld extends Area {
 	constructor() {
-		super(text.underworldWalkFlavorText, ["IntrovertedGhost", "Skeleton", "Reaper"], "fight");
+		super(text.underworldWalkFlavorText, ["IntrovertedGhost", "Skeleton", "Reaper"], "underworld-fight");
 	}
 
 	getEvents() {
