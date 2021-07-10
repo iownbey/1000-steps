@@ -473,8 +473,24 @@ class Thaddeus extends Monster {
         this.sycthe = null;
     }
 
-    attack() {
-        function logic() {
+    async attack() {
+        var points = [];
+        const circleQuantity = 3;
+        const pointsPerCircle = 5;
+        var delay = 0;
+        const radius = 200;
+        for (let circlei = 0; circlei < circleQuantity; circlei++) {
+            var offset = Vector2D.getNormalVector().scale(radius).rotate(Math.random() * 2 * Math.PI);
+            for (let i = 0; i < pointsPerCircle; i++) {
+                delay += 0.3 + ((Math.random() > 0.5) ? 0 : 0.3);
+                points.push(new SpinPoint(offset, 3, delay));
+            }
+        }
+
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        interaction.renderers = points.slice(0);
+        await interaction.getPromise();
+        if (points.some(a => a.state === -1)) {
             if (player.health >= 25) {
                 var damage = Math.randomInt(6, 13);
                 CSSAnimation.trigger(this.sycthe, "spin360");
@@ -487,7 +503,9 @@ class Thaddeus extends Monster {
                 return { text: "Thaddeus used \"SPECTRAL SLICE++\".", damage };
             }
         }
-        return new Promise(resolve => resolve(logic()));
+        else {
+            return { text: "You guarded well against his sycthe.", damage: 0 };
+        }
     }
 
     talk() {
