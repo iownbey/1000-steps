@@ -379,21 +379,28 @@ class Reaper extends Monster {
         this.sycthe = null;
     }
 
-    attack() {
-        function logic() {
-            if (player.health >= 14) {
-                var damage = Math.randomInt(1, 5);
-                CSSAnimation.trigger(this.sycthe, "spin360");
-                return { text: ("Reaper dealt " + player.checkDamage(damage) + " damage."), damage };
+    async attack() {
+            var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+            var point = new SpinPoint(new Vector2D(0,150),3);
+            interaction.renderers.push(point);
+            await interaction.getPromise();
+
+            if (point.state == -1)
+            {
+                if (player.health >= 14) {
+                    var damage = Math.randomInt(1, 5);
+                    CSSAnimation.trigger(this.sycthe, "spin360");
+                    return { text: ("Reaper dealt " + player.checkDamage(damage) + " damage."), damage };
+                }
+                else {
+                    var damage = player.health;
+                    CSSAnimation.trigger(this.sycthe, "spin360");
+                    await new Promise(resolve => cover.flash("black", null, resolve, 100));
+                    return { text: "Reaper used \"SPECTRAL SLICE\".", damage };
+                }
             }
-            else {
-                var damage = player.health;
-                cover.flash("black", null, null, 100);
-                CSSAnimation.trigger(this.sycthe, "spin360");
-                return { text: "Reaper used \"SPECTRAL SLICE\".", damage };
-            }
-        }
-        return new Promise(resolve => resolve(logic()));
+            else return {damage:0,text: "You dodged contact with the reaper's scythe."};
+            
     }
 
     talk() {
@@ -422,7 +429,7 @@ class Reaper extends Monster {
             ["Aha! I had to look in the \"OBSCURIS ALMANAC\" for this one.", expr.emery.happy],
             ["Reaper:|Health is " + _this.h + "/15|Attack is 1-5 randomly"],
             ["They are capable of a move called \"SPECTRAL SLICE\""],
-            ["It will mortally wound you instantly if your health falls below fourteen."],
+            ["It will mortally wound you instantly if your health is less than 14."],
             ["Spooky."]
         ]
     }
@@ -433,9 +440,18 @@ class Skeleton extends Monster {
         super("Generic Skeleton", 30, 2, 1);
     }
 
-    attack() {
+    async attack() {
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        var point = (new EaseInOutPoint(new Vector2D(0, 150), 1.5));
+        interaction.renderers.push(point);
+        await interaction.getPromise();
+
+        if (point.state === -1)
+        {
         Skeleton.sprites.animate(this.jobj, Skeleton.attackAnim, 100);
-        return new Promise(resolve => resolve({ text: ("Skeleton dealt " + player.checkDamage(4) + " damage."), damage: 4 }));
+        return { text: ("Skeleton dealt " + player.checkDamage(4) + " damage."), damage: 4 };
+        }
+        else return {text:"The Skeleton's hit glanced.", damage:0};
     }
 
     talk() {
@@ -638,12 +654,28 @@ class Troldier extends Monster {
                 if (this.charge == 1) {
                     this.charge = 0;
 
+                    var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+                    var point = (new EaseInOutPoint(new Vector2D(75, 75), 2));
+                    point.strong();
+                    interaction.renderers.push(point);
+                    await interaction.getPromise();
+
                     this.shiverAnim.end();
                     this.setPicture(3);
                     var _this = this;
                     setTimeout(function () { _this.setPicture(1); _this.breatheAnim.start(); }, 300);
 
-                    return { damage: 10, text: "The Troldier brings down his sword, dealing " + player.checkDamage(10) + " damage." }
+                    if (point.state === -1)
+                    {
+                        return { damage: 10, text: "The Troldier brings down his sword, dealing " + player.checkDamage(10) + " damage." }
+                    }
+                    else
+                    {
+                        return { damage: 0, text: "You blocked the Troldiers attack." }
+                    }
+                    
+
+                    
                 }
                 else {
                     this.charge = 1;
