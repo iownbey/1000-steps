@@ -58,10 +58,13 @@ class ControllerInput {
         await Promise.all(promises);
     }
 }
-
 var backgroundCanvas = new Granim({
     element: '#back-canvas',
-    direction: 'diagonal',
+    direction: 'custom',
+    customDirection: {
+        x0: "0%",   x1: "100%",
+        y0: "100%", y1: "0%"
+    },
     isPausedWhenNotInView: true,
     stateTransitionSpeed: 500,
     states : {
@@ -84,6 +87,21 @@ var backgroundCanvas = new Granim({
         }
     }
 });
+
+function spinGradient(timestamp)
+{
+    const radiansPerMilliecond = 0.00005;
+    let yOff = Math.sin(timestamp * radiansPerMilliecond);
+    let xOff = Math.cos(timestamp * radiansPerMilliecond);
+    var dir = {};
+    dir.x0 = (50 + xOff * 50) + "%";
+    dir.x1 = (50 - xOff * 50) + "%";
+    dir.y0 = (50 + yOff * 50) + "%";
+    dir.y1 = (50 - yOff * 50) + "%";
+    backgroundCanvas.customDirection = dir;
+    requestAnimationFrame(spinGradient);
+}
+requestAnimationFrame(spinGradient);
 
 backgroundCanvas.triggerDefault = () => {
     $("#back").css("visibility","visible");
