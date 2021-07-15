@@ -400,7 +400,7 @@ function shiftKeys(event) {
 		case "F": toggleFullscreen(); break;
 		case "N":
 			file.set("IntroComplete", true);
-			//area = new Area_Underworld();
+			area = new Area_Underworld();
 			StartMainGame();
 			break;
 	}

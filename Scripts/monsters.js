@@ -621,7 +621,7 @@ class Troldier extends Monster {
         if (!this.shielding) return super.hit(d);
     }
 
-    attack() {
+    async attack() {
         this.shielding = false;
 
         //if exhausted
