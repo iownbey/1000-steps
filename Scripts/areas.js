@@ -99,6 +99,10 @@ Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
 	});
 }
 
+Area.emptyStep = Area.addPossibleEvent(function () {
+// Do Nothing
+});
+
 Area.fightEvent = Area.addPossibleEvent(function () {
 	currentBattle = new Battle(this.battleTheme, [this.getRandomMonster(), this.getRandomMonster(), this.getRandomMonster()]);
 });
@@ -158,9 +162,11 @@ class Area_Aorta extends Area {
 	{
 		var _this = this;
 
+		a.push(Area.flavorEvent);
+
 		while (a.length < length)
 		{
-			a.push(Area.flavorEvent);
+			a.push(Area.emptyStep);
 		}
 
 		return GrabBag.shuffle(a);
