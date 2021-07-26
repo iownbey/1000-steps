@@ -3,7 +3,9 @@ html
 	--cos: cubic-bezier(0.3642,0,0.6358,1);
 	height:100%;
 	width: 100%;
+
 	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
 	image-rendering: -webkit-crisp-edges;
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
@@ -11,6 +13,9 @@ html
 	font-variant: small-caps;
 
 	touch-action: none;
+	
+	-webkit-user-select: none;
+	-ms-user-select: none;
 	user-select: none;
 }
 
@@ -30,6 +35,7 @@ body
 img 
 {
 	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
 	image-rendering: -webkit-crisp-edges;
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
