@@ -11,6 +11,14 @@ class TimingFunctions {
         t = TimingFunctions.convertToFlip(t);
         return Math.sqrt(t * t);
     }
+
+    static linear(t) {
+        return t;
+    }
+
+    static inverseLinear(t) {
+        return 1 - t;
+    }
 }
 
 class TimingIndicator {
@@ -88,8 +96,9 @@ class TimingIndicator {
             }
             //clear for drawing
             this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+            //Darken background
             this.#ctx.fillStyle = "#00000055";
-            this.#ctx.fillRect(0,0,this.#canvas.width, this.#canvas.height)
+            this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
 
             //update points
             for (let renderer of this.renderers) {
@@ -153,16 +162,28 @@ class TimingIndicator {
 
         if (closest) {
             if (closest.contacting === false) {
+                if (!closest.isLure)
+                {
                 //too far away
                 closest.state = -1;
                 closest.onfail();
                 sound.playPersistant(errorBlip);
+                }
             }
             else {
                 //in range!
+                if (closest.isLure)
+                {
+                closest.state = -1;
+                closest.onfail();
+                sound.playPersistant(errorBlip);
+                }
+                else
+                {
                 closest.state = 1;
                 closest.onsuccess();
                 sound.playPersistant(attackBlip);
+                }
             }
         }
     }
@@ -187,6 +208,7 @@ class TimingPoint {
         this.contacting = false;
         this.state = 0;
         this.isStrong = false;
+        this.isLure = false;
         this.onsuccess = () => { };
         this.onfail = () => { };
     }
@@ -200,11 +222,14 @@ class TimingPoint {
         return this;
     }
 
+    lure() {
+        this.isLure = true;
+        return this;
+    }
+
     standardDraw(context, blend) {
         context.globalAlpha = 1 - TimingFunctions.semicircle(blend);
 
-        context.beginPath();
-        context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
         if (this.isStrong && !player.defending)
             context.fillStyle = 'yellow';
         else switch (this.state) {
@@ -216,7 +241,17 @@ class TimingPoint {
             case 1: context.fillStyle = '#00000000'; break;
             default: context.fillStyle = 'orange'; break;
         }
-        context.fill();
+
+        
+        if (this.isLure) {
+            var cross = new Path2D(`M ${this.x} ${this.y} m 0 -6 l 12 -12 l 6 6 l -12 12 l 12 12 l -6 6 l -12 -12 l -12 12 l -6 -6 l 12 -12 l -12 -12 l 6 -6 z`);
+            context.fill(cross);
+        }
+        else {
+            context.beginPath();
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+            context.fill();
+        }
     }
 
     onenter() {
@@ -224,8 +259,7 @@ class TimingPoint {
     }
 
     onexit() {
-        if (this.state === 0) 
-        {
+        if (!this.isLure && this.state === 0) {
             sound.playPersistant(errorBlip);
             this.state = -1;
         }
@@ -250,7 +284,7 @@ class EaseInOutPoint extends TimingPoint {
                 var pos = TimingIndicator.current.getOrigin().add(
                     this.offset.scale(
                         TimingFunctions.convertToFlip(blend)));
-                        //TimingFunctions.convertToFlip(TimingFunctions.easeInOut(blend))));
+                //TimingFunctions.convertToFlip(TimingFunctions.easeInOut(blend))));
                 this.x = pos.x;
                 this.y = pos.y;
                 this.standardDraw(context, blend);
@@ -277,6 +311,45 @@ class SpinPoint extends TimingPoint {
                 var blend = (this.timeAlive - this.delayTime) / (this.lifetime - this.delayTime);
                 var spun = this.offset.rotate(blend * 2 * Math.PI);
                 var pos = TimingIndicator.current.getOrigin().add(this.offset).add(spun);
+                this.x = pos.x;
+                this.y = pos.y;
+                this.standardDraw(context, blend);
+            }
+            else TimingIndicator.MarkDone(this);
+        }
+    }
+}
+
+class ParametricPoint extends TimingPoint {
+    /**
+     * @typedef {(time: number) => number} easingFunction
+     * @param {easingFunction} xfunc - Easing for x
+     * @param {easingFunction} yfunc - Easing for y
+     * @param {number} activeTime - Length of time the point will be active after the delay
+     * @param {delayTime} delayTime - Length of time the point will be inactive after the TimingIndicator is activated
+    */
+    constructor(xfunc, yfunc, activeTime, delayTime = 0) {
+        super(xfunc(0), yfunc(0));
+        this.xfunc = xfunc;
+        this.yfunc = yfunc;
+
+        this.offset = offset;
+        this.timeAlive = 0;
+        this.lifetime = activeTime + delayTime;
+        this.delayTime = delayTime;
+    }
+
+    update(timeDelta, context) {
+        this.timeAlive += timeDelta;
+
+        if (this.timeAlive > this.delayTime) {
+            if (this.timeAlive < this.lifetime) {
+                var blend = (this.timeAlive - this.delayTime) / (this.lifetime - this.delayTime);
+                var pos = TimingIndicator.current.getOrigin().add(
+                    new Vector2D(
+                        this.xfunc(blend),
+                        this.yfunc(blend)
+                    ));
                 this.x = pos.x;
                 this.y = pos.y;
                 this.standardDraw(context, blend);
