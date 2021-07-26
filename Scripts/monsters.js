@@ -584,6 +584,93 @@ class IntrovertedGhost extends Monster {
     }
 }
 
+class Martimer extends Monster {
+    constructor() {
+        super("Martimer", 1000, 0, 0);
+        this.dialogue = new SequenceGetter([
+            "Stop looking at me like that. It's nothing personal.",
+            "Besides, YOU did this.",
+            "I'm not sure why I'm fighting you. I should be thanking you.",
+            "YOU killed the shark king."
+        ]);
+    }
+
+    async attack() {
+
+        var points = [];
+        var pointQuantity = 20;
+        var delay = 0;
+        for (let i = 0; i < pointQuantity; i++) {
+
+            delay += 0.2 + ((Math.random() > 0.5) ? 0 : 0.2);
+            points.push(getPoint(delay));
+        }
+
+        this.breatheAnim.end();
+        this.shiverAnim.start();
+        this.renderer.setSprite(1, 0);
+
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        interaction.renderers = points.slice(0);
+        await interaction.getPromise();
+
+        this.renderer.setSprite(0, 0);
+        this.shiverAnim.end();
+        this.breatheAnim.start();
+
+        if (points.some((p) => { return (p.state === -1) })) {
+            this.shakeAnim.trigger();
+            return { damage: 20, text: "Virgil only needed a single blow to deal 20 damage." };
+        }
+        else {
+            return { damage: 0, text: "Virgil is impressed" };
+        }
+
+        function getPoint(delay) {
+            function randomSign() {
+                return Math.sign(Math.random() - 0.5);
+            }
+            function randomRange(min, max) {
+                return min + (Math.random() * (max - min));
+            }
+
+            var pos = new Vector2D(randomRange(200, 300) * randomSign(), randomRange(150, 200) * randomSign());
+            var lifetime = 1.5;
+            return new EaseInOutPoint(pos, lifetime, delay);
+        }
+    }
+
+    html(root) {
+        var $marty = $('<canvas style="height:150%;width:150%;left:-25%;" id="marty"></canvas>');
+        this.jobj = $marty;
+        this.canvas = $marty[0];
+        $marty.appendTo(root);
+
+        this.renderer = new SpriteRenderer($marty[0], "./Images/Ocean/dolphin.png", 64, 64);
+
+        var _this = this;
+        this.renderer.onload = () => {
+            _this.renderer.setSprite(1, 0);
+        };
+
+        this.breatheAnim = new CSSAnimation($marty, "dolphinPose").start();
+        this.shakeAnim = new CSSAnimation($marty, "shake");
+        this.shiverAnim = new CSSAnimation($marty, "shiver");
+    }
+
+    talk() {
+        return this.dialogue.get();
+    }
+
+    magic() {
+        return "Cute. I know how to deflect magic from OUR realm, Harbinger."
+    }
+
+    inspect() {
+        return "That's one blowhole of a dolphin.";
+    }
+}
+
 class Reaper extends Monster {
     constructor() {
         super("Reaper", 15, 2, 1);

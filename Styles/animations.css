@@ -229,3 +229,29 @@
 {
 	animation: flashRed 0.75s ease-out;
 }
+
+@keyframes dolphinPose
+{
+	 from {
+		transform: translateY(0%) rotate(-0.025turn) scale(1);
+		animation-timing-function: ease-in;
+	 }
+	 50% {
+		transform: translateY(-5%) scale(1.01);
+		animation-timing-function: ease-out;
+	 }
+	 to {
+		transform: translateY(0%) rotate(0.05turn) scale(1);
+		animation-timing-function: ease-in;
+	 }
+}
+
+.dolphinPose
+{
+	animation-name: dolphinPose;
+	animation-duration: 1s;
+	animation-direction: alternate;
+	animation-iteration-count: infinite;
+
+	transform-origin: 70% 80%;
+}
