@@ -496,9 +496,9 @@ class Door extends Monster {
         this.flavorer = new NonrepeatingGetter(["The door exasperates you with its lack of movement.", "The door does not budge.", "The door would laugh at you if it had a mouth."]);
     }
 
-    attack() {
+    async attack() {
         var text = this.flavorer.get();
-        return new Promise((resolve) => resolve({ text, damage: 0 }));
+        return { text, damage: 0 };
     }
 
     magic() {

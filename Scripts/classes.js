@@ -66,6 +66,7 @@ class Battle {
 		console.log("BATTLE: Battle started.");
 		SaveData.blockSaving = true;
 		this.monsters = monsters;
+		mode = ModeEnum.fighting;
 		DialogueTypewriter.clearAll();
 		cover.flash("white",
 			() => {
@@ -78,7 +79,8 @@ class Battle {
 				}, this);
 
 				contentManager.approach(dynamicIntro);
-				sound.playMusic(music);
+				//start the music without crossfade
+				sound.playMusic(music, false);
 				backgroundCanvas.triggerBattle();
 			},
 			() => {
@@ -89,7 +91,7 @@ class Battle {
 					var index = (this.monsters.length == 2) ? 0 : 1;
 					topWriter.show(this.monsters[index].myName + " and his friends block the path.");
 				}
-				mode = ModeEnum.fighting;
+				
 
 				var _this = this;
 				this.charAnim = new CSSAnimation(player.$jobj, "battlePose").start();
@@ -466,13 +468,13 @@ class ContentManager {
 		var j = this.$jobj[0].offsetHeight;
 	}
 
-	approach(animate = true) {
+	async approach(animate = true) {
 		this.resetContentAnim();
 		if (animate) this.$jobj.addClass("approaching");
 		else this.$jobj.addClass("here");
 	}
 
-	recede(animate = true) {
+	async recede(animate = true) {
 		this.resetContentAnim();
 		if (animate) this.$jobj.addClass("receding");
 		else this.$jobj.addClass("there");
@@ -859,7 +861,7 @@ class HealthDisplay {
 
 	update(newValue, newMax) {
 		this.popin.show(5000);
-		this.popin.$jobj.html("HP<br/>" +  newValue + "/" + newMax);
+		this.popin.$jobj.html("HP<br/>" + newValue + "/" + newMax);
 	}
 
 	flashRed() {
@@ -1131,7 +1133,7 @@ class SoundManager {
 		return "Sounds/" + song;
 	}
 
-	playMusic(song) {
+	playMusic(song, crossFade = true) {
 		console.log("SOUND: Playing " + song);
 		song = this.getFileName(song);
 
@@ -1144,14 +1146,24 @@ class SoundManager {
 				volume: 0
 			});
 			_this.job.play();
-			_this.job.fade(0, 1, 500);
+			if (crossFade) _this.job.fade(0, 1, 500);
+			else _this.job.volume(1);
 		}
 
 		if (this.job != null) {
-
-			//this.job.unloop().fadeWith(this.job = new buzz.sound(song).loop(), 500);
-			this.job.fade(1, 0, 500);
-			this.job.onfade = startSong();
+			if (crossFade) {
+				var _job = this.job;
+				//this.job.unloop().fadeWith(this.job = new buzz.sound(song).loop(), 500);
+				this.job.fade(1, 0, 500);
+				this.job.onfade = () => {
+					_job.stop();
+				}
+				startSong();
+			}
+			else {
+				this.job.stop();
+				startSong();
+			}
 		}
 		else startSong();
 
@@ -1603,23 +1615,32 @@ class MenuButton {
 }
 
 class Vector2D {
+	/**
+	 * Utility object for representing 2-Dimensional Vectors
+	 * @param {number} x 
+	 * @param {number} y 
+	 */
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
 	}
 
+	/** @param {Vector2D} addend*/
 	add(addend) {
 		return new Vector2D(this.x + addend.x, this.y + addend.y);
 	}
 
+	/** @param {number} scale*/
 	scale(scale) {
 		return new Vector2D(this.x * scale, this.y * scale);
 	}
 
+	/** @description return a vector with the opposite magnitude*/
 	invert() {
 		return new Vector2D(-this.x, -this.y);
 	}
 
+	/** @description comparing square magnitudes is faster*/
 	sqrMagnitude() {
 		return (this.x ** 2) + (this.y ** 2);
 	}
@@ -1628,6 +1649,7 @@ class Vector2D {
 		return Math.sqrt(this.sqrMagnitude());
 	}
 
+	/** @param {number} rot - A rotation in degrees*/
 	rotate(rot) {
 		var cos = Math.cos(rot), sin = Math.sin(rot);
 		return new Vector2D(
@@ -1635,10 +1657,12 @@ class Vector2D {
 			(sin * this.x) + (cos * this.y));
 	}
 
+	/** @description return a vector with the same direction and a magnitude of one */
 	normalize() {
 		return this.scale(1 / this.magnitude());
 	}
 
+	/** @description Shorthand for new Vector2D(0, 1) */
 	static getNormalVector() {
 		return new Vector2D(0, 1);
 	}
