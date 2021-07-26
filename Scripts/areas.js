@@ -520,6 +520,33 @@ Area.fightThaddeus = Area.addPossibleEvent(function () {
 	currentDoer.do();
 });
 
+Area.fightChain = Area.addPossibleEvent(function () {
+	var input = {oninput: () => { }};
+	currentDoer = Doer.ofPromise(async function() {
+		DialogueTypewriter.clearAll();
+		contentManager.clear();
+		var $wrapper = $('<div class="monster"></div>');
+		var $virgil = $('<canvas style="height:180%;width:180%;left:-40%;" id="chain"></canvas>');
+		$virgil.appendTo($wrapper);
+		contentManager.add($wrapper);
+
+		var renderer = new SpriteRenderer($virgil[0],"./Images/chain.png",64,64);
+		renderer.onload = () => {
+			renderer.setSprite(0,0);
+		}
+
+		await contentManager.approach();
+
+		await new Writer(bottomWriter, [
+			"Hello, Harbinger.",
+			"The name's Chain.",
+			"Prepare to die."
+		]).writeAllAsync();
+
+		currentBattle = new Battle("chain", [new Chain()], false);
+	}(), input);
+});
+
 
 Area.fightAragore = Area.addPossibleEvent(function () {
 	mode = ModeEnum.final;

@@ -240,6 +240,103 @@ class Amadeus extends Monster {
 }
 Amadeus.sprites = new SpriteSheet("Images/troll2.png", 4, 1);
 
+class Chain extends Monster {
+    constructor() {
+        super("Chain", 1000, 0, 0);
+    }
+
+    async attack() {
+
+        var points = [];
+        var pointQuantity = 7;
+        var delay = 0;
+        for (let i = 0; i < pointQuantity; i++) {
+
+            delay += 0.2 + (Math.random() * 0.2);
+            points.push(getPoint(delay));
+        }
+
+        this.shiverAnim.start();
+        cancelAnimationFrame(this.renderHandle);
+        this.renderer.setSprite(1, 1);
+
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        interaction.renderers = points.slice(0);
+        await interaction.getPromise();
+
+        this.shiverAnim.end();
+        this.renderHandle = requestAnimationFrame(this.renderLoop);
+
+        if (points.some((p) => { return (p.state === -1) })) {
+            this.shakeAnim.trigger();
+            return { damage: 10, text: "Chain remains unbroken" };
+        }
+        else {
+            return { damage: 0, text: "You were stronger than Chain" };
+        }
+
+        function getPoint(delay) {
+            var lifetime = 1.5;
+            let p = new EaseInOutPoint(
+                new Vector2D((Math.random() > 0.5)? 300 : -300, 300),
+                lifetime, delay);
+            if (Math.random() < 0.3) p.lure();
+            return p;
+        }
+    }
+
+    html(root) {
+        var $content = $('<canvas style="height:180%;width:180%;left:-40%;position=absolute;" id="chain"></canvas>');
+        this.jobj = $content;
+        this.canvas = $content[0];
+        $content.appendTo(root);
+
+        this.renderer = new SpriteRenderer($content[0], "./Images/chain.png", 64, 64);
+
+        var _this = this;
+        this.renderer.onload = () => {
+            _this.renderer.setSprite(1, 0);
+        };
+
+        this.renderHandle = requestAnimationFrame(renderLoop);
+        const frames = ([
+            new Vector2D(1,0),
+            new Vector2D(2,1),
+            new Vector2D(3,0),
+            new Vector2D(2,0)
+        ]);
+        this.renderLoop = renderLoop;
+        function renderLoop(ml) {
+            const fps = 3;
+            const interval = 1000.0 / fps;
+            const frame_i = Math.floor(ml / interval) % frames.length;
+            const frame = frames[frame_i];
+
+            _this.renderer.setSprite(frame.x,frame.y);
+
+            _this.renderHandle = requestAnimationFrame(renderLoop);
+        }
+
+        this.shakeAnim = new CSSAnimation($content, "shake");
+        this.shiverAnim = new CSSAnimation($content, "shiver");
+        this.breatheAnim = new CSSAnimation($content, "trollPose").start();
+    }
+
+    talk() {
+        return this.dialogue.get();
+    }
+
+    magic() {
+        return "Idiot."
+    }
+
+    inspect() {
+            return [
+                "The DARKNESS, a near omnipotent pseudo-deity ruling over Earth with an iron fist."
+            ]
+    }
+}
+
 class Decoy extends Monster {
     constructor() {
         super("Decoy", 1000, 0, 0);
