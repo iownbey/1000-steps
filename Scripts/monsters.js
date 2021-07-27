@@ -278,7 +278,7 @@ class Chain extends Monster {
         function getPoint(delay) {
             var lifetime = 1.5;
             let p = new EaseInOutPoint(
-                new Vector2D((Math.random() > 0.5)? 300 : -300, 300),
+                new Vector2D((Math.random() > 0.5) ? 300 : -300, 300),
                 lifetime, delay);
             if (Math.random() < 0.3) p.lure();
             return p;
@@ -300,10 +300,10 @@ class Chain extends Monster {
 
         this.renderHandle = requestAnimationFrame(renderLoop);
         const frames = ([
-            new Vector2D(1,0),
-            new Vector2D(2,1),
-            new Vector2D(3,0),
-            new Vector2D(2,0)
+            new Vector2D(1, 0),
+            new Vector2D(2, 1),
+            new Vector2D(3, 0),
+            new Vector2D(2, 0)
         ]);
         this.renderLoop = renderLoop;
         function renderLoop(ml) {
@@ -312,7 +312,7 @@ class Chain extends Monster {
             const frame_i = Math.floor(ml / interval) % frames.length;
             const frame = frames[frame_i];
 
-            _this.renderer.setSprite(frame.x,frame.y);
+            _this.renderer.setSprite(frame.x, frame.y);
 
             _this.renderHandle = requestAnimationFrame(renderLoop);
         }
@@ -331,9 +331,9 @@ class Chain extends Monster {
     }
 
     inspect() {
-            return [
-                "The DARKNESS, a near omnipotent pseudo-deity ruling over Earth with an iron fist."
-            ]
+        return [
+            "The DARKNESS, a near omnipotent pseudo-deity ruling over Earth with an iron fist."
+        ]
     }
 }
 
@@ -373,17 +373,17 @@ class Darkness extends Monster {
 
         function getPoint(delay) {
             var lifetime = 2;
-            const xmag = 400 * Math.sign(Math.random() - 0.5); 
+            const xmag = 400 * Math.sign(Math.random() - 0.5);
             return new ParametricPoint(
                 t => //x
                 {
                     t = TimingFunctions.convertToFlip(t);
-                    return ((-4 * (t**2)) + (4*Math.abs(t))) * xmag
+                    return ((-4 * (t ** 2)) + (4 * Math.abs(t))) * xmag
                 },
                 t => //y
                 {
                     t = TimingFunctions.convertToFlip(t);
-                    return (t < 0)? TimingFunctions.linear(t) * 150 : 0
+                    return (t < 0) ? TimingFunctions.linear(t) * 150 : 0
                 },
                 lifetime, delay);
         }
@@ -414,19 +414,15 @@ class Darkness extends Monster {
             //animate Y position
             $content.css("bottom", (y * amplitude) + "%");
 
-            if (y > 0.9 || y < -0.9)
-            {
-                _this.renderer.setSprite(0,0);
+            if (y > 0.9 || y < -0.9) {
+                _this.renderer.setSprite(0, 0);
             }
-            else
-            {
-                if (yprime < 0)
-                {
-                    _this.renderer.setSprite(1,0);
+            else {
+                if (yprime < 0) {
+                    _this.renderer.setSprite(1, 0);
                 }
-                else
-                {
-                    _this.renderer.setSprite(1,1);
+                else {
+                    _this.renderer.setSprite(1, 1);
                 }
             }
             _this.renderHandle = requestAnimationFrame(renderLoop);
@@ -445,9 +441,9 @@ class Darkness extends Monster {
     }
 
     inspect() {
-            return [
-                "The DARKNESS, a near omnipotent pseudo-deity ruling over Earth with an iron fist."
-            ]
+        return [
+            "The DARKNESS, a near omnipotent pseudo-deity ruling over Earth with an iron fist."
+        ]
     }
 }
 
@@ -663,12 +659,147 @@ class Martimer extends Monster {
     }
 
     magic() {
-        return "Cute. I know how to deflect magic from OUR realm, Harbinger."
+        return ["OoOoOh.", "I don't feel so swell."]
+        //Don't call friends into battle for so many turns
     }
 
     inspect() {
         return "That's one blowhole of a dolphin.";
     }
+}
+
+class MasterSponge extends Monster {
+    constructor() {
+        super("Master Sponge", 1000, 0, 0);
+        this.dialogue = new SequenceGetter([
+            "\"F\" is for fighting, harm the harbinger",
+            "\"U\" is for unparralleled hurt",
+            "\"N\" is for never getting outside of Earth's Core, your destined to die in the dirt.",
+            "Sponge makes some unsettling noises."
+        ]);
+    }
+
+    async attack() {
+
+        var points = [];
+        var pointQuantity = 20;
+        var delay = 0;
+        for (let i = 0; i < pointQuantity; i++) {
+
+            delay += 0.2 + ((Math.random() > 0.5) ? 0 : 0.2);
+            points.push(getPoint(delay));
+        }
+
+        this.breatheAnim.end();
+        this.shiverAnim.start();
+        this.renderer.setSprite(1, 0);
+
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        interaction.renderers = points.slice(0);
+        await interaction.getPromise();
+
+        this.renderer.setSprite(0, 0);
+        this.shiverAnim.end();
+        this.breatheAnim.start();
+
+        if (points.some((p) => { return (p.state === -1) })) {
+            this.shakeAnim.trigger();
+            return { damage: 20, text: "Virgil only needed a single blow to deal 20 damage." };
+        }
+        else {
+            return { damage: 0, text: "Virgil is impressed" };
+        }
+
+        function getPoint(delay) {
+            function randomSign() {
+                return Math.sign(Math.random() - 0.5);
+            }
+            function randomRange(min, max) {
+                return min + (Math.random() * (max - min));
+            }
+
+            var pos = new Vector2D(randomRange(200, 300) * randomSign(), randomRange(150, 200) * randomSign());
+            var lifetime = 1.5;
+            return new EaseInOutPoint(pos, lifetime, delay);
+        }
+    }
+
+    html(root) {
+        var $virgil = $('<canvas style="height:180%;width:180%;left:-40%;" id="virgil"></canvas>');
+        this.jobj = $virgil;
+        this.canvas = $virgil[0];
+        $virgil.appendTo(root);
+
+        this.renderer = new SpriteRenderer($virgil[0], "./Images/master-sponge.png", 1024, 1024);
+
+        var _this = this;
+        this.renderer.onload = () => {
+            _this.renderer.setSprite(0, 0);
+        };
+
+        this.breatheAnim = new CSSAnimation($virgil, "trollPose").start();
+        this.shakeAnim = new CSSAnimation($virgil, "shake");
+        this.shiverAnim = new CSSAnimation($virgil, "shiver");
+    }
+
+    talk() {
+        return this.dialogue.get();
+    }
+
+    magic() {
+        return "Cute. I know how to deflect magic from OUR realm, Harbinger."
+    }
+
+    inspect() {
+        return [
+            "The unholy endowment of a barely living being with the DARKNESS, himself.",
+        ]
+    }
+}
+
+class PreMasterSponge extends Monster {
+    constructor() {
+        super("Sponge?", 100, 0, 0);
+        this.turnsAlive = 0;
+    }
+
+    async attack() {
+        let writerContents;
+        switch (++this.turnsAlive) {
+            case 1: writerContents = ["The sponge is making some very strange noises.", "It's ebb and flow seem unnatural."]; break;
+            case 2: writerContents = ["The sponge is...", "Mumbling?"]; break;
+            case 3: writerContents = ["...", "Something bad is about to happen."]; break;
+        }
+
+        await new Writer(bottomWriter, writerContents).writeAllAsync();
+
+        if (this.turnsAlive === 3) {
+            currentBattle = new Battle("master-sponge", [new MasterSponge()], false);
+        }
+
+        return {damage: 0, text: "Nothing happened."}
+    }
+
+    // This sponge is a scripted monster. He can't die.
+    hit() {
+        return false;
+    }
+
+    inspect() {
+        return "Something is VERY wrong."
+    }
+
+    html(root) {
+        var h = $(
+            `
+                <div class="puddle"></div>
+                <div class="sponge spongePose" src="` + Helper.imageURL("sponge") + `"></div>
+                `
+        );
+        root.append(h);
+        this.jobj = h;
+    }
+
 }
 
 class Reaper extends Monster {
@@ -678,27 +809,26 @@ class Reaper extends Monster {
     }
 
     async attack() {
-            var interaction = new TimingIndicator(document.getElementById("content-canvas"));
-            var point = new SpinPoint(new Vector2D(0,150),3);
-            interaction.renderers.push(point);
-            await interaction.getPromise();
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        var point = new SpinPoint(new Vector2D(0, 150), 3);
+        interaction.renderers.push(point);
+        await interaction.getPromise();
 
-            if (point.state == -1)
-            {
-                if (player.health >= 14) {
-                    var damage = Math.randomInt(1, 5);
-                    CSSAnimation.trigger(this.sycthe, "spin360");
-                    return { text: ("Reaper dealt " + player.checkDamage(damage) + " damage."), damage };
-                }
-                else {
-                    var damage = player.health;
-                    CSSAnimation.trigger(this.sycthe, "spin360");
-                    await new Promise(resolve => cover.flash("black", null, resolve, 100));
-                    return { text: "Reaper used \"SPECTRAL SLICE\".", damage };
-                }
+        if (point.state == -1) {
+            if (player.health >= 14) {
+                var damage = Math.randomInt(1, 5);
+                CSSAnimation.trigger(this.sycthe, "spin360");
+                return { text: ("Reaper dealt " + player.checkDamage(damage) + " damage."), damage };
             }
-            else return {damage:0,text: "You dodged contact with the reaper's scythe."};
-            
+            else {
+                var damage = player.health;
+                CSSAnimation.trigger(this.sycthe, "spin360");
+                await new Promise(resolve => cover.flash("black", null, resolve, 100));
+                return { text: "Reaper used \"SPECTRAL SLICE\".", damage };
+            }
+        }
+        else return { damage: 0, text: "You dodged contact with the reaper's scythe." };
+
     }
 
     talk() {
@@ -744,12 +874,11 @@ class Skeleton extends Monster {
         interaction.renderers.push(point);
         await interaction.getPromise();
 
-        if (point.state === -1)
-        {
-        Skeleton.sprites.animate(this.jobj, Skeleton.attackAnim, 100);
-        return { text: ("Skeleton dealt " + player.checkDamage(4) + " damage."), damage: 4 };
+        if (point.state === -1) {
+            Skeleton.sprites.animate(this.jobj, Skeleton.attackAnim, 100);
+            return { text: ("Skeleton dealt " + player.checkDamage(4) + " damage."), damage: 4 };
         }
-        else return {text:"The Skeleton's hit glanced.", damage:0};
+        else return { text: "The Skeleton's hit glanced.", damage: 0 };
     }
 
     talk() {
@@ -963,17 +1092,15 @@ class Troldier extends Monster {
                     var _this = this;
                     setTimeout(function () { _this.setPicture(1); _this.breatheAnim.start(); }, 300);
 
-                    if (point.state === -1)
-                    {
+                    if (point.state === -1) {
                         return { damage: 10, text: "The Troldier brings down his sword, dealing " + player.checkDamage(10) + " damage." }
                     }
-                    else
-                    {
+                    else {
                         return { damage: 0, text: "You blocked the Troldiers attack." }
                     }
-                    
 
-                    
+
+
                 }
                 else {
                     this.charge = 1;

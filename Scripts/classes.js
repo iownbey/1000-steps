@@ -417,7 +417,7 @@ class SpriteRenderer {
 
 	setSprite(x, y) {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.drawImage(this.sprites, x * this.w, y * this.h, 64, 64, 0, 0, 64, 64);
+		this.ctx.drawImage(this.sprites, x * this.w, y * this.h, this.w, this.h, 0, 0, this.w, this.h);
 	}
 
 	setRandomSprite(positions) {
