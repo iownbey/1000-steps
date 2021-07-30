@@ -91,7 +91,7 @@ class Battle {
 					var index = (this.monsters.length == 2) ? 0 : 1;
 					topWriter.show(this.monsters[index].myName + " and his friends block the path.");
 				}
-				
+
 
 				var _this = this;
 				this.charAnim = new CSSAnimation(player.$jobj, "battlePose").start();
@@ -387,6 +387,16 @@ class Battle {
 		else {
 			finishEnd();
 		}
+	}
+
+	endNow() {
+		SaveData.blockSaving = false;
+		this.charAnim.end();
+		mode = ModeEnum.walking;
+		currentBattle = null;
+		player.defending = false;
+		playBackgroundMusic();
+		backgroundCanvas.triggerDefault();
 	}
 
 	getPromise() {
@@ -1102,6 +1112,15 @@ class ScreenCover {
 			if (flashcallback !== null) flashcallback();
 			_this.jqueryobj.animate({ opacity: 0 }, time / 2, "linear", function () {
 				if (finishcallback !== null) finishcallback();
+			});
+		});
+	}
+
+	async fadeTo(opacity, time) {
+		var _this = this;
+		return new Promise(resolve => {
+			_this.jqueryobj.animate({ opacity: opacity }, time, "linear", function () {
+				resolve();
 			});
 		});
 	}

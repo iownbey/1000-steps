@@ -746,10 +746,6 @@ class MasterSponge extends Monster {
         return this.dialogue.get();
     }
 
-    magic() {
-        return "Cute. I know how to deflect magic from OUR realm, Harbinger."
-    }
-
     inspect() {
         return [
             "The unholy endowment of a barely living being with the DARKNESS, himself.",
@@ -774,6 +770,11 @@ class PreMasterSponge extends Monster {
         await new Writer(bottomWriter, writerContents).writeAllAsync();
 
         if (this.turnsAlive === 3) {
+            this.shakeAnim.start();
+            sound.stop();
+            sound.playFX("pre-master-sponge");
+            await cover.fadeTo(1,5000);
+            currentBattle.endNow();
             currentBattle = new Battle("master-sponge", [new MasterSponge()], false);
         }
 
@@ -798,6 +799,8 @@ class PreMasterSponge extends Monster {
         );
         root.append(h);
         this.jobj = h;
+
+        this.shakeAnim = new CSSAnimation(h, "shake");
     }
 
 }
