@@ -971,14 +971,16 @@ class Thaddeus extends Monster {
     }
 
     html(root) {
-        this.sycthe = $('<div id="thaddeusSycthe"></div>');
+        this.sycthe = $('<div style="width:100%;height:100%;"></div>');
+        var innerSycthe = $('<div id="thaddeusSycthe" class="scytheSpin"></div>');
+        this.sycthe.append(innerSycthe);
         var h = $(
             `
-            <div id="thaddeus"></div>
+            <div id="thaddeus" class="trollPose"></div>
             `
         );
         root.append(h);
-        root.append(this.sycthe);
+        h.append(this.sycthe);
         this.jobj = h;
         Thaddeus.sprites.setSprite(h, 2, 1);
     }
@@ -987,7 +989,7 @@ class Thaddeus extends Monster {
         var _this = this;
         return [
             { text: "I don't need a book to tell you about this guy.", aExpr: expr.emery.annoyed },
-            ["Emery's Uncle Thaddeus:|Health is " + _this.h + "/15|Attack is 6-13 randomly|Past History is a whopping 25!"],
+            ["Emery's Uncle Thaddeus:|Health is " + _this.h + "/200|Attack is 6-13 randomly|Past History is a whopping 25!"],
             ["Uncle Thaddeus seems to have mastered the \"SPECTRAL SLICE\"; He can mortally wound you if your health drops below 25."],
             ["He's scrappy.|Don't underestimate him."]
         ]
