@@ -1,4 +1,5 @@
 
+/** @type {?Doer} */
 var currentDoer = null;
 var ModeEnum = Object.freeze({ walking: 1, fighting: 2, talking: 3, dead: 4, final: 5, won: 6, intro: 7 });
 var mode = ModeEnum.intro;
@@ -9,6 +10,7 @@ var lastCalled = null;
 var introWriter = null;
 
 // Singletons:
+/** @type {SoundManager} */
 var sound = new SoundManager();
 var speechByte = sound.loadPersistant("speechByte");
 var normalByte = sound.loadPersistant("normalByte");
@@ -17,7 +19,9 @@ var errorBlip = sound.loadPersistant("errorBlip");
 var contentManager;
 
 // To be defined later:
+/** @type {Typewriter} */
 var topWriter;
+/** @type {Typewriter} */
 var bottomWriter;
 
 var sparkHandler;
@@ -35,8 +39,11 @@ var hcursor;
 var vcursor;
 var contentCanvas;
 
+/** @type {Area} */
 var area;
 
+/** @const {string} */
+/** This string will be substituted for a new line in all dialogue. */
 const nl = '|';
 
 var fullscreen = false;
@@ -308,7 +315,7 @@ function inspect(monster) {
 
 		case 1:
 			{
-				var w = new Writer(bottomWriter, text.emery.aboutInspect);
+				var w = new Writer(bottomWriter, text.other.aboutInspect);
 				var doit = function () {
 					w.write();
 					if (w.complete) {
@@ -389,6 +396,7 @@ async function getChoice(options, cursor) {
 		menu.setDisplay(true);
 	});
 
+	bottomWriter.clear();
 	doc.off("keydown.choiceInput");
 	return selected;
 }
@@ -400,8 +408,9 @@ function shiftKeys(event) {
 		case "F": toggleFullscreen(); break;
 		case "N":
 			file.set("IntroComplete", true);
-			area = new Area_Underworld();
+			//area = new Area_Underworld();
 			StartMainGame();
+			currentBattle = new Battle("chain", [new IntrovertedGhost()], false);
 			break;
 	}
 }
@@ -485,10 +494,10 @@ function StartMainGame() {
 var doc = $(document);
 
 function initIntro() {
-	var firstWriter = new Writer(new Typewriter($("#introoutput"), 50).setTextClass("introText"), text.emery.introText);
+	var firstWriter = new Writer(new Typewriter($("#introoutput"), 50).setTextClass("introText"), text.intro.emerySpeak);
 	firstWriter.write();
-	var secondWriter = new Writer(new Typewriter($("#introoutput"), 50), text.darknessIntroText);
-	var wakeWriter = new Writer(new Typewriter($("#i2_output"), 50), text.wakeIntroText);
+	var secondWriter = new Writer(new Typewriter($("#introoutput"), 50), text.intro.darknessIntroText);
+	var wakeWriter = new Writer(new Typewriter($("#i2_output"), 50), text.intro.wakeIntroText);
 
 	var sitting = $("#i2_playerSitting");
 	var standing = $("#i2_playerStanding");
@@ -570,7 +579,7 @@ function init$() {
 
 	contentCanvas = $("#content-canvas")[0];
 
-	$("#endflavor").text(getRandom(text.gameOverFlavorText));
+	$("#endflavor").text(getRandom(text.other.gameOverFlavorText));
 	Player.sprites.setSprite($("#gameover_player"), 1, 8);
 
 	let $health = $("#health-pop-in");

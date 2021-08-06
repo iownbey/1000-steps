@@ -100,7 +100,7 @@ Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
 }
 
 Area.emptyStep = Area.addPossibleEvent(function () {
-// Do Nothing
+	// Do Nothing
 });
 
 Area.fightEvent = Area.addPossibleEvent(function () {
@@ -118,12 +118,13 @@ Area.nextAreaEvent = Area.addPossibleEvent(function () {
 
 class Area_Aorta extends Area {
 	constructor() {
-		super(text.area1WalkFlavorText, ["Troll", "Sponge", "Door", "Decoy"], "fight");
+		super(text.aorta.walkFlavor, ["Troll", "Sponge", "Door", "Decoy"], "fight");
 	}
 
 	getEvents() {
 
 		var events = [].concat(
+			[Area.fightThaddeus],
 			[Area.meetVirgil],
 			[Area.meetTroll1],
 			this.fillGrabBagThing(9),
@@ -158,14 +159,12 @@ class Area_Aorta extends Area {
 		sound.playMusic(this.getBackgroundMusic());
 	}
 
-	fillGrabBagThing(length = 10, a = [Area.fightEvent])
-	{
+	fillGrabBagThing(length = 10, a = [Area.fightEvent]) {
 		var _this = this;
 
 		a.push(Area.flavorEvent);
 
-		while (a.length < length)
-		{
+		while (a.length < length) {
 			a.push(Area.emptyStep);
 		}
 
@@ -175,7 +174,7 @@ class Area_Aorta extends Area {
 
 Area.meetVirgil = Area.addPossibleEvent(function () {
 
-	var input = {oninput: () => { }};
+	var input = { oninput: () => { } };
 	currentDoer = Doer.ofPromise(scene(), input);
 	async function scene() {
 		DialogueTypewriter.clearAll();
@@ -186,9 +185,9 @@ Area.meetVirgil = Area.addPossibleEvent(function () {
 		contentManager.add($wrapper);
 		contentManager.approach();
 
-		var renderer = new SpriteRenderer($virgil[0],"./Images/virgil.png",64,64);
+		var renderer = new SpriteRenderer($virgil[0], "./Images/virgil.png", 64, 64);
 		renderer.onload = () => {
-			renderer.setSprite(0,0);
+			renderer.setSprite(0, 0);
 		}
 
 		await new Promise((r) => setTimeout(r, 1000));
@@ -200,10 +199,9 @@ Area.meetVirgil = Area.addPossibleEvent(function () {
 			"Or do you already know how to fight?"
 		]).writeAllAsync();
 
-		var pick = await getChoice(["Yes","No"],hcursor);
+		var pick = await getChoice(["Yes", "No"], hcursor);
 
-		switch (pick)
-		{
+		switch (pick) {
 			case "Yes":
 				{
 					await new Writer(bottomWriter, [
@@ -212,9 +210,8 @@ Area.meetVirgil = Area.addPossibleEvent(function () {
 						"You must prove this if you are to continue."
 					]).writeAllAsync();
 
-					var pick2 = await getChoice(["Fine then","Nevermind"], hcursor);
-					switch (pick2)
-					{
+					var pick2 = await getChoice(["Fine then", "Nevermind"], hcursor);
+					switch (pick2) {
 						case "Fine then":
 							{
 								await new Writer(bottomWriter, [
@@ -223,7 +220,7 @@ Area.meetVirgil = Area.addPossibleEvent(function () {
 									"If this happens, The fight will be over, and you must accept my training.",
 									"Prepare to combat with the master of blade and sorrow."
 								]).writeAllAsync();
-								currentBattle = new Battle("virgil-theme",[new Virgil()],false);
+								currentBattle = new Battle("virgil-theme", [new Virgil()], false);
 								await currentBattle.getPromise();
 							}; break;
 						case "Nevermind":
@@ -242,8 +239,7 @@ Area.meetVirgil = Area.addPossibleEvent(function () {
 				}; break;
 		}
 
-		async function tutorial()
-		{
+		async function tutorial() {
 			await new Writer(bottomWriter, [
 				"Good.",
 				"Even now, humans continue to be abducted by the darkness's haze of malice.",
@@ -257,14 +253,12 @@ Area.meetVirgil = Area.addPossibleEvent(function () {
 				"Let's practice. Block my swing."
 			]).writeAllAsync();
 
-			do
-			{
-			var timing = new TimingIndicator(contentCanvas);
-			var point = new EaseInOutPoint(new Vector2D(200,0),2);
-			timing.renderers.push(point);
-			await timing.getPromise();
-				if (point.state === -1)
-				{
+			do {
+				var timing = new TimingIndicator(contentCanvas);
+				var point = new EaseInOutPoint(new Vector2D(200, 0), 2);
+				timing.renderers.push(point);
+				await timing.getPromise();
+				if (point.state === -1) {
 					await new Writer(bottomWriter, [
 						"Remember, you must hit space when the attack enters the center.",
 						"The attack will turn blue when you can block it.",
@@ -299,7 +293,7 @@ Area.meetTroll1 = Area.addPossibleEvent(function () {
 	contentManager.clear();
 	contentManager.add($('<div class="monster"><div class="troll"></div></div>'));
 	contentManager.approach();
-	var w = new Writer(bottomWriter, text.trollFoundText);
+	var w = new Writer(bottomWriter, text.aorta.trollFoundText);
 
 	currentDoer = new Doer([
 		w.getThing(),
@@ -313,7 +307,7 @@ Area.meetTroldiers = Area.addPossibleEvent(function () {
 	contentManager.clear();
 	contentManager.add($('<div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div>'));
 	contentManager.approach();
-	var w = new Writer(bottomWriter, text.meetTroldiersText);
+	var w = new Writer(bottomWriter, text.aorta.meetTroldiersText);
 	currentDoer = new Doer([
 		{ action: function () { sound.playFX("troll-fanfare") }, time: 2000, waitForInput: false },
 		w.getThing(),
@@ -331,7 +325,7 @@ Area.meetAmadeus = Area.addPossibleEvent(function () {
 	$a.html($b);
 	Amadeus.sprites.setSprite($b, 1, 1);
 	contentManager.approach();
-	var w = new Writer(bottomWriter, text.meetAmadeusText);
+	var w = new Writer(bottomWriter, text.aorta.meetAmadeusText);
 	currentDoer = new Doer([
 		w.getThing(),
 		{ action: function () { contentManager.recede() }, time: 1000, waitForInput: false },
@@ -349,7 +343,7 @@ Area.talkAmadeus = Area.addPossibleEvent(function () {
 	$a.html($b);
 	Amadeus.sprites.setSprite($b, 1, 1);
 	contentManager.approach();
-	var w = new Writer(bottomWriter, text.talkToAmadeusText);
+	var w = new Writer(bottomWriter, text.aorta.talkToAmadeusText);
 	currentDoer = new Doer([
 		w.getThing(),
 		{ action: function () { contentManager.recede() }, time: 1000, waitForInput: false },
@@ -368,7 +362,7 @@ Area.fightAmadeus = Area.addPossibleEvent(function () {
 	$a.html($b);
 	Amadeus.sprites.setSprite($b, 1, 1);
 	contentManager.approachFromLeft();
-	var w = new Writer(bottomWriter, text.prefightAmadeusText);
+	var w = new Writer(bottomWriter, text.aorta.prefightAmadeusText);
 	currentDoer = new Doer([
 		w.getThing(),
 		{ action: function () { currentBattle = new Battle("amadeus", [new Amadeus()], false) } }
@@ -378,7 +372,7 @@ Area.fightAmadeus = Area.addPossibleEvent(function () {
 
 class Area_Underworld extends Area {
 	constructor() {
-		super(text.underworldWalkFlavorText, ["IntrovertedGhost", "Skeleton", "Reaper"], "underworld-fight");
+		super(text.underworld.walkFlavor, ["IntrovertedGhost", "Skeleton", "Reaper"], "underworld-fight");
 	}
 
 	getEvents() {
@@ -435,7 +429,7 @@ class Area_Underworld extends Area {
 Area.talkEmery1 = Area.addPossibleEvent(function () {
 	file.set("Inspect-Level", 1); //flag for dialogue in-fight.
 	sound.pause();
-	var w = new Writer(bottomWriter, text.emery.talk1);
+	var w = new Writer(bottomWriter, text.underworld.emerySpeak);
 	currentDoer = new Doer([
 		w.getThing(),
 		{ action: function () { sound.unpause(); DialogueTypewriter.clearAll(); } },
@@ -509,26 +503,62 @@ Area.talkArnold = Area.addPossibleEvent(function () {
 Area.enterThaddeusDungeon = Area.getBackgroundChangeEvent("You enter Thaddeus' dungeon.", "wideTunnel");
 
 Area.fightThaddeus = Area.addPossibleEvent(function () {
-	changeBackground("bigDoor");
-	sound.stop();
-	contentManager.clear();
-	var $a = $('<div class="monster"></div>');
-	var $b = $('<div id="thaddeus"></div>');
-	contentManager.add($a);
-	$a.html($b);
-	Thaddeus.sprites.setSprite($b, 1, 1);
-	contentManager.approachFromLeft();
-	var w = new Writer(bottomWriter, text.underworld.prefightThaddeusText);
-	currentDoer = new Doer([
-		w.getThing(),
-		{ action: function () { currentBattle = new Battle("fight", [new Thaddeus()], false) } }
-	]);
-	currentDoer.do();
+	var input = { oninput: () => { } };
+	currentDoer = Doer.ofPromise(async function () {
+		changeBackground("bigDoor");
+		sound.stop();
+		contentManager.clear();
+		var $a = $('<div class="monster"></div>');
+		var $b = $('<div id="thaddeus"></div>');
+		contentManager.add($a);
+		$a.html($b);
+		Thaddeus.sprites.setSprite($b, 1, 1);
+		await contentManager.approachFromLeft();
+
+		await new Writer(bottomWriter, text.underworld.preFightThaddeus.intro).writeAllAsync();
+		var answer = await getChoice(["Accept", "Decline"], hcursor);
+		if (answer === "Accept") {
+			await new Writer(bottomWriter, text.underworld.preFightThaddeus.chooseYes).writeAllAsync();
+			//Cut to black, then fade in to looping footage of the harbinger sitting in the underworld.
+			//Something telling you to load or reset the game appears.
+		}
+		else // Decline
+		{
+			await new Writer(bottomWriter, text.underworld.preFightThaddeus.chooseNo).writeAllAsync();
+			//currentBattle = new Battle("thaddeus", [new Thaddeus()], false);
+			//await currentBattle.getPromise();
+
+			DialogueTypewriter.clearAll();
+			await Helper.delay(2);
+
+			sound.stop();
+			var $a = $('<div class="monster fadeInOpacity"></div>');
+			var $b = $('<div id="thaddeus"></div>');
+			contentManager.add($a);
+			contentManager.approach(false);
+			$a.html($b);
+			Thaddeus.sprites.setSprite($b, 1, 1);
+
+			await Helper.delay(2);
+
+			var w = new Writer(bottomWriter, text.underworld.postFightThaddeus);
+			await w.writeAllAsync();
+			await contentManager.recedeToLeft();
+			await Helper.delay(1);
+			// Thaddeus leaves, arnold enters
+			contentManager.clear();
+			var arnold = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(1.1,0.7)");
+			Skeleton.sprites.setSprite(arnold, 1, 1);
+			contentManager.add($('<div class="monster"></div>').html(arnold));
+			await contentManager.approachFromLeft();
+			await w.writeAllAsync();
+		}
+	}(), input);
 });
 
 Area.fightChain = Area.addPossibleEvent(function () {
-	var input = {oninput: () => { }};
-	currentDoer = Doer.ofPromise(async function() {
+	var input = { oninput: () => { } };
+	currentDoer = Doer.ofPromise(async function () {
 		DialogueTypewriter.clearAll();
 		contentManager.clear();
 		var $wrapper = $('<div class="monster"></div>');
@@ -536,9 +566,9 @@ Area.fightChain = Area.addPossibleEvent(function () {
 		$virgil.appendTo($wrapper);
 		contentManager.add($wrapper);
 
-		var renderer = new SpriteRenderer($virgil[0],"./Images/chain.png",64,64);
+		var renderer = new SpriteRenderer($virgil[0], "./Images/chain.png", 64, 64);
 		renderer.onload = () => {
-			renderer.setSprite(0,0);
+			renderer.setSprite(0, 0);
 		}
 
 		await contentManager.approach();
@@ -552,7 +582,6 @@ Area.fightChain = Area.addPossibleEvent(function () {
 		currentBattle = new Battle("chain", [new Chain()], false);
 	}(), input);
 });
-
 
 Area.fightAragore = Area.addPossibleEvent(function () {
 	mode = ModeEnum.final;

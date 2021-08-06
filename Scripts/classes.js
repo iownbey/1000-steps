@@ -189,10 +189,10 @@ class Battle {
 		else {
 			var damage = attack.damage || 0;
 			if (player.defending) {
-				damage = 0;
+				damage = Math.round(damage * 0.5);
 			}
 
-			if (attack.text) topWriter.show(attack.text);
+			if (attack.text) topWriter.show(attack.text.replace(Battle.damagestr,damage));
 
 			if (player.changeHealth(-damage)) {
 				_this.queueAction(function () {
@@ -404,6 +404,7 @@ class Battle {
 		return new Promise((r) => { _this.onfinish = r });
 	}
 }
+Battle.damagestr = '{$d}'
 
 class SpriteRenderer {
 	constructor(canvas, src, w, h) {
@@ -482,25 +483,29 @@ class ContentManager {
 		this.resetContentAnim();
 		if (animate) this.$jobj.addClass("approaching");
 		else this.$jobj.addClass("here");
+		await Helper.delay(1);
 	}
 
 	async recede(animate = true) {
 		this.resetContentAnim();
 		if (animate) this.$jobj.addClass("receding");
 		else this.$jobj.addClass("there");
+		await Helper.delay(1);
 	}
 
-	approachFromLeft(animate = true) {
+	async approachFromLeft(animate = true) {
 		this.resetContentAnim();
 		this.$jobj.addClass("here");
 		if (animate) this.$jobj.addClass("fromLeft");
+		await Helper.delay(1);
 	}
 
-	recedeToLeft(animate = true) {
+	async recedeToLeft(animate = true) {
 		this.resetContentAnim();
 		this.$jobj.addClass("here");
 		if (animate) this.$jobj.addClass("toLeft");
 		else this.$jobj.addClass("left");
+		await Helper.delay(1);
 	}
 }
 
@@ -658,6 +663,7 @@ class DialogueTypewriter {
 		}
 		else {
 			var _this = this;
+
 			t = text.text;
 
 			if (text.sExpr) {
@@ -882,6 +888,10 @@ class HealthDisplay {
 class Helper {
 	static imageURL(name) {
 		return "Images/" + name + ".png";
+	}
+
+	static async delay(seconds) {
+		await new Promise(resolve => setTimeout(resolve,seconds * 1000.0));
 	}
 }
 
@@ -1640,7 +1650,15 @@ class Vector2D {
 	 * @param {number} y 
 	 */
 	constructor(x, y) {
+		/**
+		 * @type {number}
+		 * @public
+		 */
 		this.x = x;
+		/**
+		 * @type {number}
+		 * @public
+		 */
 		this.y = y;
 	}
 
@@ -1681,6 +1699,11 @@ class Vector2D {
 		return this.scale(1 / this.magnitude());
 	}
 
+	/** @description return this vector's normal of the same magnitude */
+	getNormal() {
+		return new Vector2D(-this.y,this.x);
+	}
+
 	/** @description Shorthand for new Vector2D(0, 1) */
 	static getNormalVector() {
 		return new Vector2D(0, 1);
@@ -1692,6 +1715,7 @@ class Writer {
 		this.typewriter = typewriter;
 		this.messages = messages.splice(0); //make shallow copy.
 		this.complete = (this.messages.length == 0);
+		this.break = this.complete;
 	}
 
 	set letterCallback(value) {
@@ -1700,10 +1724,19 @@ class Writer {
 
 	write() {
 		if (this.complete) return;
+		this.break = false;
 
-		this.typewriter.show(this.messages.shift());
-		if (this.messages.length == 0) {
-			this.complete = true;
+		let next = this.messages.shift();
+		if (next === text.break)
+		{
+			this.break = true;
+		}
+		else
+		{
+			this.typewriter.show(next);
+			if (this.messages.length == 0) {
+				this.complete = true;
+			}
 		}
 	}
 
@@ -1713,7 +1746,7 @@ class Writer {
 
 	getThing() {
 		var _this = this;
-		return { action: function () { _this.write(); }, condition: function () { return _this.complete } };
+		return { action: function () { _this.write(); }, condition: function () { return _this.complete || _this.break } };
 	}
 
 	getOnceThing() {
@@ -1722,7 +1755,7 @@ class Writer {
 	}
 
 	async writeAllAsync() {
-		while (!this.complete) {
+		while (!(this.complete || this.break)) {
 			this.write();
 			//wait for input.
 			await InputHandler.waitForInput();
