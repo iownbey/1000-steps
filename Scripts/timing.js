@@ -284,7 +284,6 @@ class EaseInOutPoint extends TimingPoint {
                 var pos = TimingIndicator.current.getOrigin().add(
                     this.offset.scale(
                         TimingFunctions.convertToFlip(blend)));
-                //TimingFunctions.convertToFlip(TimingFunctions.easeInOut(blend))));
                 this.x = pos.x;
                 this.y = pos.y;
                 this.standardDraw(context, blend);
@@ -350,6 +349,50 @@ class ParametricPoint extends TimingPoint {
                         this.xfunc(blend),
                         this.yfunc(blend)
                     ));
+                this.x = pos.x;
+                this.y = pos.y;
+                this.standardDraw(context, blend);
+            }
+            else TimingIndicator.MarkDone(this);
+        }
+    }
+}
+
+class SinePoint extends TimingPoint {
+    /**
+     * @param {Vector2D} offset - offset from the center that the point will start at
+     * @param {number} phase - sinusoidal wave offset
+     * @param {number} amplitude - sinusoidal wave amplitude
+     * @param {number} period - sinusoidal wave period
+     * @param {number} activeTime - Length of time the point will be active after the delay
+     * @param {delayTime} delayTime - Length of time the point will be inactive after the TimingIndicator is activated
+    */
+    constructor(offset,phase,amplitude,period,activeTime,delayTime = 0)
+    {
+        super(offset.x,offset.y);
+        this.period = period;
+        this.amplitude = amplitude;
+        this.phase = phase;
+        this.offset = offset;
+        this.offsetN = offset.normalize().getNormal();
+        this.timeAlive = 0;
+        this.lifetime = activeTime + delayTime;
+        this.delayTime = delayTime;
+    }
+
+    update(timeDelta, context) {
+        this.timeAlive += timeDelta;
+
+        if (this.timeAlive > this.delayTime) {
+            if (this.timeAlive < this.lifetime) {
+                var blend = (this.timeAlive - this.delayTime) / (this.lifetime - this.delayTime);
+                var movement = TimingFunctions.convertToFlip(TimingFunctions.easeInOut(blend));
+                var pos = TimingIndicator.current.getOrigin().add(
+                    this.offset.scale(
+                        movement
+                    )).add(
+                        this.offsetN.scale(this.amplitude * Math.sin((movement + this.phase) * ((2 * Math.PI) / this.period)))
+                    );
                 this.x = pos.x;
                 this.y = pos.y;
                 this.standardDraw(context, blend);

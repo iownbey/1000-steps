@@ -61,32 +61,28 @@ class Aragore extends Monster {
         this.index = 0;
     }
 
-    attack() {
-        function logic() {
-            this.index++;
-            switch (this.index) {
-                case 1: return { text: "Aragore scalds you with his fiery breath, dealing " + player.checkDamage(5) + " damage.", damage: 10 };
-                case 2: return { text: "Aragore hesitates.", damage: 0 };
-                case 3: return { text: "Aragore claws at you with immense fury. You take " + player.checkDamage(12) + " damage", damage: 12 };
-                case 4: return { text: "Aragore prepares.", damage: 0 };
-                case 5: return { text: "Aragore whacks you with his tail. You take " + player.checkDamage(5) + " damage.", damage: 5 };
-                case 6: return { text: "Aragore looks you straight in the eye, and his unholy glare pierces your soul. You take " + player.checkDamage(20) + " damage.", damage: 20 };
-                case 7:
-                    {
-                        this.h += 5;
-                        if (this.h > this.maxH) this.h = this.maxH;
-                        return { text: "Aragore uses healing magic.", damage: 0 }
-                    }; break;
+    async attack() {
+        this.index++;
+        switch (this.index) {
+            case 1: return { text: "Aragore scalds you with his fiery breath, dealing " + player.checkDamage(5) + " damage.", damage: 10 };
+            case 2: return { text: "Aragore hesitates.", damage: 0 };
+            case 3: return { text: "Aragore claws at you with immense fury. You take " + player.checkDamage(12) + " damage", damage: 12 };
+            case 4: return { text: "Aragore prepares.", damage: 0 };
+            case 5: return { text: "Aragore whacks you with his tail. You take " + player.checkDamage(5) + " damage.", damage: 5 };
+            case 6: return { text: "Aragore looks you straight in the eye, and his unholy glare pierces your soul. You take " + player.checkDamage(20) + " damage.", damage: 20 };
+            case 7:
+                {
+                    this.h += 5;
+                    if (this.h > this.maxH) this.h = this.maxH;
+                    return { text: "Aragore uses healing magic.", damage: 0 }
+                }; break;
 
-                case 8:
-                    {
-                        this.index = 0;
-                        return this.attack();
-                    }; break;
-            }
+            case 8:
+                {
+                    this.index = 0;
+                    return this.attack();
+                }; break;
         }
-
-        return new Promise((resolve => resolve(logic())));
     }
 
     talk() {
@@ -194,7 +190,7 @@ class Amadeus extends Monster {
 
                     this.smack();
 
-                    return { damage: 9999, text: "Amadeus crashes his mallet upon you, dealing a ludicrous 9999 damage." }
+                    return { damage: 9999, text: "Amadeus crashes his mallet upon you, dealing a ludicrous {$d} damage." }
                 }; break;
         }
         return { text: "You broke Amadeus! The server cries out in agony." }
@@ -365,7 +361,7 @@ class Darkness extends Monster {
 
         if (points.some((p) => { return (p.state === -1) })) {
             this.shakeAnim.trigger();
-            return { damage: 20, text: "The DARKNESS hurts you deep inside" };
+            return { damage: 20, text: "The DARKNESS hurts you deep inside.|You took {$d} damage." };
         }
         else {
             return { damage: 0, text: "Virtue protected your heart" };
@@ -455,7 +451,7 @@ class Decoy extends Monster {
     }
 
     attack() {
-        var text = this.flavorer.get() + " and deals " + player.checkDamage(1) + " damage.";
+        var text = this.flavorer.get() + " and deals {$d} damage.";
         return new Promise((resolve) => resolve({ text, damage: 1 }));
     }
 
@@ -535,9 +531,25 @@ class IntrovertedGhost extends Monster {
         this.powerup = 0;
     }
 
-    attack() {
-        var damage = 5 + this.powerup;
-        return new Promise((resolve) => resolve({ text: "Introverted Ghost hit you, dealing " + player.checkDamage(damage) + " damage.", damage }));
+    async attack() {
+        var points = [];
+        var pointQuantity = 14;
+        var delay = 0;
+        for (let i = 0; i < pointQuantity; i++) {
+            delay += 0.3;
+            points.push(new SinePoint(new Vector2D(300, 0), getRandom([0,1,0.5,-0.5, 0.5, -0.5]), 100, 2, 2, delay));
+        }
+
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        interaction.renderers = points.slice(0);
+        await interaction.getPromise();
+
+        if (points.some((p) => { return (p.state === -1) })) {
+            var damage = 5 + this.powerup;
+            return { text: "Introverted Ghost hit you, dealing {$d} damage.", damage };
+        }
+        else return { text: "Introverted ghost felt shy." };
+
     }
 
     magic() {
@@ -773,12 +785,12 @@ class PreMasterSponge extends Monster {
             this.shakeAnim.start();
             sound.stop();
             sound.playFX("pre-master-sponge");
-            await cover.fadeTo(1,5000);
+            await cover.fadeTo(1, 5000);
             currentBattle.endNow();
             currentBattle = new Battle("master-sponge", [new MasterSponge()], false);
         }
 
-        return {damage: 0, text: "Nothing happened."}
+        return { damage: 0, text: "Nothing happened." }
     }
 
     // This sponge is a scripted monster. He can't die.

@@ -255,3 +255,30 @@
 
 	transform-origin: 70% 80%;
 }
+
+@keyframes scytheSpin
+{
+	from{
+		transform: rotate(0turn);
+	}
+	25%{
+		transform: rotate(3turn);
+	}
+	50%{
+		transform: rotate(2.97turn);
+	}
+	75%{
+		transform: rotate(3.03turn);
+	}
+	100%{
+		transform: rotate(3turn);
+	}
+}
+.scytheSpin
+{
+	animation-name: scytheSpin;
+	animation-duration: 7.3s;
+	animation-direction: normal;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+}
