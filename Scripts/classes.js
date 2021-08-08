@@ -426,6 +426,12 @@ class SpriteRenderer {
 		return this.sprites.onload;
 	}
 
+	waitForLoad() {
+		return new Promise(resolve => {
+			this.sprites.onload = resolve;
+		});
+	}
+
 	setSprite(x, y) {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.ctx.drawImage(this.sprites, x * this.w, y * this.h, this.w, this.h, 0, 0, this.w, this.h);
@@ -1755,6 +1761,7 @@ class Writer {
 	}
 
 	async writeAllAsync() {
+		this.break = false;
 		while (!(this.complete || this.break)) {
 			this.write();
 			//wait for input.
