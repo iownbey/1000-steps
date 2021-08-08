@@ -64,17 +64,17 @@ class Aragore extends Monster {
     async attack() {
         this.index++;
         switch (this.index) {
-            case 1: return { text: "Aragore scalds you with his fiery breath, dealing " + player.checkDamage(5) + " damage.", damage: 10 };
-            case 2: return { text: "Aragore hesitates.", damage: 0 };
-            case 3: return { text: "Aragore claws at you with immense fury. You take " + player.checkDamage(12) + " damage", damage: 12 };
-            case 4: return { text: "Aragore prepares.", damage: 0 };
-            case 5: return { text: "Aragore whacks you with his tail. You take " + player.checkDamage(5) + " damage.", damage: 5 };
-            case 6: return { text: "Aragore looks you straight in the eye, and his unholy glare pierces your soul. You take " + player.checkDamage(20) + " damage.", damage: 20 };
+            case 1: return { text: "Aragore scalds you with his fiery breath, dealing {$d} damage.", damage: 10 };
+            case 2: return { text: "Aragore hesitates." };
+            case 3: return { text: "Aragore claws at you with immense fury. You take {$d} damage", damage: 12 };
+            case 4: return { text: "Aragore prepares." };
+            case 5: return { text: "Aragore whacks you with his tail. You take {$d} damage.", damage: 5 };
+            case 6: return { text: "Aragore looks you straight in the eye, and his unholy glare pierces your soul. You take {$d} damage.", damage: 20 };
             case 7:
                 {
                     this.h += 5;
                     if (this.h > this.maxH) this.h = this.maxH;
-                    return { text: "Aragore uses healing magic.", damage: 0 }
+                    return { text: "Aragore uses healing magic." }
                 }; break;
 
             case 8:
@@ -265,7 +265,7 @@ class Chain extends Monster {
 
         if (points.some((p) => { return (p.state === -1) })) {
             this.shakeAnim.trigger();
-            return { damage: 10, text: "Chain remains unbroken" };
+            return { damage: 10, text: "Chain remains unbroken.|He dealt {$d} damage." };
         }
         else {
             return { damage: 0, text: "You were stronger than Chain" };
@@ -490,7 +490,7 @@ class Door extends Monster {
 
     async attack() {
         var text = this.flavorer.get();
-        return { text, damage: 0 };
+        return { text };
     }
 
     magic() {
@@ -628,10 +628,10 @@ class Martimer extends Monster {
 
         if (points.some((p) => { return (p.state === -1) })) {
             this.shakeAnim.trigger();
-            return { damage: 20, text: "Virgil only needed a single blow to deal 20 damage." };
+            return { damage: 20, text: "Virgil only needed a single blow to deal {$d} damage." };
         }
         else {
-            return { damage: 0, text: "Virgil is impressed" };
+            return { text: "Virgil is impressed" };
         }
 
         function getPoint(delay) {
@@ -716,7 +716,7 @@ class MasterSponge extends Monster {
 
         if (points.some((p) => { return (p.state === -1) })) {
             this.shakeAnim.trigger();
-            return { damage: 20, text: "Virgil only needed a single blow to deal 20 damage." };
+            return { damage: 20, text: "Virgil only needed a single blow to deal {$d} damage." };
         }
         else {
             return { damage: 0, text: "Virgil is impressed" };
@@ -891,9 +891,9 @@ class Skeleton extends Monster {
 
         if (point.state === -1) {
             Skeleton.sprites.animate(this.jobj, Skeleton.attackAnim, 100);
-            return { text: ("Skeleton dealt " + player.checkDamage(4) + " damage."), damage: 4 };
+            return { text: ("Skeleton dealt {$d} damage."), damage: 4 };
         }
-        else return { text: "The Skeleton's hit glanced.", damage: 0 };
+        else return { text: "The Skeleton's hit glanced." };
     }
 
     talk() {
@@ -1005,7 +1005,7 @@ class Sponge extends Monster {
 
     attack() {
         var ft = this.flavorText.get();
-        return new Promise(resolve => resolve({ text: (ft + nl + "Sponge dealt " + player.checkDamage(2) + " damage."), damage: 2 }));
+        return new Promise(resolve => resolve({ text: (ft + nl + "Sponge dealt {$d} damage."), damage: 2 }));
     }
 
     talk() {
@@ -1076,7 +1076,7 @@ class Troldier extends Monster {
 
             //recover
             this.stamina = 3;
-            return { damage: 0, text: "The Troldier is exhausted!" };
+            return { text: "The Troldier is exhausted!" };
         }
         else //otherwise
         {
@@ -1090,7 +1090,7 @@ class Troldier extends Monster {
                 this.setPicture(4);
                 this.breatheAnim.end();
                 this.shiverAnim.end();
-                return { damage: 0, text: "The Troldier shields against an imminent blow." };
+                return { text: "The Troldier shields against an imminent blow." };
             }
             else {
                 this.stamina = 3;
@@ -1110,10 +1110,10 @@ class Troldier extends Monster {
                     setTimeout(function () { _this.setPicture(1); _this.breatheAnim.start(); }, 300);
 
                     if (point.state === -1) {
-                        return { damage: 10, text: "The Troldier brings down his sword, dealing " + player.checkDamage(10) + " damage." }
+                        return { damage: 10, text: "The Troldier brings down his sword, dealing {$d} damage." }
                     }
                     else {
-                        return { damage: 0, text: "You blocked the Troldiers attack." }
+                        return { text: "You blocked the Troldiers attack." }
                     }
 
 
@@ -1191,7 +1191,7 @@ class Troll extends Monster {
             case 1:
                 {
                     this.setPicture(2);
-                    return { damage: 0, text: "The Troll lifts his mallet." };
+                    return { text: "The Troll lifts his mallet." };
                 }; break;
 
             case 2:
@@ -1199,7 +1199,7 @@ class Troll extends Monster {
                     this.setPicture(3);
                     this.breatheAnim.end();
                     this.shiverAnim.start();
-                    return { damage: 0, text: "The Troll holds his mallet high above his head!!!" };
+                    return { text: "The Troll holds his mallet high above his head!!!" };
                 }; break;
 
             case 3:
@@ -1218,7 +1218,7 @@ class Troll extends Monster {
                     this.charge = 0;
                     var damage = 30;
                     if (point.state === 1) damage = 0;
-                    return { damage, text: "The Troll crashes his mallet upon you, dealing " + damage + " damage." }
+                    return { damage, text: "The Troll crashes his mallet upon you, dealing {$d} damage." }
                 }; break;
         }
     }
@@ -1301,10 +1301,10 @@ class Virgil extends Monster {
 
         if (points.some((p) => { return (p.state === -1) })) {
             this.shakeAnim.trigger();
-            return { damage: 20, text: "Virgil only needed a single blow to deal 20 damage." };
+            return { damage: 20, text: "Virgil only needed a single blow to deal {$d} damage." };
         }
         else {
-            return { damage: 0, text: "Virgil is impressed" };
+            return { text: "Virgil is impressed" };
         }
 
         function getPoint(delay) {
