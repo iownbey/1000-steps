@@ -16,6 +16,7 @@ var speechByte = sound.loadPersistant("speechByte");
 var normalByte = sound.loadPersistant("normalByte");
 var attackBlip = sound.loadPersistant("blip");
 var errorBlip = sound.loadPersistant("errorBlip");
+/** @type {ContentManager} */
 var contentManager;
 
 // To be defined later:
@@ -100,20 +101,21 @@ function getRandom(array) {
 	return array[Math.floor(Math.random() * array.length)];
 }
 
-function walk() {
-	CSSAnimation.trigger(player.$jobj, "walk");
-	var stepsLeft = file.get("Steps-Left");
-	if (stepsLeft == 0) {
-		SaveData.changeBackground("outside");
-		topWriter.show("Congratulations! You saved the world!");
-		return;
+async function walk() {
+	if (!area.busy) {
+		CSSAnimation.trigger(player.$jobj, "walk");
+		var stepsLeft = file.get("Steps-Left");
+		if (stepsLeft == 0) {
+			SaveData.changeBackground("outside");
+			topWriter.show("Congratulations! You saved the world!");
+			return;
+		}
+		stepsLeft--;
+		file.set("Steps-Left", stepsLeft);
+		stepsPopIn.$jobj.html("STEPS<br/>" + stepsLeft);
+		stepsPopIn.show(3000);
+		await area.walk();
 	}
-	stepsLeft--;
-	file.set("Steps-Left", stepsLeft);
-	stepsPopIn.$jobj.html("STEPS<br/>" + stepsLeft);
-	stepsPopIn.show(3000);
-
-	area.walk();
 }
 
 function die() {
@@ -410,7 +412,7 @@ function shiftKeys(event) {
 			file.set("IntroComplete", true);
 			//area = new Area_Underworld();
 			StartMainGame();
-			currentBattle = new Battle("chain", [new IntrovertedGhost()], false);
+			//currentBattle = new Battle("chain", [new IntrovertedGhost()], false);
 			break;
 	}
 }
