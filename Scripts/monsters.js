@@ -592,6 +592,120 @@ class IntrovertedGhost extends Monster {
     }
 }
 
+class ManglerFish extends Monster {
+    constructor() {
+        super("Mangler Fish", 50, 0, 0.3);
+        this.angry = false;
+    }
+
+    async attack() {
+
+        if (Math.random() < 0.1)
+        {
+            this.toggleAnger();
+            await new Writer(topWriter,["The Mangler fish's temper has changed."]).writeAllAsync();
+        }
+
+        // Add "Taunt", a move that makes the player only attack this monster.
+
+        var xSign = Math.round(Math.random()) * 2 - 1;
+        var point = new ParametricPoint(
+            x => xSign * TimingFunctions.convertToFlip(x) * 200,
+            y => {
+                const a = 400;
+                return -((4 * a * (y ** 2)) - (4 * a * y) + a);
+            },
+            4
+        );
+
+        var interaction = new TimingIndicator(document.getElementById("content-canvas"));
+        interaction.renderers = [point];
+        await interaction.getPromise();
+
+        if (point.state === -1) {
+            this.shakeAnim.trigger();
+            return { damage: 20, text: "The Mangler fish dealt {$d} damage." };
+        }
+        else {
+            return { text: "The Mangler fish couldn't deceive you." };
+        }
+    }
+
+    toggleAnger() {
+        this.angry = !this.angry;
+        this.renderer.setSprite((this.angry ? 1 : 0), 0);
+    }
+
+    async hit(damage) {
+        this.h -= damage;
+        if (this.h <= 0) return true;
+        else {
+            if (this.angry) {
+                await new Writer(topWriter,["The Mangler Fish lashes out.|It dealt 30 damage."]).writeAllAsync();
+                currentBattle.dealPlayerDamage(30);
+            }
+            else {
+                this.toggleAnger();
+            }
+            return false;
+        }
+    }
+
+    talk() {
+        return ["The fish makes indeterminate gurgles in response."];
+    }
+
+    magic() {
+        if (Math.random() > 0.5) {
+            this.toggleAnger();
+            return (this.angry ? "The Mangler fish was enraged by your magics." : "The Mangler fish was calmed by your magics.");
+        }
+        else "The fish was too resolute to be affected.";
+    }
+
+    inspect() {
+        var _this = this;
+        return [
+            { text: "Let's see...", aExpr: expr.emery.happy },
+            ["Mangler Fish:|Health is " + _this.h + "/50|Attack is 7"],
+            ["Occasionally, Mangler fish have been known to lash out when attacked."],
+            ["Choose your timing wisely."]
+        ]
+    }
+
+    html(root) {
+        var $mangler = $('<canvas style="height:120%;width:120%;left:-10%;" class="mangler"></canvas>');
+        this.jobj = $mangler;
+        this.canvas = $mangler[0];
+        $mangler.appendTo(root);
+
+        this.renderer = new SpriteRenderer($mangler[0], "./Images/Ocean/angler.png", 96, 96);
+
+        var _this = this;
+        this.renderer.onload = () => {
+            _this.renderer.setSprite(0, 0);
+        };
+
+        var perlinOrigin = new Vector2D(Math.random() * 10000, Math.random() * 10000);
+
+        function animation(timestamp) {
+            var offset = timestamp / 1000;
+            if (_this.angry) offset *= 2;
+            var p1 = perlinOrigin.add(new Vector2D(0, offset));
+            var p2 = perlinOrigin.add(new Vector2D(offset, 0));
+
+            _this.jobj.css("left", `${perlin.get(p1.x, p1.y) * 20}%`);
+            _this.jobj.css("bottom", `${perlin.get(p2.x, p2.y) * 20}%`);
+
+            _this.animHandle = requestAnimationFrame(animation)
+        }
+
+        this.animHandle = requestAnimationFrame(animation)
+    }
+
+
+}
+
 class Martimer extends Monster {
     constructor() {
         super("Martimer", 1000, 0, 0);
