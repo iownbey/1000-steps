@@ -1,19 +1,19 @@
 
 class Area_Ocean extends Area {
 	constructor() {
-		super(Area_Ocean.flavor, ["Troll", "Sponge", "Door", "Decoy"], "fight");
+		super(Area_Ocean.text.flavor, ["Troll", "Sponge", "Door", "Decoy"], "fight");
 	}
 
 	getEvents() {
 
 		var events = [].concat(
-			[Area.meetVirgil],
-			[Area.meetTroll1],
+			[Area.fightChain],
+			[Area_Aorta.meetTroll1],
 			this.fillGrabBagThing(9),
-			[Area.meetOscar],
+			[Area_Aorta.meetOscar],
 			this.fillGrabBagThing(9),
 			this.fillGrabBagThing(9),
-			[Area.meetAmadeus],
+			[Area_Aorta.meetAmadeus],
 			this.fillGrabBagThing(9, [Area.fightEvent]),
 			this.fillGrabBagThing(10, [Area.meetTroldiers]),
 			this.fillGrabBagThing(),
@@ -37,8 +37,8 @@ class Area_Ocean extends Area {
 	}
 
 	onStart() {
-		changeBackground("back");
-		topWriter.show("Press \"Space\" to walk forward.");
+		changeBackground("ocean");
+		topWriter.show("You have entered the great Ocean.");
 		sound.playMusic(this.getBackgroundMusic());
 	}
 
@@ -56,5 +56,22 @@ class Area_Ocean extends Area {
 }
 
 Area_Ocean.text = {
-    flavor
+    flavor: [
+        "Somehow you can breathe in this water.",
+        "Even though you cannot see very far, this is some of the clearest water you have ever seen."
+    ],
+
+    intro: [
+        "You have just walked into an ocean.",
+        "You clutch at your throat, gasping for breath...",
+        "Except...",
+        "You can breathe.",
+        ["Hey, I forgot to tell you.",expr.emery.happy],
+        ["You can breathe the water."],
+        [""]
+    ]
 }
+
+Area_Ocean.firstStep = Area.registerEvent(async function() {
+    
+});
