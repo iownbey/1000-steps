@@ -168,6 +168,10 @@ class TimingIndicator {
                 closest.state = -1;
                 closest.onfail();
                 sound.playPersistant(errorBlip);
+
+                // mo.js
+                closest.burst.tune({x: closest.x, y: closest.y, children: {fill: 'red'}});
+                closest.burst.replay();
                 }
             }
             else {
@@ -177,12 +181,20 @@ class TimingIndicator {
                 closest.state = -1;
                 closest.onfail();
                 sound.playPersistant(errorBlip);
+
+                // mo.js
+                closest.burst.tune({x: closest.x, y: closest.y, children: {fill: 'red'}});
+                closest.burst.replay();
                 }
                 else
                 {
                 closest.state = 1;
                 closest.onsuccess();
                 sound.playPersistant(attackBlip);
+
+                // mo.js
+                closest.burst.tune({x: closest.x, y: closest.y, children: {fill: 'blue'}});
+                closest.burst.replay();
                 }
             }
         }
@@ -211,6 +223,21 @@ class TimingPoint {
         this.isLure = false;
         this.onsuccess = () => { };
         this.onfail = () => { };
+
+        this.burst = new mojs.Burst({
+            left: 0, top: 0,
+            radius:   { 0: 100 },
+            angle:    45,
+            count: 20,
+            children: {
+              shape:        'circle',
+              radius:       10,
+              scale:        { '1' : '0' },
+              duration:     700,
+              easing:       'sin.out',
+              fill: 'blue'
+            }
+          });
     }
 
     update(timeDelta, ctx) {
