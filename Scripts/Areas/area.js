@@ -3,7 +3,7 @@ const allMonsters = Object.freeze(["Troll", "Sponge", "IntrovertedGhost", "Door"
 class Area {
     constructor(flavor, monsters, battleTheme = "fight") {
         this.stepsTaken = 0;
-        this.flavor = new NonrepeatingGetter(flavor);
+        this.flavor = new SequenceGetter(flavor);
         this.battleTheme = battleTheme;
         this.events = this.getEvents();
         this.currentEvent = null;
@@ -12,7 +12,7 @@ class Area {
         console.log(this.monsters);
     }
 
-    static addPossibleEvent(element) {
+    static registerEvent(element) {
         return Area.possibleEvents.push(element) - 1;
     }
 
@@ -70,7 +70,7 @@ class Area {
         var _this = this;
         var handleEvent = async function (event) {
             _this.currentEvent = event;
-            var r = Area.possibleEvents[event].call(_this);
+            var r = Area.possibleEvents[event]();
             if (!((r == undefined) || (r == null))) {
                 await r;
             }
@@ -91,24 +91,25 @@ class Area {
 }
 Area.possibleEvents = [];
 Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
-    return Area.addPossibleEvent(function () {
+    return Area.registerEvent(function () {
         topWriter.show(flavor);
         changeBackground(back);
         changeForeground(fore);
     });
 }
 
-Area.emptyStep = Area.addPossibleEvent(function () {
+Area.emptyStep = Area.registerEvent(function () {
     // Do Nothing
 });
 
-Area.fightEvent = Area.addPossibleEvent(function () {
-    currentBattle = new Battle(this.battleTheme, [this.getRandomMonster(), this.getRandomMonster(), this.getRandomMonster()]);
+Area.fightEvent = Area.registerEvent(function () {
+    currentBattle = new Battle(area.battleTheme, [area.getRandomMonster(), area.getRandomMonster(), area.getRandomMonster()]);
 });
-Area.flavorEvent = Area.addPossibleEvent(function () {
-    topWriter.show(this.flavor.get());
+
+Area.flavorEvent = Area.registerEvent(function () {
+    topWriter.show(area.flavor.get());
 });
-Area.nextAreaEvent = Area.addPossibleEvent(function () {
+Area.nextAreaEvent = Area.registerEvent(function () {
     this.onEnd();
     area = this.getNextArea();
     sound.playMusic(area.getBackgroundMusic());
@@ -117,7 +118,7 @@ Area.nextAreaEvent = Area.addPossibleEvent(function () {
 
 // Prototype Events
 
-Area.fightChain = Area.addPossibleEvent(function () {
+Area.fightChain = Area.registerEvent(function () {
     var input = { oninput: () => { } };
     currentDoer = Doer.ofPromise(async function () {
         DialogueTypewriter.clearAll();
@@ -144,54 +145,7 @@ Area.fightChain = Area.addPossibleEvent(function () {
     }(), input);
 });
 
-Area.meetOscar = Area.addPossibleEvent(function () {
-    var input = { oninput: () => { } };
-    currentDoer = Doer.ofPromise(async function () {
-        DialogueTypewriter.clearAll();
-        contentManager.clear();
-        var $wrapper = $('<div class="monster"></div>');
-        var $virgil = $('<canvas style="height:80%;width:80%;left:10%;" id="oscar"></canvas>');
-        $virgil.appendTo($wrapper);
-        contentManager.add($wrapper);
-
-
-        var animHandle;
-        var renderer = new SpriteRenderer($virgil[0], "./Images/oscar.png", 32, 32);
-        await new Promise(resolve => {
-            renderer.onload = () => {
-                var fs = new SequenceGetter([{ x: 1, y: 0 }, { x: 2, y: 0 }], true);
-                function animLoop() {
-                    let f = fs.get();
-                    renderer.setSprite(f.x, f.y);
-                }
-                animHandle = setInterval(animLoop, 480);
-                setTimeout(resolve, 480);
-            }
-        })
-        sound.playMusic("accordion", true);
-
-        await contentManager.approach();
-        clearInterval(animHandle);
-        await Helper.delay(1);
-        sound.pause();
-        await Helper.delay(1);
-        renderer.setSprite(0, 0);
-
-        let textBlob = text.aorta.meetOscar;
-        await new Writer(bottomWriter, textBlob.intro).writeAllAsync();
-        bottomWriter.show(textBlob.choice.prompt);
-        let chose = await getChoice([textBlob.choice.yes.button, textBlob.choice.no.button], hcursor);
-        if (chose == textBlob.choice.yes.button) {
-            await new Writer(bottomWriter, textBlob.choice.yes.result).writeAllAsync();
-        }
-        else {
-            await new Writer(bottomWriter, textBlob.choice.no.result).writeAllAsync();
-        }
-        contentManager.clear();
-    }(), input);
-})
-
-Area.fightAragore = Area.addPossibleEvent(function () {
+Area.fightAragore = Area.registerEvent(function () {
     mode = ModeEnum.final;
     currentBattle = new Battle("aragore", [new Aragore()]);
     topWriter.show("Aragore the dragon blocks the exit.");

@@ -49,13 +49,13 @@ const expr = Object.freeze(ex);
 delete ex;
 
 //Text
-const t = {};
+const tex = {};
 
 /** @const {object} */
 /** This object will cause a dialogue writer to return control to the code.*/
-t.break = Object.freeze({});
+tex.break = Object.freeze({});
 
-t.other = {
+tex.other = {
 	aboutInspect: [
 		{ text: "Hey, Harbinger!", aExpr: expr.emery.happy },
 		["I noticed you're clever enough to use \"INSPECT\" in battle."],
@@ -75,7 +75,7 @@ t.other = {
 	]
 }
 
-t.intro = {
+tex.intro = {
 	emerySpeak: [
 		"Hello?",
 		"Can you hear me?",
@@ -130,7 +130,7 @@ t.intro = {
 	],
 }
 
-t.aorta = {
+tex.aorta = {
 	walkFlavor: [
 		"You walk through the dungeon...",
 		"You run through the dungeon...",
@@ -318,4 +318,4 @@ t.aorta = {
 		}),
 };
 
-const text = Object.freeze(t);
+const text = Object.freeze(tex);

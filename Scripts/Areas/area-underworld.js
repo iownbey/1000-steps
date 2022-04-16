@@ -219,7 +219,7 @@ Area_Underworld.text = {
         ["..."],
         ["Now that you've defeated me, the DARKNESS has no reason to let me survive..."],
         ["..."],
-        t.break,
+        text.break,
         ["Now that you've inherited the birthright, the door will be unlocked.", expr.arnold.stoic],
         ["Go. I'll find Franklin."]
     ]
@@ -227,7 +227,7 @@ Area_Underworld.text = {
 
 //logic
 
-Area_Underworld.talkEmery1 = Area.addPossibleEvent(async function () {
+Area_Underworld.talkEmery1 = Area.registerEvent(async function () {
     file.set("Inspect-Level", 1); //flag for dialogue in-fight.
     sound.pause();
     await new Writer(bottomWriter, Area_Underworld.text.emerySpeak).writeAllAsync();
@@ -235,7 +235,7 @@ Area_Underworld.talkEmery1 = Area.addPossibleEvent(async function () {
     DialogueTypewriter.clearAll();
 });
 
-Area_Underworld.meetSkeletons = Area.addPossibleEvent(async function () {
+Area_Underworld.meetSkeletons = Area.registerEvent(async function () {
     contentManager.clear();
     var franklin = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(0.9,1.1)");
     var arnold = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(1.1,0.7)");
@@ -251,7 +251,7 @@ Area_Underworld.meetSkeletons = Area.addPossibleEvent(async function () {
     DialogueTypewriter.clearAll();
 });
 
-Area_Underworld.talkSkeletons = Area.addPossibleEvent(async function () {
+Area_Underworld.talkSkeletons = Area.registerEvent(async function () {
     sound.pause();
     contentManager.clear();
     var franklin = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(0.9,1.1)");
@@ -271,7 +271,7 @@ Area_Underworld.talkSkeletons = Area.addPossibleEvent(async function () {
     DialogueTypewriter.clearAll();
 });
 
-Area_Underworld.talkArnold = Area.addPossibleEvent(async function () {
+Area_Underworld.talkArnold = Area.registerEvent(async function () {
     sound.pause();
     contentManager.clear();
     var arnold = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(1.1,0.7)");
@@ -286,7 +286,7 @@ Area_Underworld.talkArnold = Area.addPossibleEvent(async function () {
 
 Area_Underworld.enterThaddeusDungeon = Area.getBackgroundChangeEvent("You enter Thaddeus' dungeon.", "wideTunnel");
 
-Area_Underworld.fightThaddeus = Area.addPossibleEvent(async function () {
+Area_Underworld.fightThaddeus = Area.registerEvent(async function () {
     changeBackground("bigDoor");
     sound.stop();
     contentManager.clear();

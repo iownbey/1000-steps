@@ -7,6 +7,7 @@ class Area_Aorta extends Area {
 	getEvents() {
 
 		return [].concat(
+			[Area_Aorta.meetOscar],
 			[Area_Aorta.meetVirgil],
 			[Area_Aorta.meetTroll1],
 			this.fillGrabBagThing(9),
@@ -54,7 +55,7 @@ class Area_Aorta extends Area {
 	}
 }
 
-Area_Aorta.meetVirgil    = Area.addPossibleEvent(async function () {
+Area_Aorta.meetVirgil    = Area.registerEvent(async function () {
 
 	DialogueTypewriter.clearAll();
 	contentManager.clear();
@@ -166,7 +167,7 @@ Area_Aorta.meetVirgil    = Area.addPossibleEvent(async function () {
 	console.log("done");
 });
 
-Area_Aorta.meetTroll1    = Area.addPossibleEvent(async function () {
+Area_Aorta.meetTroll1    = Area.registerEvent(async function () {
 	contentManager.clear();
 	contentManager.add($('<div class="monster"><div class="troll"></div></div>'));
 	contentManager.approach();
@@ -176,7 +177,7 @@ Area_Aorta.meetTroll1    = Area.addPossibleEvent(async function () {
 	await currentBattle.getPromise();
 });
 
-Area_Aorta.meetTroldiers = Area.addPossibleEvent(async function () {
+Area_Aorta.meetTroldiers = Area.registerEvent(async function () {
 	sound.stop();
 	contentManager.clear();
 	contentManager.add($('<div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div>'));
@@ -189,7 +190,7 @@ Area_Aorta.meetTroldiers = Area.addPossibleEvent(async function () {
 	await currentBattle.getPromise();
 });
 
-Area_Aorta.meetAmadeus   = Area.addPossibleEvent(async function () {
+Area_Aorta.meetAmadeus   = Area.registerEvent(async function () {
 	sound.pause();
 	contentManager.clear();
 	var $a = $('<div class="monster"></div>');
@@ -205,7 +206,7 @@ Area_Aorta.meetAmadeus   = Area.addPossibleEvent(async function () {
 	DialogueTypewriter.clearAll();
 });
 
-Area_Aorta.talkAmadeus   = Area.addPossibleEvent(async function () {
+Area_Aorta.talkAmadeus   = Area.registerEvent(async function () {
 	sound.pause();
 	contentManager.clear();
 	var $a = $('<div class="monster"></div>');
@@ -221,7 +222,7 @@ Area_Aorta.talkAmadeus   = Area.addPossibleEvent(async function () {
 	DialogueTypewriter.clearAll();
 });
 
-Area_Aorta.fightAmadeus  = Area.addPossibleEvent(async function () {
+Area_Aorta.fightAmadeus  = Area.registerEvent(async function () {
 	changeBackground("bigDoor");
 	sound.stop();
 	contentManager.clear();
@@ -235,3 +236,50 @@ Area_Aorta.fightAmadeus  = Area.addPossibleEvent(async function () {
 	currentBattle = new Battle("amadeus", [new Amadeus()], false);
 	await currentBattle.getPromise();
 });
+
+Area_Aorta.meetOscar = Area.registerEvent(function () {
+    var input = { oninput: () => { } };
+    currentDoer = Doer.ofPromise(async function () {
+        DialogueTypewriter.clearAll();
+        contentManager.clear();
+        var $wrapper = $('<div class="monster"></div>');
+        var $oscar = $('<canvas style="height:80%;width:80%;left:10%;" id="oscar"></canvas>');
+        $oscar.appendTo($wrapper);
+        contentManager.add($wrapper);
+
+
+        var animHandle;
+        var renderer = new SpriteRenderer($oscar[0], "./Images/oscar.png", 32, 32);
+        await new Promise(resolve => {
+            renderer.onload = () => {
+                var fs = new SequenceGetter([{ x: 1, y: 0 }, { x: 2, y: 0 }], true);
+                function animLoop() {
+                    let f = fs.get();
+                    renderer.setSprite(f.x, f.y);
+                }
+                animHandle = setInterval(animLoop, 480);
+                setTimeout(resolve, 480);
+            }
+        })
+        sound.playMusic("accordion", true);
+
+        await contentManager.approach();
+        clearInterval(animHandle);
+        await Helper.delay(1);
+        sound.pause();
+        await Helper.delay(1);
+        renderer.setSprite(0, 0);
+
+        let textBlob = text.aorta.meetOscar;
+        await new Writer(bottomWriter, textBlob.intro).writeAllAsync();
+        bottomWriter.show(textBlob.choice.prompt);
+        let chose = await getChoice([textBlob.choice.yes.button, textBlob.choice.no.button], hcursor);
+        if (chose == textBlob.choice.yes.button) {
+            await new Writer(bottomWriter, textBlob.choice.yes.result).writeAllAsync();
+        }
+        else {
+            await new Writer(bottomWriter, textBlob.choice.no.result).writeAllAsync();
+        }
+        contentManager.clear();
+    }(), input);
+})
