@@ -537,7 +537,7 @@ class IntrovertedGhost extends Monster {
         var delay = 0;
         for (let i = 0; i < pointQuantity; i++) {
             delay += 0.3;
-            points.push(new SinePoint(new Vector2D(300, 0), getRandom([0,1,0.5,-0.5, 0.5, -0.5]), 100, 2, 2, delay));
+            points.push(new SinePoint(new Vector2D(300, 0), getRandom([0, 1, 0.5, -0.5, 0.5, -0.5]), 100, 2, 2, delay));
         }
 
         var interaction = new TimingIndicator(document.getElementById("content-canvas"));

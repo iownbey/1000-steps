@@ -135,7 +135,7 @@ function charge() {
 	switch (chargeAmount) {
 		case 0:
 			{
-				onFinish = function () { topWriter.show("You focus your light into an spark."); };
+				onFinish = function () { topWriter.show("You focus your light into a spark."); };
 				onFlash = function () { sparkHandler.showSpark(); };
 			}; break;
 		case 1:
@@ -155,7 +155,7 @@ function charge() {
 	lastCalled = charge;
 }
 
-function attack(monster) {
+async function attack(monster) {
 	lastCalled = attack;
 	Player.sprites.animate(player.$jobj, Player.attackAnim, 25);
 	CSSAnimation.trigger(monster.jobj, "shake");
@@ -163,7 +163,7 @@ function attack(monster) {
 	var damage = player.attack * (3 ** chargeAmount);
 	const basephrase = "You hit " + monster.myName + " and deal " + damage + " damage.";
 
-	if (monster.hit(damage)) {
+	if (await monster.hit(damage)) {
 		sound.playFX("deathfx");
 		var add = nl + "You killed " + monster.myName + ".";
 		currentBattle.kill(monster);
@@ -410,7 +410,7 @@ function shiftKeys(event) {
 		case "F": toggleFullscreen(); break;
 		case "N":
 			file.set("IntroComplete", true);
-			//area = new Area_Underworld();
+			area = new Area_Aorta();
 			StartMainGame();
 			//currentBattle = new Battle("chain", [new IntrovertedGhost()], false);
 			break;

@@ -26,6 +26,7 @@ class Animator {
 	}
 }
 
+/** @type {Battle} */
 var currentBattle = null;
 
 class Queue {
@@ -174,6 +175,16 @@ class Battle {
 		});
 	}
 
+
+	dealPlayerDamage(damage) {
+		if (player.changeHealth(-damage)) {
+			_this.queueAction(function () {
+				topWriter.show(monster.myName + " has mortally wounded you!");
+				_this.finishAction();
+			});
+		}
+	}
+
 	async monsterTurn(index) {
 		console.log("BATTLE: Starting Monster " + index + " Turn");
 		DialogueTypewriter.clearAll();
@@ -194,17 +205,7 @@ class Battle {
 
 			if (attack.text) topWriter.show(attack.text.replace(Battle.damagestr,damage));
 
-			if (player.changeHealth(-damage)) {
-				_this.queueAction(function () {
-					topWriter.show(monster.myName + " has mortally wounded you!");
-					_this.finishAction();
-				});
-			}
-			else {
-				if (damage != 0) {
-					CSSAnimation.trigger(player.$jobj, "shake");
-				}
-			}
+			this.dealPlayerDamage(damage);
 		}
 
 		index++;
@@ -1007,7 +1008,10 @@ class Player {
 		if (wounded) this.health = 1;
 		else if (this.health > this.maxHealth) this.health = this.maxHealth;
 		healthDisplay.update(this.health, this.maxHealth);
-		if (change < 0) healthDisplay.flashRed();
+		if (change < 0) {
+			healthDisplay.flashRed();
+			CSSAnimation.trigger(player.$jobj, "shake");
+		}
 		this.wounded = wounded;
 		return wounded;
 	}
@@ -1556,11 +1560,11 @@ class Menu {
 		}
 	}
 
-	handleInput(event) {
+	async handleInput(event) {
 		if (this.child == null) {
 			if (!this.blockInput) {
 				if (event.key == " ") {
-					this.buttons[this.pos.x][this.pos.y].activate();
+					await this.buttons[this.pos.x][this.pos.y].activate();
 					this.afterButton();
 				}
 				else if (event.key == "Backspace") {
@@ -1640,8 +1644,9 @@ class MenuButton {
 		this.call = callback;
 	}
 
-	activate() {
-		this.call();
+	async activate() {
+		var w = this.call();
+		if (w != null) await w;
 	}
 
 	jobj() {
