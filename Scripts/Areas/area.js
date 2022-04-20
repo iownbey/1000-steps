@@ -1,5 +1,12 @@
+/**
+ * A whitelist for the code that allows generics in monster creation.
+ * This list should contain every monster involved in random encounters
+ */
 const allMonsters = Object.freeze(["Troll", "Sponge", "IntrovertedGhost", "Door", "Decoy", "Skeleton", "Reaper", "Troldier"]);
 
+/**
+ * The base class for areas.
+ */
 class Area {
     constructor(flavor, monsters, battleTheme = "fight") {
         this.stepsTaken = 0;
@@ -12,8 +19,22 @@ class Area {
         console.log(this.monsters);
     }
 
+    /**
+     * A map from an area constructor to its events
+     * @type {Map<function,function[]>}
+     */
+    static possibleEvents = new Map();
+    /**
+     * The constructor of the currently building event list
+     */
+    static boundArea;
+
+    static registerArea(type) {
+        Area.possibleEvents.set(Area.boundArea = type,[]);
+    }
+
     static registerEvent(element) {
-        return Area.possibleEvents.push(element) - 1;
+        return Area.possibleEvents.get(Area.boundArea).push(element) - 1;
     }
 
     getEvents() {
@@ -57,6 +78,7 @@ class Area {
     getRandomMonster() {
         var classes = this.toMonsters(this.monsters);
         var monster = null;
+        // Generic instantiation via eval
         eval("monster = new " + getRandom(classes) + "();");
         return monster;
     }
@@ -70,7 +92,7 @@ class Area {
         var _this = this;
         var handleEvent = async function (event) {
             _this.currentEvent = event;
-            var r = Area.possibleEvents[event]();
+            var r = Area.possibleEvents.get(_this.constructor)[event]();
             if (!((r == undefined) || (r == null))) {
                 await r;
             }
@@ -89,7 +111,10 @@ class Area {
 
     }
 }
-Area.possibleEvents = [];
+
+// Switches the static event handler so that it is binding events to the correct Area.
+Area.registerArea(Area);
+
 Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
     return Area.registerEvent(function () {
         topWriter.show(flavor);

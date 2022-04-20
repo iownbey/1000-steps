@@ -55,6 +55,8 @@ class Area_Aorta extends Area {
 	}
 }
 
+Area.registerArea(Area_Aorta);
+
 Area_Aorta.meetVirgil    = Area.registerEvent(async function () {
 
 	DialogueTypewriter.clearAll();

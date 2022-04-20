@@ -72,6 +72,8 @@ Area_Ocean.text = {
     ]
 }
 
+Area.registerArea(Area_Ocean);
+
 Area_Ocean.firstStep = Area.registerEvent(async function() {
     
 });

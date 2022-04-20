@@ -225,6 +225,8 @@ Area_Underworld.text = {
     ]
 };
 
+Area.registerArea(Area_Underworld);
+
 //logic
 
 Area_Underworld.talkEmery1 = Area.registerEvent(async function () {
