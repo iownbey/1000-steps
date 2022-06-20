@@ -62,6 +62,23 @@ function toggleFullscreen() {
 	}
 }
 
+/** Loads a script into the dom
+ * @param {string} script - the script to load 
+ * @returns {Promise} a promise representing the load task
+*/
+async function loadScript(script) {
+	if (loadScript.allLoaded.includes(script)) return new Promise(res => res());
+	loadScript.allLoaded.push(script);
+	var element = document.createElement('script');
+	var promise = new Promise((res) => {
+		element.onload = res;
+	});
+	element.src = `scripts/${script}`;
+	document.head.appendChild(element);
+	return promise;
+}
+loadScript.allLoaded = [];
+
 Math.randomInt = function (min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
@@ -403,17 +420,19 @@ async function getChoice(options, cursor) {
 	return selected;
 }
 
-function shiftKeys(event) {
+async function shiftKeys(event) {
 	switch (event.key) {
 		case "S": file.save(); break;
 		case "L": file.load(); break;
 		case "F": toggleFullscreen(); break;
-		case "N":
+		case "N": {
+			// asynchronous context
 			file.set("IntroComplete", true);
 			area = new Area_Aorta();
 			StartMainGame();
-			//currentBattle = new Battle("chain", [new IntrovertedGhost()], false);
-			break;
+			await loadScript("monsters/darkness.js");
+			currentBattle = new Battle("darkness-fight", [new Darkness()], false);
+		}; break;
 	}
 }
 
