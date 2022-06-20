@@ -34,7 +34,8 @@ class TimingIndicator {
     constructor(canvas) {
         console.log("Init timing");
         TimingIndicator.current = this;
-        this.radius = 30;
+        this.displayRadius = 30;
+        this.logicalRadius = 50;
         this.#canvas = canvas;
         this.#ctx = canvas.getContext("2d");
         this.renderers = [];
@@ -74,7 +75,7 @@ class TimingIndicator {
     #render(context) {
         var center = this.getOrigin();
         context.beginPath();
-        context.arc(center.x, center.y, this.radius, 0, 2 * Math.PI, false);
+        context.arc(center.x, center.y, this.displayRadius, 0, 2 * Math.PI, false);
         context.lineWidth = 2;
         context.strokeStyle = '#ffffff';
         context.stroke();
@@ -105,7 +106,7 @@ class TimingIndicator {
                 var center = this.origin;
                 var distSqr = ((renderer.x - center.x) ** 2) + ((renderer.y - center.y) ** 2);
                 //update collisions
-                if ((((this.radius) + renderer.radius) ** 2) < distSqr) {
+                if ((((this.logicalRadius) + renderer.radius) ** 2) < distSqr) {
                     //too far away
                     if (renderer.contacting === true) {
                         renderer.contacting = false;
@@ -147,7 +148,7 @@ class TimingIndicator {
         //the closest TimingPoint
         var closest = null;
         //It's distance, squared
-        var closestSqrDist = (this.radius ** 4);
+        var closestSqrDist = (this.logicalRadius ** 2) * 2;
         var center = this.getOrigin();
         for (let renderer of this.renderers) {
             //Only block hits that are strong if the player is defending
