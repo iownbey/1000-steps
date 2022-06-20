@@ -76,12 +76,13 @@ var backgroundCanvas = new Granim({
         },
         "battle-state": {
             gradients: [
-                ["#fe86ff","#1905d9"],
-                ["#34fd50","#be0457"],
-                ["#fe3218","#e100f5"],
-                ["#387dfc","#d5014c"],
-                ["#06f984","#ff00f9"],
-                ["#b4dafc","#7f51fd"]
+                ["#50cc7f","#f5d100"],
+                ["#007adf","#00ecbc"],
+                ["#20e2d7","#f9fea5"],
+                ["#00dbde","#fc00ff"],
+                ["#f9d423","#ff4e50"],
+                ["#cc208e","#6713d2"],
+                ["#4facfe","#00f2fe"]
             ],
             transitionSpeed: 500
         }
