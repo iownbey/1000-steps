@@ -19,6 +19,10 @@ class TimingFunctions {
     static inverseLinear(t) {
         return 1 - t;
     }
+
+    static cosBlend(t) {
+        return (Math.cos(t * Math.PI) + 1) / 2;
+    }
 }
 
 class TimingIndicator {
@@ -360,7 +364,6 @@ class ParametricPoint extends TimingPoint {
         this.xfunc = xfunc;
         this.yfunc = yfunc;
 
-        this.offset = offset;
         this.timeAlive = 0;
         this.lifetime = activeTime + delayTime;
         this.delayTime = delayTime;
@@ -424,6 +427,34 @@ class SinePoint extends TimingPoint {
                 this.x = pos.x;
                 this.y = pos.y;
                 this.standardDraw(context, blend);
+            }
+            else TimingIndicator.MarkDone(this);
+        }
+    }
+}
+
+class FlashPoint extends TimingPoint {
+
+    constructor(x,y,activeTime,delayTime = 0) {
+        super(x,y);
+
+        this.offset = new Vector2D(x,y);
+
+        this.timeAlive = 0;
+        this.lifetime = activeTime + delayTime;
+        this.delayTime = delayTime;
+    }
+
+    update(timeDelta, context) {
+        this.timeAlive += timeDelta;
+
+        if (this.timeAlive > this.delayTime) {
+            if (this.timeAlive < this.lifetime) {
+                var blend = (this.timeAlive - this.delayTime) / (this.lifetime - this.delayTime);
+                var pos = TimingIndicator.current.getOrigin().add(this.offset);
+                this.x = pos.x;
+                this.y = pos.y;
+                this.standardDraw(context, 0.5);
             }
             else TimingIndicator.MarkDone(this);
         }
