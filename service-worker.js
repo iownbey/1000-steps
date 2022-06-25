@@ -159,6 +159,10 @@ self.addEventListener('install', event => {
 
 // The activate handler takes care of cleaning up old caches.
 self.addEventListener('activate', event => {
+  console.warn("clearing service worker caches");
+  caches.delete(PRECACHE);
+  caches.delete(RUNTIME);
+
   const currentCaches = [PRECACHE, RUNTIME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
