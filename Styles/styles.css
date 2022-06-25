@@ -1,3 +1,7 @@
+* {
+	touch-action: manipulation;
+}
+
 html
 {
 	--cos: cubic-bezier(0.3642,0,0.6358,1);
@@ -11,8 +15,6 @@ html
 	image-rendering: crisp-edges;
 
 	font-variant: small-caps;
-
-	touch-action: none;
 	
 	-webkit-user-select: none;
 	-ms-user-select: none;
@@ -154,10 +156,6 @@ div
 	height:256px;
 }
 
-#main
-{
-}
-
 #output1
 {
 	flex-grow: 1;
@@ -179,10 +177,6 @@ div
 	flex-direction: column; 
 	justify-content: space-around;
 	align-items: center;
-}
-
-#intro
-{
 }
 
 #introoutput
