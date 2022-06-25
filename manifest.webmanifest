@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+    "name": "1000 Steps",
+    "short_name": "1000 Steps",
+    "start_url": ".",
+    "display": "fullscreen",
+    "background_color": "black",
+    "description": "The web RPG",
+    "icons":[{
+        "src": "Images/icon.svg",
+        "sizes": "any"
+    }],
+    "categories": ["games"],
+    "orientation": "landscape",
+    "theme_color": "black"
+}

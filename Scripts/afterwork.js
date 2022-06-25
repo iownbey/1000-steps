@@ -114,3 +114,9 @@ backgroundCanvas.triggerBattle  = () => {
     $("#fore").css("visibility","hidden");
     backgroundCanvas.changeState("battle-state")
 };
+
+// register the service worker
+// Handles manual caching and allows for PWA
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+}
