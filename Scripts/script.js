@@ -605,6 +605,18 @@ function init$() {
 
 	let $health = $("#health-pop-in");
 	let $steps = $("#steps-pop-in");
+	
+	fetch("https://api.github.com/repos/iownbey/1000-steps/commits?sha=main&per_page=1").then(resp => resp.json())
+	.then((resp) => {
+		let commit = resp[0].commit;
+		$("#information").html(
+`-1000 Steps-
+Shift+F to toggle fullscreen.
+Shift+S to save.
+Shift+L to load.
+Last Commit on ${new Date(commit.author.date).toDateString()} by ${commit.author.name}: ${commit.message}`
+);
+	})
 
 	healthPopIn = new PopIn($health);
 	healthPopIn.setAnchor("top", "0vh");
