@@ -7,6 +7,8 @@ class Darkness extends Monster {
         this.rushSound = sound.loadPersistant("darkness/attack-choir");
 
         this.flashFrameGetter = new NonrepeatingGetter([[2,0],[3,0],[2,1],[3,1]]);
+
+        this.attackGetter = new NonrepeatingGetter([this.attack1,this.attack2,this.attack3]);
     }
 
     // Small Waves
@@ -157,7 +159,7 @@ class Darkness extends Monster {
     }
 
     async attack() {
-        return await this.attack1();
+        return await (this.attackGetter.get().apply(this));
     }
 
     html(root) {

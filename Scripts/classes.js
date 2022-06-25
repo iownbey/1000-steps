@@ -67,6 +67,7 @@ class Battle {
 		console.log("BATTLE: Battle started.");
 		SaveData.blockSaving = true;
 		this.monsters = monsters;
+		this.currentMonster = null;
 		mode = ModeEnum.fighting;
 		DialogueTypewriter.clearAll();
 		cover.flash("white",
@@ -178,8 +179,9 @@ class Battle {
 
 	dealPlayerDamage(damage) {
 		if (player.changeHealth(-damage)) {
-			_this.queueAction(function () {
-				topWriter.show(monster.myName + " has mortally wounded you!");
+			var _this = this;
+			this.queueAction(function () {
+				topWriter.show(_this.currentMonster.myName + " has mortally wounded you!");
 				_this.finishAction();
 			});
 		}
@@ -190,7 +192,7 @@ class Battle {
 		DialogueTypewriter.clearAll();
 		var _this = currentBattle;
 		_this.finishAction();
-		var monster = this.monsters[index];
+		var monster = this.currentMonster = this.monsters[index];
 		var attack = await monster.attack();
 		if (monster.dieAtEndOfTurn) {
 			index--;
@@ -1215,9 +1217,10 @@ class SoundManager {
 		return i;
 	}
 
-	playPersistant(persistant) {
+	playPersistant(persistant, force = true) {
 		var b = this.persistants[persistant];
-		b.stop().play();
+		if (force || !b.playing())
+			b.stop().play();
 	}
 
 	stop(fade = true) {
