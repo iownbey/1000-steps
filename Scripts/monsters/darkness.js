@@ -7,6 +7,7 @@ class Darkness extends Monster {
         this.rushSound = sound.loadPersistant("darkness/attack-choir");
 
         this.flashFrameGetter = new NonrepeatingGetter([[2,0],[3,0],[2,1],[3,1]]);
+        this.flashAttackSound = sound.loadPersistant("darkness/attack-slash");
 
         this.attackGetter = new NonrepeatingGetter([this.attack1,this.attack2,this.attack3]);
     }
@@ -93,13 +94,13 @@ class Darkness extends Monster {
 
         this.floatUpdate = false;
         CSSAnimation.trigger(this.jobj, "shake");
-        sound.playPersistant(this.rushSound);
         this.renderer.setSprite(2, 0);
         var _this = this;
         setTimeout(() => {
             CSSAnimation.trigger(_this.jobj, "shake");
             _this.shiverAnim.start();
             _this.renderer.setSprite(2,1);
+            sound.playPersistant(this.rushSound);
         },1000)
 
         var interaction = new TimingIndicator(document.getElementById("content-canvas"));
@@ -128,6 +129,7 @@ class Darkness extends Monster {
             _this.jobj.css(`transform","scaleX(${Math.sign(Math.random()-0.5)})`);
             const frame = _this.flashFrameGetter.get();
             _this.renderer.setSprite(frame[0],frame[1]);
+            sound.playPersistant(_this.flashAttackSound);
         }
 
         const intervals = [1,0.95,0.9,0.8,0.7,0.65,0.6,0.6,0.6,0.6,0.5];
