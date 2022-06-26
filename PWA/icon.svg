@@ -25,7 +25,7 @@
      showgrid="false"
      units="px"
      inkscape:zoom="23.147924"
-     inkscape:cx="17.042565"
+     inkscape:cx="15.076946"
      inkscape:cy="15.854554"
      inkscape:window-width="1920"
      inkscape:window-height="992"
@@ -39,12 +39,19 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:4.99999;stroke-linejoin:round"
+       id="rect844"
+       width="8.4697113"
+       height="8.4697113"
+       x="0"
+       y="-0.011430111" />
     <ellipse
-       style="fill:#ffffff;stroke-width:5.02039;stroke-linejoin:round;fill-opacity:1"
+       style="fill:#ffffff;fill-opacity:1;stroke-width:4.13724;stroke-linejoin:round"
        id="path31"
        cx="4.2234263"
        cy="4.2234259"
-       rx="4.2234263"
-       ry="4.2234259" />
+       rx="3.4804692"
+       ry="3.4804688" />
   </g>
 </svg>

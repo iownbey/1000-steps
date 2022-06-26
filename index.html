@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
+	<meta name="description" content="1000 Steps is an entire turn-based rpg designed for the browser. Save the world by defeating the darkness and make friends throughout the ten layers!">
+
 	<link rel="manifest" href="manifest.webmanifest">
+	<link rel="apple-touch-icon" href="pwa/icon192x192.png">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta name="theme-color" content="#000000"/>
 	
 	<title>1000 Steps</title>
 
@@ -19,12 +23,26 @@
 	<link  href="Styles/monsters.css"   rel="stylesheet">
 	<link  href="Styles/faces.css"      rel="stylesheet">
 	
-	<script src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js" integrity="sha256-D+v9meJzO2kOysLcNsgohfWBprXHO2WJWJj/hUhBX1s=" crossorigin="anonymous"></script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js" integrity="sha256-D+v9meJzO2kOysLcNsgohfWBprXHO2WJWJj/hUhBX1s=" crossorigin="anonymous"></script>
+	<script defer src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     
-	<script src="Scripts/classes.js" ></script>
-	<script src="Scripts/text.js"    ></script>
-	<script src="Scripts/script.js"  ></script>
+	<script defer src="Scripts/classes.js" ></script>
+	<script defer src="Scripts/text.js"    ></script>
+	<script defer src="Scripts/script.js"  ></script>
+
+	<script defer src="Scripts/Areas/area.js"></script>
+	<script defer src="Scripts/Areas/area-aorta.js"></script>
+	<script defer src="Scripts/Areas/area-underworld.js"></script>
+	<script defer src="Scripts/Areas/area-ocean.js"></script>
+
+	<script defer src="Scripts/monsters.js"></script>
+	<script defer src="Scripts/timing.js"  ></script>
+	<script defer src="Scripts/libraries/perlin.js"></script>
+	<script defer src="Scripts/libraries/Controller.min.js"></script>
+	<script defer src="Scripts/libraries/Controller.layouts.min.js"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/granim@2.0.0/dist/granim.min.js" integrity="sha256-79ATLdCUzg3BVrKHvdiOJY47UxdQ3viLUdvEsqh2apI=" crossorigin="anonymous"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/@mojs/core"></script>
+	<script defer src="Scripts/afterwork.js"  ></script>
 </head>
 <body id="body">
 	<canvas id="back-canvas"></canvas>
@@ -95,20 +113,5 @@
 
 	<canvas id="content-canvas" style="pointer-events: none;"></canvas>
 	<div id="cover" style="pointer-events: none;"></div>
-
-	<script src="Scripts/Areas/area.js"></script>
-	<script src="Scripts/Areas/area-aorta.js"></script>
-	<script src="Scripts/Areas/area-underworld.js"></script>
-	<script src="Scripts/Areas/area-ocean.js"></script>
-
-	<script src="Scripts/monsters.js"></script>
-	<script src="Scripts/timing.js"  ></script>
-	<script src="Scripts/libraries/perlin.js"></script>
-	<script src="Scripts/libraries/Controller.min.js"></script>
-	<script src="Scripts/libraries/Controller.layouts.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/granim@2.0.0/dist/granim.min.js" integrity="sha256-79ATLdCUzg3BVrKHvdiOJY47UxdQ3viLUdvEsqh2apI=" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@mojs/core"></script>
-	<script src="Scripts/afterwork.js"  ></script>
-
 </body>
 </html>

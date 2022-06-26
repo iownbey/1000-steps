@@ -6,10 +6,22 @@
     "display": "fullscreen",
     "background_color": "black",
     "description": "The web RPG",
-    "icons":[{
-        "src": "Images/icon.svg",
+    "icons":[
+        {
+        "src": "pwa/icon.svg",
         "sizes": "any"
-    }],
+        },
+        {
+            "src": "pwa/icon192x192.png",
+            "sizes": "192x192",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "pwa/icon512x512.png",
+            "sizes": "512x512",
+            "purpose": "any maskable"
+        }
+    ],
     "categories": ["games"],
     "orientation": "landscape",
     "theme_color": "black"
