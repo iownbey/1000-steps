@@ -84,7 +84,7 @@ var backgroundCanvas = new Granim({
                 ["#cc208e","#6713d2"],
                 ["#4facfe","#00f2fe"]
             ],
-            transitionSpeed: 500
+            transitionSpeed: 2000
         }
     }
 });
