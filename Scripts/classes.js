@@ -1055,20 +1055,19 @@ class PopIn {
 class SaveData {
 	constructor(notifier = null) {
 		this.notifier = notifier;
-		this.blockSave = false;
 		this.obj = {};
-		this.onSave = function () { };
-		var oldSave = {};//JSON.parse(localStorage.saveData || null) || {};
-		if (oldSave.load === true) {
+		this.beforeSave = function () { };
+		var oldSave = this.#getFromLocalStorage();
+		if (oldSave.obj.load === true) {
 			console.log("Loaded.");
 			this.obj = oldSave.obj;
 			this.obj.load = false;
 			this.forceSave();
-			this.showNotification("Game Loaded.")
+			this.#showNotification("Game Loaded.")
 		}
 	}
 
-	showNotification(message) {
+	#showNotification(message) {
 		if (this.notifier != null) this.notifier.show(message);
 	}
 
@@ -1085,31 +1084,32 @@ class SaveData {
 		this.obj[key] = value
 	}
 
+	#getFromLocalStorage() {
+		return JSON.parse(localStorage.saveData || null) || {obj:{}};
+	}
+
 	forceSet(key, value) {
-		var save = JSON.parse(localStorage.saveData || null) || {};
+		var save = this.#getFromLocalStorage();
 		save.obj[key] = value;
 		localStorage.saveData = JSON.stringify(save);
 	}
 
 	load() {
 		console.log("Loading...");
-		var oldSave =
-			JSON.parse(localStorage.saveData || null) || {};
-		oldSave.load = true;
-		oldSave.time = new Date().getTime();
-		localStorage.saveData = JSON.stringify(oldSave);
 
+		this.forceSet("load",true);
+		this.forceSet(new Date().getTime());
 		location.reload(false);
 	}
 
 	save() {
 		if (SaveData.blockSaving) {
-			this.showNotification("You are not allowed to save right now, sorry.")
+			this.#showNotification("You are not allowed to save right now, sorry.")
 			return;
 		}
-		this.onSave();
+		this.beforeSave();
 		this.forceSave();
-		this.showNotification("Game Saved.")
+		this.#showNotification("Game Saved.")
 	}
 
 	forceSave() {
@@ -1121,6 +1121,7 @@ class SaveData {
 		localStorage.saveData = JSON.stringify(saveData);
 	}
 }
+SaveData.blockSaving = false;
 
 class ScreenCover {
 	constructor(jqueryobj) {
