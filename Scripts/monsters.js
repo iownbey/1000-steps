@@ -882,6 +882,66 @@ class Reaper extends Monster {
     }
 }
 
+class Shark extends Monster {
+    constructor() {
+        super("Shark", 50, 0, 0.3);
+    }
+
+    async attack() {
+
+        // Has a normal attack
+        // Sometimes goes into a rage
+        return {text:"shorky shork"};
+    }
+
+    async hit(damage) {
+        this.h -= damage;
+        if (this.h <= 0) return true;
+        else {
+            // Sometimes gets angry
+            return false;
+        }
+    }
+
+    talk() {
+        // Add shark flavor text
+        return ["The fish makes indeterminate gurgles in response."];
+    }
+
+    magic() {
+        return "Sharks are too stupid to be affected by magic.";
+    }
+
+    inspect() {
+        // TODO: Shark inspect
+        var _this = this;
+        return [
+            { text: "Let's see...", aExpr: expr.emery.happy },
+            ["Shark:|Health is " + _this.h + "/50|Attack is 7"],
+            ["Sharks are known for their tempers.|When they get angry they deal double damage and use STRONG attacks."],
+            ["Maybe try to keep them calm???"]
+        ]
+    }
+
+    html(root) {
+        var $shark = $('<canvas style="height:150%;width:150%;left:-25%;" id="marty"></canvas>');
+        this.jobj = $shark;
+        this.canvas = $shark[0];
+        $shark.appendTo(root);
+
+        this.renderer = new SpriteRenderer($shark[0], "./Images/Ocean/shark.png", 64, 64);
+
+        var _this = this;
+        this.renderer.onload = () => {
+            _this.renderer.setSprite(0, 1);
+        };
+
+        this.breatheAnim = new CSSAnimation($shark, "trollPose").start();
+    }
+
+
+}
+
 class Skeleton extends Monster {
     constructor() {
         super("Generic Skeleton", 30, 2, 1);

@@ -428,10 +428,10 @@ async function shiftKeys(event) {
 		case "N": {
 			// asynchronous context
 			file.set("IntroComplete", true);
-			area = new Area_Aorta();
+			area = new Area_Ocean();
 			StartMainGame();
-			await loadScript("monsters/darkness.js");
-			currentBattle = new Battle("darkness-fight", [new Darkness()], false);
+			//await loadScript("monsters/darkness.js");
+			//currentBattle = new Battle("darkness-fight", [new Darkness()], false);
 		}; break;
 	}
 }
@@ -567,10 +567,10 @@ function initIntro() {
 }
 
 function initSave() {
-	area = new Area_Aorta();
+	area = file.get("area", new Area_Aorta());
 	var events = file.get("events", null);
 	if (events !== null) area.events = events;
-	file.onSave = function () {
+	file.beforeSave = function () {
 		if (area.currentEvent != null) {
 			file.set("Steps-Left", file.get("Steps-Left") + 1);
 			file.set("events", [area.currentEvent].concat(area.events));
@@ -609,13 +609,16 @@ function init$() {
 	fetch("https://api.github.com/repos/iownbey/1000-steps/commits?sha=main&per_page=1").then(resp => resp.json())
 	.then((resp) => {
 		let commit = resp[0].commit;
-		$("#information").html(
+		let $info = $("#information");
+		$info.html(
 `-1000 Steps-
 Shift+F to toggle fullscreen.
 Shift+S to save.
 Shift+L to load.
 Last Commit on ${new Date(commit.author.date).toDateString()} by ${commit.author.name}: ${commit.message}`
 );
+		$info.css("opacity","1");
+		setTimeout(()=>{$info.css("transition","default")},2000);
 	})
 
 	healthPopIn = new PopIn($health);

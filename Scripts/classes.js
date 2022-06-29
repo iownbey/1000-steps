@@ -1733,6 +1733,9 @@ class Writer {
 		this.break = this.complete;
 	}
 
+	/**
+	 * @param {function} value
+	 */
 	set letterCallback(value) {
 		this.typewriter.letterCallback = value;
 	}
@@ -1745,6 +1748,10 @@ class Writer {
 		if (next === text.break)
 		{
 			this.break = true;
+		}
+		else if (typeof(next) === "function")
+		{
+			next();
 		}
 		else
 		{

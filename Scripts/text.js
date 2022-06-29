@@ -45,6 +45,11 @@ ex.oscar.happy = faceHandler.registerExpression(1, 6);
 ex.oscar.sad   = faceHandler.registerExpression(3, 6);
 ex.oscar.superhappy   = faceHandler.registerExpression(5, 6);
 
+ex.martimer = {};
+ex.martimer.happy = faceHandler.registerExpression(1,7);
+ex.martimer.sad = faceHandler.registerExpression(3,7);
+ex.martimer.angry = faceHandler.registerExpression(5,7);
+
 const expr = Object.freeze(ex);
 delete ex;
 
