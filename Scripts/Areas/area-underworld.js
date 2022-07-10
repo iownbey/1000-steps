@@ -309,8 +309,8 @@ Area_Underworld.fightThaddeus = Area.registerEvent(async function () {
     else // Decline
     {
         await new Writer(bottomWriter, Area_Underworld.text.preFightThaddeus.chooseNo).writeAllAsync();
-        currentBattle = new Battle("thaddeus", [new Thaddeus()], false);
-        await currentBattle.getPromise();
+        Battle.current = new Battle("thaddeus", [new Thaddeus()], false);
+        await Battle.current.getPromise();
 
         DialogueTypewriter.clearAll();
         await Helper.delay(2);

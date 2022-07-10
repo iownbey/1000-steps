@@ -101,8 +101,8 @@ Area_Aorta.meetVirgil    = Area.registerEvent(async function () {
 								"If this happens, The fight will be over, and you must accept my training.",
 								"Prepare to combat with the master of blade and sorrow."
 							]).writeAllAsync();
-							currentBattle = new Battle("virgil-theme", [new Virgil()], false);
-							await currentBattle.getPromise();
+							Battle.current = new Battle("virgil-theme", [new Virgil()], false);
+							await Battle.current.getPromise();
 						}; break;
 					case "Nevermind":
 						{
@@ -175,8 +175,8 @@ Area_Aorta.meetTroll1    = Area.registerEvent(async function () {
 	contentManager.approach();
 	await new Writer(bottomWriter, text.aorta.trollFoundText).writeAllAsync();
 
-	currentBattle = new Battle("fight", [new Troll()], false);
-	await currentBattle.getPromise();
+	Battle.current = new Battle("fight", [new Troll()], false);
+	await Battle.current.getPromise();
 });
 
 Area_Aorta.meetTroldiers = Area.registerEvent(async function () {
@@ -188,8 +188,8 @@ Area_Aorta.meetTroldiers = Area.registerEvent(async function () {
 	await Helper.delay(2);
 
 	await new Writer(bottomWriter, text.aorta.meetTroldiersText).writeAllAsync();
-	currentBattle = new Battle("fight", [new Troldier(), new Troldier(), new Troldier()], false);
-	await currentBattle.getPromise();
+	Battle.current = new Battle("fight", [new Troldier(), new Troldier(), new Troldier()], false);
+	await Battle.current.getPromise();
 });
 
 Area_Aorta.meetAmadeus   = Area.registerEvent(async function () {
@@ -235,8 +235,8 @@ Area_Aorta.fightAmadeus  = Area.registerEvent(async function () {
 	Amadeus.sprites.setSprite($b, 1, 1);
 	await contentManager.approachFromLeft();
 	await new Writer(bottomWriter, text.aorta.prefightAmadeusText).writeAllAsync();
-	currentBattle = new Battle("amadeus", [new Amadeus()], false);
-	await currentBattle.getPromise();
+	Battle.current = new Battle("amadeus", [new Amadeus()], false);
+	await Battle.current.getPromise();
 });
 
 Area_Aorta.meetOscar = Area.registerEvent(function () {

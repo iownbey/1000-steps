@@ -26,9 +26,6 @@ class Animator {
 	}
 }
 
-/** @type {Battle} */
-var currentBattle = null;
-
 class Queue {
 	constructor() {
 		this.events = [];
@@ -121,7 +118,7 @@ class Battle {
 
 	startPlayerTurn() {
 		console.log("BATTLE: Player turn started.")
-		var _this = currentBattle;
+		var _this = Battle.current;
 		_this.finishAction();
 		DialogueTypewriter.clearAll();
 		_this.menu = _this.getMenu(_this);
@@ -190,7 +187,7 @@ class Battle {
 	async monsterTurn(index) {
 		console.log("BATTLE: Starting Monster " + index + " Turn");
 		DialogueTypewriter.clearAll();
-		var _this = currentBattle;
+		var _this = Battle.current;
 		_this.finishAction();
 		var monster = this.currentMonster = this.monsters[index];
 		var attack = await monster.attack();
@@ -226,7 +223,7 @@ class Battle {
 	}
 
 	checkFinished() {
-		var _this = currentBattle;
+		var _this = Battle.current;
 		var finished = true;
 		if (_this.monsters.length > 0) {
 			_this.monsters.forEach(function (element) {
@@ -371,7 +368,7 @@ class Battle {
 			SaveData.blockSaving = false;
 			_this.charAnim.end();
 			mode = ModeEnum.walking;
-			currentBattle = null;
+			Battle.current = null;
 			player.defending = false;
 			playBackgroundMusic();
 			if (_this.onfinish) _this.onfinish();
@@ -379,7 +376,7 @@ class Battle {
 			backgroundCanvas.triggerDefault();
 		}
 
-		if (currentBattle.monsters.length > 0) {
+		if (Battle.current.monsters.length > 0) {
 			this.eventQueue.priorityPush(finishEnd);
 			this.eventQueue.priorityPush(function () {
 				topWriter.show("Everyone else was unimportant.");
@@ -396,7 +393,7 @@ class Battle {
 		SaveData.blockSaving = false;
 		this.charAnim.end();
 		mode = ModeEnum.walking;
-		currentBattle = null;
+		Battle.current = null;
 		player.defending = false;
 		playBackgroundMusic();
 		backgroundCanvas.triggerDefault();
@@ -407,6 +404,8 @@ class Battle {
 		return new Promise((r) => { _this.onfinish = r });
 	}
 }
+/** @type {Battle} */
+Battle.current = null;
 Battle.damagestr = '{$d}'
 
 class SpriteRenderer {

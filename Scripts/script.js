@@ -183,7 +183,7 @@ async function attack(monster) {
 	if (await monster.hit(damage)) {
 		sound.playFX("deathfx");
 		var add = nl + "You killed " + monster.myName + ".";
-		currentBattle.kill(monster);
+		Battle.current.kill(monster);
 		topWriter.show(basephrase + add);
 	}
 	else {
@@ -195,9 +195,9 @@ async function attack(monster) {
 function runAway(monsters) {
 	lastCalled = runAway;
 	topWriter.show("You run...");
-	currentBattle.recede();
-	currentBattle.queueAction(function () {
-		currentBattle.approach();
+	Battle.current.recede();
+	Battle.current.queueAction(function () {
+		Battle.current.approach();
 
 		var total = monsters.length;
 		var ranfrom = 0;
@@ -205,7 +205,7 @@ function runAway(monsters) {
 		monsters.forEach(function (monster) {
 			if (monster.run()) {
 				ranfrom++;
-				currentBattle.kill(monster);
+				Battle.current.kill(monster);
 				ranfromName = monster.myName;
 			}
 		});
@@ -234,7 +234,7 @@ function runAway(monsters) {
 		}
 
 
-		currentBattle.finishAction();
+		Battle.current.finishAction();
 	});
 }
 
@@ -294,23 +294,23 @@ function talk(monster) {
 	var response = monster.talk();
 	topWriter.show("You attempt to communicate with " + monster.myName + ".");
 	if ((typeof response) == "string") {
-		currentBattle.queueAction(function () {
+		Battle.current.queueAction(function () {
 			topWriter.show(response);
-			currentBattle.finishAction();
+			Battle.current.finishAction();
 		});
 	}
 	else if (Array.isArray(response)) {
 		var w = new Writer(topWriter, response);
-		currentBattle.queueAction(function () {
+		Battle.current.queueAction(function () {
 			w.write();
-			if (w.complete) currentBattle.finishAction();
+			if (w.complete) Battle.current.finishAction();
 		});
 	}
 	else {
-		currentBattle.queueAction(function () {
+		Battle.current.queueAction(function () {
 			console.log("Doer doing");
 			response.do();
-			if (response.complete) currentBattle.finishAction();
+			if (response.complete) Battle.current.finishAction();
 		});
 	}
 }
@@ -322,14 +322,14 @@ function inspect(monster) {
 	var w2 = new Writer(bottomWriter, monster.inspect())
 	var doit2 = function () {
 		w2.write();
-		if (w2.complete) currentBattle.finishAction();
+		if (w2.complete) Battle.current.finishAction();
 	}
 
 	switch (level) {
 		case 2:
 		case 0:
 			{
-				currentBattle.queueAction(doit2);
+				Battle.current.queueAction(doit2);
 			}; break;
 
 		case 1:
@@ -339,10 +339,10 @@ function inspect(monster) {
 					w.write();
 					if (w.complete) {
 						file.set("Inspect-Level", 2);
-						currentBattle.changeAction(doit2);
+						Battle.current.changeAction(doit2);
 					}
 				}
-				currentBattle.queueAction(doit);
+				Battle.current.queueAction(doit);
 			}; break;
 	}
 }
@@ -422,16 +422,14 @@ async function getChoice(options, cursor) {
 
 async function shiftKeys(event) {
 	switch (event.key) {
-		case "S": file.save(); break;
-		case "L": file.load(); break;
+		case "S": /*file.save();*/ break;
+		case "L": /*file.load();*/ break;
 		case "F": toggleFullscreen(); break;
 		case "N": {
-			// asynchronous context
 			file.set("IntroComplete", true);
-			area = new Area_Ocean();
 			StartMainGame();
-			//await loadScript("monsters/darkness.js");
-			//currentBattle = new Battle("darkness-fight", [new Darkness()], false);
+			await loadScript("monsters/darkness.js");
+			Battle.current = new Battle("darkness-fight", [new Darkness()], false);
 		}; break;
 	}
 }
@@ -452,7 +450,7 @@ function handleInput(event) {
 			introInput(event);
 		}
 		else if (mode == ModeEnum.fighting) {
-			currentBattle.handleInput(event);
+			Battle.current.handleInput(event);
 		}
 		else if (currentDoer != null) {
 			currentDoer.do();
@@ -566,7 +564,7 @@ function initIntro() {
 	]);
 }
 
-function initSave() {
+/*function initSave() {
 	area = file.get("area", new Area_Aorta());
 	var events = file.get("events", null);
 	if (events !== null) area.events = events;
@@ -579,7 +577,7 @@ function initSave() {
 			file.set("events", area.events);
 		}
 	}
-}
+}*/
 
 function init$() {
 	faceHandler.init($("#face1").add("#face2"), new SpriteSheet("Images/faces.png", 16, 16));
@@ -613,8 +611,6 @@ function init$() {
 		$info.html(
 `-1000 Steps-
 Shift+F to toggle fullscreen.
-Shift+S to save.
-Shift+L to load.
 Last Commit on ${new Date(commit.author.date).toDateString()} by ${commit.author.name}: ${commit.message}`
 );
 		$info.css("opacity","1");
@@ -650,7 +646,7 @@ doc.ready(function () {
 
 	init$();
 
-	initSave();
+	//initSave();
 
 	initIntro();
 
