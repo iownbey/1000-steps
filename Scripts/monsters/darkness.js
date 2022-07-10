@@ -10,6 +10,16 @@ class Darkness extends Monster {
         this.flashAttackSound = sound.loadPersistant("darkness/attack-slash");
 
         this.attackGetter = new NonrepeatingGetter([this.attack1,this.attack2,this.attack3]);
+
+        this.dialogue = new SequenceGetter([
+            "I HAVEN'T HAD A FIGHT LIKE THIS IN LIFETIMES",
+            "WE'VE HAD MANY NAMES...|LIGHT & DARK, YIN & YANG, LIFE & DEATH",
+            "BROTHER, WHY DON'T YOU GIVE IN?",
+            "YOU CAN GO BACK TO RESTING ONCE AGAIN. PERFECT PEACE...",
+            "LET ME RULE THE WORLD",
+            "WHY CAN'T I HAVE MY WAY?|ARE YOU AFRAID OF THE DARK?",
+            "BROTHER, YOU ARE WEAK FROM YOUR TIME IN THE HEART OF THE EARTH"
+        ],false);
     }
 
     // Small Waves
@@ -78,14 +88,12 @@ class Darkness extends Monster {
         function distance(d, point) {
             return Math.abs((d+1.5) - (point)) > 0.1;
         }
-        await (async () => {
-            for (let i = 0; i < 80; i++) {
-                delay += 0.05;
-                if (distance(delay,pointLoc1) && distance(delay,pointLoc2) && distance(delay,pointLoc3) && distance(delay,pointLoc4))
-                    points.push(new SpinPoint(offset, 3, i * 0.05).lure());
-                if (i % 10 == 0) await new Promise(res => setTimeout(res))
-            }
-        })();
+
+        for (let i = 0; i < 80; i++) {
+            delay += 0.05;
+            if (distance(delay,pointLoc1) && distance(delay,pointLoc2) && distance(delay,pointLoc3) && distance(delay,pointLoc4))
+                points.push(new SpinPoint(offset, 3, i * 0.05).lure());
+        }
         
         points.push(new SpinPoint(offset.scale(0.5), 3, pointLoc1-1.5));
         points.push(new SpinPoint(offset.scale(0.5), 3, pointLoc2-1.5));
@@ -218,7 +226,7 @@ class Darkness extends Monster {
     }
 
     magic() {
-        return "Idiot."
+        return ["IDIOT.", "I AM THE DARKNESS.", "LIGHT BECOMES LOST IN MY VERY FORM."];
     }
 
     inspect() {
