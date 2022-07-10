@@ -15,6 +15,8 @@
 
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
 	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 	<link  href="Styles/styles.css"     rel="stylesheet">
@@ -38,10 +40,11 @@
 	<script defer src="Scripts/monsters.js"></script>
 	<script defer src="Scripts/timing.js"  ></script>
 	<script defer src="Scripts/libraries/perlin.js"></script>
-	<script defer src="Scripts/libraries/Controller.min.js"></script>
-	<script defer src="Scripts/libraries/Controller.layouts.min.js"></script>
+	<script defer src="Scripts/libraries/Controller.js"></script>
+	<script defer src="Scripts/libraries/Controller.layouts.js"></script>
 	<script defer src="https://cdn.jsdelivr.net/npm/granim@2.0.0/dist/granim.min.js" integrity="sha256-79ATLdCUzg3BVrKHvdiOJY47UxdQ3viLUdvEsqh2apI=" crossorigin="anonymous"></script>
-	<script defer src="https://cdn.jsdelivr.net/npm/@mojs/core"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/mo-js@0.288.2/build/mo.min.js"   integrity="sha256-VC3SEa0yDbQY9+b0peWxyR65rJS2eqPWlLSZEtPvAkA=" crossorigin="anonymous"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.js" integrity="sha256-icjghcPaibMf1jv4gQIGi5MeWNHem2SispcorCiCfSg=" crossorigin="anonymous"></script>
 	<script defer src="Scripts/afterwork.js"  ></script>
 </head>
 <body id="body">
@@ -111,7 +114,8 @@
 	<p id="health-pop-in" class="bordered big-text"></p>
 	<p id="steps-pop-in" class="bordered big-text"></p>
 
-	<canvas id="content-canvas" style="pointer-events: none;"></canvas>
-	<div id="cover" style="pointer-events: none;"></div>
+	<div id="particles-js"></div>
+	<canvas id="content-canvas"></canvas>
+	<div id="cover"></div>
 </body>
 </html>

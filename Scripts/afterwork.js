@@ -119,4 +119,5 @@ backgroundCanvas.triggerBattle  = () => {
 // Handles manual caching and allows for PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js');
-}
+}particlesJS.load('particles-js', 'scripts/libraries/particlesjs-config.json');
+
