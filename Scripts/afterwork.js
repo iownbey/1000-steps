@@ -119,5 +119,28 @@ backgroundCanvas.triggerBattle  = () => {
 // Handles manual caching and allows for PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js');
-}particlesJS.load('particles-js', 'scripts/libraries/particlesjs-config.json');
+}
 
+// register particles.js
+particlesJS.load('particles-js', 'scripts/libraries/particlesjs-config.json');
+
+// register mo.js objects
+let burstPool = [];
+for (let i = 0; i < 5; i++) 
+{
+    burstPool.push(new mojs.Burst({
+    left: 0, top: 0,
+    radius:   { 0: 100 },
+    angle:    45,
+    count: 20,
+    children: {
+      shape:        'circle',
+      radius:       10,
+      scale:        { '1' : '0' },
+      duration:     700,
+      easing:       'sin.out',
+      fill: 'blue'
+    }
+  }));
+}
+TimingIndicator.burstPool = new SequenceGetter(burstPool);
