@@ -1,7 +1,8 @@
 
 class Area_Ocean extends Area {
 	constructor() {
-		super(Area_Ocean.text.flavor, ["Sponge", "Shark"], "fight");
+		super(Area_Ocean.text.flavor, ["Sponge", "Shark", "ManglerFish"], "ocean-fight");
+
 	}
 
 	getEvents() {
@@ -40,6 +41,7 @@ class Area_Ocean extends Area {
 		changeBackground("ocean");
 		topWriter.show("You have entered the great Ocean.");
 		sound.playMusic(this.getBackgroundMusic());
+		loadScript("monsters/ocean-monsters.js");
 	}
 
 	fillGrabBagThing(length = 10, a = [Area.fightEvent]) {
@@ -75,7 +77,7 @@ Area_Ocean.firstStep = Area.registerEvent(async function() {
 		"...",
 		["This is the vast underground ocean."],
 		["It's full of dolphins!!!"],
-		["and sharks"],
+		["and sharks", expr.emery.annoyed],
 		["and they don't like eachother"],
         "You push onward."
 	]).writeAllAsync();
@@ -103,5 +105,5 @@ Area_Ocean.meetMortimer = Area.registerEvent(async function() {
 		["The SHARKS!!!"],
 	]).writeAllAsync();
 
-	currentBattle = new Battle("",[new Shark(), new Shark(), new Shark()],true);
+	Battle.current = new Battle("ocean-fight",[new Shark(), new Shark(), new Shark()],true);
 });
