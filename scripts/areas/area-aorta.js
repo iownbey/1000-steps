@@ -1,7 +1,7 @@
 
 class Area_Aorta extends Area {
 	constructor() {
-		super(text.aorta.walkFlavor, ["Troll", "Sponge", "Door", "Decoy"], "fight");
+		super(text.aorta.walkFlavor, ["Troll", "Door", "Decoy"], "fight");
 	}
 
 	getEvents() {
@@ -162,9 +162,7 @@ Area_Aorta.meetVirgil    = Area.registerEvent(async function () {
 	}
 
 	DialogueTypewriter.clearAll();
-	contentManager.recede();
-	//sleep for 1 second
-	await Helper.delay(1);
+	await contentManager.recede(true);
 	contentManager.clear();
 	console.log("done");
 });

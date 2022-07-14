@@ -30,11 +30,12 @@ class Area {
     static boundArea;
 
     static registerArea(type) {
-        Area.possibleEvents.set(Area.boundArea = type,[]);
+        //Area.possibleEvents.set(Area.boundArea = type,[]);
     }
 
     static registerEvent(element) {
-        return Area.possibleEvents.get(Area.boundArea).push(element) - 1;
+        //return Area.possibleEvents.get(Area.boundArea).push(element) - 1;
+        return element;
     }
 
     getEvents() {
@@ -92,7 +93,8 @@ class Area {
         var _this = this;
         var handleEvent = async function (event) {
             _this.currentEvent = event;
-            var r = Area.possibleEvents.get(_this.constructor)[event]();
+            //var r = Area.possibleEvents.get(_this.constructor)[event]();
+            var r = event();
             if (!((r == undefined) || (r == null))) {
                 await r;
             }

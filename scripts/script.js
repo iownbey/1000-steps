@@ -423,8 +423,8 @@ async function shiftKeys(event) {
 		case "N": {
 			file.set("IntroComplete", true);
 			StartMainGame();
-			await loadScript("monsters/darkness.js");
-			Battle.current = new Battle("darkness-fight", [new Darkness()], false);
+			//await loadScript("monsters/darkness.js");
+			//Battle.current = new Battle("darkness-fight", [new Darkness()], false);
 		}; break;
 	}
 }
