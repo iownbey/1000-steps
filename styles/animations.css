@@ -1,0 +1,284 @@
+@keyframes approaching
+{
+	from
+	{
+		left: 33%;
+		right: 33%;
+		height: 10%;
+		bottom: 73.7%;
+	}
+
+	to
+	{
+		left: 0%;
+		right: 0%;
+		height: 30%;
+		bottom: 44%;
+	}
+}
+
+@keyframes receding
+{
+	from
+	{
+		left: 0%;
+		right: 0%;
+		height: 30%;
+		bottom: 44%;
+	}
+
+	to
+	{
+		left: 33%;
+		right: 33%;
+		height: 10%;
+		bottom: 73.7%;
+	}
+}
+
+@keyframes fromLeft
+{
+	from 	{transform: translateX(-150%);};
+	to 	{transform: translateX(0px);}
+}
+
+.fromLeft
+{
+	animation: fromLeft 1 forwards ease-out 1s;
+}
+
+.toLeft
+{
+	animation: fromLeft 1 forwards ease-in 1s;
+	animation-direction: reverse;
+}
+
+.left
+{
+	transform: translateX(-150%);
+}
+
+.approaching
+{
+	animation: approaching 1 forwards ease-out 1s;
+}
+
+.receding
+{
+	animation: receding 1 forwards ease-out 1s;
+}
+
+.here
+{
+	left: 0%;
+	right: 0%;
+	height: 30%;
+	bottom: 44%;
+}
+
+.there
+{
+	left: 33%;
+	right: 33%;
+	height: 10%;
+	bottom: 73.7%;
+}
+
+@keyframes fallOver
+{
+	from 	{transform: rotateX(0deg);}
+	to 	{transform: rotateX(60deg);}
+}
+
+.fallOver
+{
+	animation: fallOver ease-in 3s forwards;
+	transform-origin: bottom;
+	perspective: 650px;
+	perspective-origin: bottom;
+}
+
+@keyframes ghostPose
+{
+	0% {transform: translateY(-2px);}
+	50% {transform: translateY(2px);}
+	100% {transform: translateY(-2px);}
+}
+
+.ghostPose
+{
+	animation: ghostPose 4s var(--cos) infinite;
+}
+
+@keyframes trollPose
+{
+	0%  {transform: scaleY(1);}
+	50% {transform: scaleY(1.02);}
+	100%{transform: scaleY(1);}
+}
+
+.trollPose
+{
+	animation: trollPose 4s ease-in-out infinite;
+	transform-origin: bottom;
+}
+
+@keyframes spongePose
+{
+	0%  {transform: scaleY(1.04) scaleX(0.96);}
+	50%  {transform: scaleY(0.96) scaleX(1.04);}
+	100%  {transform: scaleY(1.04) scaleX(0.96);}
+}
+
+.spongePose
+{
+	animation: spongePose 4s ease-in-out infinite;
+	transform-origin: bottom;
+}
+
+@keyframes spin360
+{
+	from {transform: rotate(0turn);}
+	to   {transform: rotate(1turn);}
+}
+
+.spin360
+{
+	animation: spin360 0.333s ease-in-out;
+	transform-origin: bottom;
+}
+
+@keyframes shiver
+{
+	0%  {transform: translateX(0px);}
+	25% {transform: translateX(2px);}
+	50% {transform: translateX(-2px);}
+	75% {transform: translateX(2px);}
+	100%{transform: translateX(0px);}
+}
+
+.shiver
+{
+	animation: shiver 0.1s ease-in-out;
+}
+
+@keyframes hover
+{
+	0%  {transform: translateY(-4px);}
+	50% {transform: translateY(4px);}
+	100%{transform: translateY(-4px);}
+}
+
+.hover
+{
+	animation: hover 2s var(--cos);
+}
+
+@keyframes shake
+{
+	0%  {transform: translateX(0px);}
+	25% {transform: translateX(16px);}
+	50% {transform: translateX(-16px);}
+	75% {transform: translateX(16px);}
+	100%{transform: translateX(0px);}
+}
+
+.shake
+{
+	animation: shake 0.1s ease-in-out !important; 
+}
+
+@keyframes aragoreHeadSway
+{
+	25% {transform: translateX(6px);}
+	75% {transform: translateX(-6px);}
+}
+
+@keyframes fadeInOpacity
+{
+	from
+	{
+		opacity: 0;
+	}
+
+	to
+	{
+		opacity: 1;
+	}
+}
+
+.fadeInOpacity
+{
+	animation: fadeInOpacity 0.5s ease-in-out;
+}
+
+.introText
+{
+	min-width: 0.5em;
+	display: inline-block;
+	animation: fadeInOpacity 0.5s ease-in-out, hover 2s var(--cos) infinite;
+}
+
+@keyframes flashRed
+{
+	0%  {color: red;}
+	100%{color: white;}
+}
+
+.flashRed
+{
+	animation: flashRed 0.75s ease-out;
+}
+
+@keyframes dolphinPose
+{
+	 from {
+		transform: translateY(0%) rotate(-0.025turn) scale(1);
+		animation-timing-function: ease-in;
+	 }
+	 50% {
+		transform: translateY(-5%) scale(1.01);
+		animation-timing-function: ease-out;
+	 }
+	 to {
+		transform: translateY(0%) rotate(0.05turn) scale(1);
+		animation-timing-function: ease-in;
+	 }
+}
+
+.dolphinPose
+{
+	animation-name: dolphinPose;
+	animation-duration: 1s;
+	animation-direction: alternate;
+	animation-iteration-count: infinite;
+
+	transform-origin: 70% 80%;
+}
+
+@keyframes scytheSpin
+{
+	from{
+		transform: rotate(0turn);
+	}
+	25%{
+		transform: rotate(3turn);
+	}
+	50%{
+		transform: rotate(2.97turn);
+	}
+	75%{
+		transform: rotate(3.03turn);
+	}
+	100%{
+		transform: rotate(3turn);
+	}
+}
+.scytheSpin
+{
+	animation-name: scytheSpin;
+	animation-duration: 7.3s;
+	animation-direction: normal;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+}
