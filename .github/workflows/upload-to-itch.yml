@@ -26,7 +26,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'release.zip'
-          exclusions: '*.git* /*node_modules/* .editorconfig *.flp'
+          exclusions: '*.git* /*node_modules/* .editorconfig *.flp *.xcf'
 
       - name: Upload to Itch
         uses: manleydev/butler-publish-itchio-action@master
