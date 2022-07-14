@@ -67,7 +67,7 @@ Area_Aorta.meetVirgil    = Area.registerEvent(async function () {
 	contentManager.add($wrapper);
 	contentManager.approach();
 
-	var renderer = new SpriteRenderer($virgil[0], "./Images/virgil.png", 64, 64);
+	var renderer = new SpriteRenderer($virgil[0], "./images/virgil.png", 64, 64);
 	await renderer.waitForLoad();
 	renderer.setSprite(0, 0);
 
@@ -251,7 +251,7 @@ Area_Aorta.meetOscar = Area.registerEvent(function () {
 
 
         var animHandle;
-        var renderer = new SpriteRenderer($oscar[0], "./Images/oscar.png", 32, 32);
+        var renderer = new SpriteRenderer($oscar[0], "./images/oscar.png", 32, 32);
         await new Promise(resolve => {
             renderer.onload = () => {
                 var fs = new SequenceGetter([{ x: 1, y: 0 }, { x: 2, y: 0 }], true);

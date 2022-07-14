@@ -895,7 +895,7 @@ class HealthDisplay {
 
 class Helper {
 	static imageURL(name) {
-		return "Images/" + name + ".png";
+		return "images/" + name + ".png";
 	}
 
 	static async delay(seconds) {
@@ -1171,7 +1171,7 @@ class SoundManager {
 	}
 
 	getFileName(song) {
-		return "Sounds/" + song;
+		return "sounds/" + song;
 	}
 
 	playMusic(song, crossFade = true) {
@@ -1293,7 +1293,7 @@ class SparkHandler {
 			}
 			else {
 				lit = true;
-				SpriteSheet.setSprite(s, "Images/sparkBase.png");
+				SpriteSheet.setSprite(s, "images/sparkBase.png");
 				_this.sparkJob = setTimeout(flicker, Math.randomInt(100, 500));
 			}
 		}
@@ -1788,7 +1788,7 @@ class Writer {
 //Static Variables:
 
 SaveData.blockSaving = false;
-SparkHandler.sparkSprites = new SpriteSheet("Images/sparks.png", 2, 2);
-SparkHandler.flameSprites = new SpriteSheet("Images/flames.png", 2, 2);
-Player.sprites = new SpriteSheet("Images/character.png", 4, 8);
+SparkHandler.sparkSprites = new SpriteSheet("images/sparks.png", 2, 2);
+SparkHandler.flameSprites = new SpriteSheet("images/flames.png", 2, 2);
+Player.sprites = new SpriteSheet("images/character.png", 4, 8);
 Player.attackAnim = [{ x: 2, y: 1 }, { x: 3, y: 1 }, { x: 4, y: 1 }, { x: 1, y: 2, time: 500 }, { x: 1, y: 1 }];

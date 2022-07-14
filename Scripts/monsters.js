@@ -234,7 +234,7 @@ class Amadeus extends Monster {
         ]
     }
 }
-Amadeus.sprites = new SpriteSheet("Images/troll2.png", 4, 1);
+Amadeus.sprites = new SpriteSheet("images/troll2.png", 4, 1);
 
 class Chain extends Monster {
     constructor() {
@@ -287,7 +287,7 @@ class Chain extends Monster {
         this.canvas = $content[0];
         $content.appendTo(root);
 
-        this.renderer = new SpriteRenderer($content[0], "./Images/chain.png", 64, 64);
+        this.renderer = new SpriteRenderer($content[0], "./images/chain.png", 64, 64);
 
         var _this = this;
         this.renderer.onload = () => {
@@ -544,7 +544,7 @@ class MasterSponge extends Monster {
         this.canvas = $virgil[0];
         $virgil.appendTo(root);
 
-        this.renderer = new SpriteRenderer($virgil[0], "./Images/master-sponge.png", 1024, 1024);
+        this.renderer = new SpriteRenderer($virgil[0], "./images/master-sponge.png", 1024, 1024);
 
         var _this = this;
         this.renderer.onload = () => {
@@ -725,7 +725,7 @@ class Skeleton extends Monster {
     }
 }
 Skeleton.attackAnim = [{ x: 4, y: 1 }, { x: 4, y: 2, time: 500 }, { x: 1, y: 1 }];
-Skeleton.sprites = new SpriteSheet("Images/skeleton.png", 4, 2);
+Skeleton.sprites = new SpriteSheet("images/skeleton.png", 4, 2);
 
 class Thaddeus extends Monster {
     constructor() {
@@ -797,7 +797,7 @@ class Thaddeus extends Monster {
         ]
     }
 }
-Thaddeus.sprites = new SpriteSheet("Images/thaddeus.png", 2, 2);
+Thaddeus.sprites = new SpriteSheet("images/thaddeus.png", 2, 2);
 
 class Troldier extends Monster {
     constructor() {
@@ -1083,7 +1083,7 @@ class Virgil extends Monster {
         this.canvas = $virgil[0];
         $virgil.appendTo(root);
 
-        this.renderer = new SpriteRenderer($virgil[0], "./Images/virgil.png", 64, 64);
+        this.renderer = new SpriteRenderer($virgil[0], "./images/virgil.png", 64, 64);
 
         var _this = this;
         this.renderer.onload = () => {

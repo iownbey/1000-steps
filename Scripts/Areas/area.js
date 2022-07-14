@@ -153,7 +153,7 @@ Area.fightChain = Area.registerEvent(function () {
         $virgil.appendTo($wrapper);
         contentManager.add($wrapper);
 
-        var renderer = new SpriteRenderer($virgil[0], "./Images/chain.png", 64, 64);
+        var renderer = new SpriteRenderer($virgil[0], "./images/chain.png", 64, 64);
         renderer.onload = () => {
             renderer.setSprite(0, 0);
         }

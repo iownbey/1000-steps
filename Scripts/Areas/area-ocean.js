@@ -93,7 +93,7 @@ Area_Ocean.meetMortimer = Area.registerEvent(async function() {
 	var $a = $('<div class="monster"></div>');
 	var $marty = $('<canvas style="height:150%;width:150%;left:-25%;" id="marty"></canvas>');
     $marty.appendTo($a);
-	var renderer = new SpriteRenderer($marty[0], "./Images/Ocean/dolphin.png", 64, 64);
+	var renderer = new SpriteRenderer($marty[0], "./images/Ocean/dolphin.png", 64, 64);
     renderer.onload = () => {renderer.setSprite(0, 0);};
 
 	contentManager.add($a);

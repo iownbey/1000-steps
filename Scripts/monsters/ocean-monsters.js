@@ -85,7 +85,7 @@ class ManglerFish extends Monster {
         this.canvas = $mangler[0];
         $mangler.appendTo(root);
 
-        this.renderer = new SpriteRenderer($mangler[0], "./Images/Ocean/angler.png", 96, 96);
+        this.renderer = new SpriteRenderer($mangler[0], "./images/Ocean/angler.png", 96, 96);
 
         var _this = this;
         this.renderer.onload = () => {
@@ -224,7 +224,7 @@ class Shark extends Monster {
         this.canvas = $shark[0];
         $shark.appendTo(root);
 
-        this.renderer = new SpriteRenderer($shark[0], "./Images/Ocean/shark.png", 64, 64);
+        this.renderer = new SpriteRenderer($shark[0], "./images/Ocean/shark.png", 64, 64);
 
         var _this = this;
         this.renderer.onload = () => {
@@ -346,7 +346,7 @@ class Martimer extends Monster {
         this.canvas = $marty[0];
         $marty.appendTo(root);
 
-        this.renderer = new SpriteRenderer($marty[0], "./Images/Ocean/dolphin.png", 64, 64);
+        this.renderer = new SpriteRenderer($marty[0], "./images/Ocean/dolphin.png", 64, 64);
 
         var _this = this;
         this.renderer.onload = () => {

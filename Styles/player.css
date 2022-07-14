@@ -1,6 +1,6 @@
 #character
 {
-	background-image: url("../Images/character.png");
+	background-image: url("../images/character.png");
 	background-size: 400%;
 	background-position: bottom left;
 	z-index: 5;
@@ -59,7 +59,7 @@
 .intro_playerWalkingDown
 {
 	background-size: 200%;
-    background-image: url(../Images/Cutscenes/Intro/playerwalkingdown.png);
+    background-image: url(../images/Cutscenes/Intro/playerwalkingdown.png);
     animation: 
     	intro_playerWalkingDown_sprite steps(2,jump-both) 1s infinite,
     	intro_playerWalkingDown_spriteflip steps(2,jump-both) 2s infinite,

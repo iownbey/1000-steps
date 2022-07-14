@@ -89,13 +89,21 @@ Math.getPercentage = function (numerator, dividend) {
 	return (((numerator - 1) / (dividend - 1)) || 0) * 100
 }
 
+Object.defineProperty(Array.prototype, "remove", {
+	value: function remove(element) {
+		return this.filter(function (el) { return !(el == this); }, element);
+	},
+	writable: true,
+	configurable: true
+});
+
 function changeBackground(newImage) {
-	$("#back").attr("src", Helper.imageURL("Backgrounds/" + newImage));
+	$("#back").attr("src", Helper.imageURL("backgrounds/" + newImage));
 }
 
 function changeForeground(newImage) {
 	if (newImage) {
-		$("#fore").css("display", "block").attr("src", Helper.imageURL("Backgrounds/" + newImage));
+		$("#fore").css("display", "block").attr("src", Helper.imageURL("backgrounds/" + newImage));
 	}
 	else {
 		$("#fore").css("display", "none").removeAttr("src");
@@ -106,14 +114,6 @@ function playBackgroundMusic() {
 	sound.playMusic(area.getBackgroundMusic());
 }
 
-Object.defineProperty(Array.prototype, "remove", {
-	value: function remove(element) {
-		return this.filter(function (el) { return !(el == this); }, element);
-	},
-	writable: true,
-	configurable: true
-});
-
 function getRandom(array) {
 	return array[Math.floor(Math.random() * array.length)];
 }
@@ -122,11 +122,6 @@ async function walk() {
 	if (!area.busy) {
 		CSSAnimation.trigger(player.$jobj, "walk");
 		var stepsLeft = file.get("Steps-Left");
-		if (stepsLeft == 0) {
-			SaveData.changeBackground("outside");
-			topWriter.show("Congratulations! You saved the world!");
-			return;
-		}
 		stepsLeft--;
 		file.set("Steps-Left", stepsLeft);
 		stepsPopIn.$jobj.html("STEPS<br/>" + stepsLeft);
@@ -505,8 +500,8 @@ function setCurrentScope(jobj) {
 function StartMainGame() {
 
 	mode = ModeEnum.walking;
+	area = new Area_Aorta();
 	area.onStart();
-	//sound.playMusic("back");
 	setCurrentScope($("#main"));
 }
 
@@ -580,7 +575,7 @@ function initIntro() {
 }*/
 
 function init$() {
-	faceHandler.init($("#face1").add("#face2"), new SpriteSheet("Images/faces.png", 16, 16));
+	faceHandler.init($("#face1").add("#face2"), new SpriteSheet("images/faces.png", 16, 16));
 
 	contentManager = new ContentManager($("#content"));
 	player = new Player($("#character"), 50, 5);

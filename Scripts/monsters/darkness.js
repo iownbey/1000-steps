@@ -178,7 +178,7 @@ class Darkness extends Monster {
         this.canvas = $content[0];
         $content.appendTo(root);
 
-        this.renderer = new SpriteRenderer($content[0], "./Images/darkness.png", 64, 64);
+        this.renderer = new SpriteRenderer($content[0], "./images/darkness.png", 64, 64);
         this.floatUpdate = true;
 
         var _this = this;
