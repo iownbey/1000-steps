@@ -64,9 +64,7 @@ Area_Ocean.text = {
     ]
 }
 
-Area.registerArea(Area_Ocean);
-
-Area_Ocean.firstStep = Area.registerEvent(async function() {
+Area_Ocean.firstStep = async function() {
     await new Writer(bottomWriter, [
 		"You have just walked into an ocean.",
         "You clutch at your throat, gasping for breath...",
@@ -82,9 +80,9 @@ Area_Ocean.firstStep = Area.registerEvent(async function() {
         "You push onward."
 	]).writeAllAsync();
 	DialogueTypewriter.clearAll();
-});
+};
 
-Area_Ocean.meetMortimer = Area.registerEvent(async function() {
+Area_Ocean.meetMortimer = async function() {
 	
 	new Writer(topWriter, ["HEEEEEELLLLLLPPP!!!!"]).write();
 
@@ -106,4 +104,4 @@ Area_Ocean.meetMortimer = Area.registerEvent(async function() {
 	]).writeAllAsync();
 
 	Battle.current = new Battle("ocean-fight",[new Shark(), new Shark(), new Shark()],true);
-});
+};

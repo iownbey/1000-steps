@@ -43,8 +43,6 @@ class Area_Aorta extends Area {
 	}
 
 	fillGrabBagThing(length = 10, a = [Area.fightEvent]) {
-		var _this = this;
-
 		a.push(Area.flavorEvent);
 
 		while (a.length < length) {
@@ -55,9 +53,7 @@ class Area_Aorta extends Area {
 	}
 }
 
-Area.registerArea(Area_Aorta);
-
-Area_Aorta.meetVirgil    = Area.registerEvent(async function () {
+Area_Aorta.meetVirgil = async function () {
 
 	DialogueTypewriter.clearAll();
 	contentManager.clear();
@@ -165,9 +161,9 @@ Area_Aorta.meetVirgil    = Area.registerEvent(async function () {
 	await contentManager.recede(true);
 	contentManager.clear();
 	console.log("done");
-});
+};
 
-Area_Aorta.meetTroll1    = Area.registerEvent(async function () {
+Area_Aorta.meetTroll1 = async function () {
 	contentManager.clear();
 	contentManager.add($('<div class="monster"><div class="troll"></div></div>'));
 	contentManager.approach();
@@ -175,9 +171,9 @@ Area_Aorta.meetTroll1    = Area.registerEvent(async function () {
 
 	Battle.current = new Battle("fight", [new Troll()], false);
 	await Battle.current.getPromise();
-});
+};
 
-Area_Aorta.meetTroldiers = Area.registerEvent(async function () {
+Area_Aorta.meetTroldiers = async function () {
 	sound.stop();
 	contentManager.clear();
 	contentManager.add($('<div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div><div class="monster"><div class="troll-soldier"></div></div>'));
@@ -188,9 +184,9 @@ Area_Aorta.meetTroldiers = Area.registerEvent(async function () {
 	await new Writer(bottomWriter, text.aorta.meetTroldiersText).writeAllAsync();
 	Battle.current = new Battle("fight", [new Troldier(), new Troldier(), new Troldier()], false);
 	await Battle.current.getPromise();
-});
+};
 
-Area_Aorta.meetAmadeus   = Area.registerEvent(async function () {
+Area_Aorta.meetAmadeus   = async function () {
 	sound.pause();
 	contentManager.clear();
 	var $a = $('<div class="monster"></div>');
@@ -204,9 +200,9 @@ Area_Aorta.meetAmadeus   = Area.registerEvent(async function () {
 	contentManager.clear();
 	sound.unpause();
 	DialogueTypewriter.clearAll();
-});
+};
 
-Area_Aorta.talkAmadeus   = Area.registerEvent(async function () {
+Area_Aorta.talkAmadeus   = async function () {
 	sound.pause();
 	contentManager.clear();
 	var $a = $('<div class="monster"></div>');
@@ -220,9 +216,9 @@ Area_Aorta.talkAmadeus   = Area.registerEvent(async function () {
 	contentManager.clear();
 	sound.unpause();
 	DialogueTypewriter.clearAll();
-});
+};
 
-Area_Aorta.fightAmadeus  = Area.registerEvent(async function () {
+Area_Aorta.fightAmadeus  = async function () {
 	changeBackground("bigDoor");
 	sound.stop();
 	contentManager.clear();
@@ -235,9 +231,9 @@ Area_Aorta.fightAmadeus  = Area.registerEvent(async function () {
 	await new Writer(bottomWriter, text.aorta.prefightAmadeusText).writeAllAsync();
 	Battle.current = new Battle("amadeus", [new Amadeus()], false);
 	await Battle.current.getPromise();
-});
+};
 
-Area_Aorta.meetOscar = Area.registerEvent(function () {
+Area_Aorta.meetOscar = function () {
     var input = { oninput: () => { } };
     currentDoer = Doer.ofPromise(async function () {
         DialogueTypewriter.clearAll();
@@ -282,4 +278,4 @@ Area_Aorta.meetOscar = Area.registerEvent(function () {
         }
         contentManager.clear();
     }(), input);
-})
+}

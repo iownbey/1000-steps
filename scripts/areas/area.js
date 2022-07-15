@@ -19,23 +19,8 @@ class Area {
         console.log(this.monsters);
     }
 
-    /**
-     * A map from an area constructor to its events
-     * @type {Map<function,function[]>}
-     */
-    static possibleEvents = new Map();
-    /**
-     * The constructor of the currently building event list
-     */
-    static boundArea;
-
-    static registerArea(type) {
-        //Area.possibleEvents.set(Area.boundArea = type,[]);
-    }
-
-    static registerEvent(element) {
-        //return Area.possibleEvents.get(Area.boundArea).push(element) - 1;
-        return element;
+    offset(steps) {
+        this.events.splice(0,steps);
     }
 
     getEvents() {
@@ -90,22 +75,8 @@ class Area {
         this.stepsTaken++;
         this.onWalk();
         var event = this.events.shift();
-        var _this = this;
-        var handleEvent = async function (event) {
-            _this.currentEvent = event;
-            //var r = Area.possibleEvents.get(_this.constructor)[event]();
-            var r = event();
-            if (!((r == undefined) || (r == null))) {
-                await r;
-            }
-        }
-        if (Array.isArray(event)) {
-            for (var subEvent of event) await handleEvent(subEvent);
-            event.foreach(handleEvent);
-        }
-        else {
-            await handleEvent(event);
-        }
+        if (!Array.isArray(event)) event = [event];
+        for (var subEvent of event) await subEvent();
         this.busy = false;
     }
 
@@ -114,38 +85,35 @@ class Area {
     }
 }
 
-// Switches the static event handler so that it is binding events to the correct Area.
-Area.registerArea(Area);
-
 Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
-    return Area.registerEvent(function () {
+    return function () {
         topWriter.show(flavor);
         changeBackground(back);
         changeForeground(fore);
-    });
+    }
 }
 
-Area.emptyStep = Area.registerEvent(function () {
+Area.emptyStep = function () {
     // Do Nothing
-});
+}
 
-Area.fightEvent = Area.registerEvent(function () {
+Area.fightEvent = function () {
     currentBattle = new Battle(area.battleTheme, [area.getRandomMonster(), area.getRandomMonster(), area.getRandomMonster()]);
-});
+}
 
-Area.flavorEvent = Area.registerEvent(function () {
+Area.flavorEvent = function () {
     topWriter.show(area.flavor.get());
-});
-Area.nextAreaEvent = Area.registerEvent(function () {
+};
+Area.nextAreaEvent = function () {
     this.onEnd();
     area = this.getNextArea();
     sound.playMusic(area.getBackgroundMusic());
     area.onStart();
-});
+};
 
 // Prototype Events
 
-Area.fightChain = Area.registerEvent(function () {
+Area.fightChain = function () {
     var input = { oninput: () => { } };
     currentDoer = Doer.ofPromise(async function () {
         DialogueTypewriter.clearAll();
@@ -170,10 +138,10 @@ Area.fightChain = Area.registerEvent(function () {
 
         currentBattle = new Battle("chain", [new Chain()], false);
     }(), input);
-});
+};
 
-Area.fightAragore = Area.registerEvent(function () {
+Area.fightAragore = function () {
     mode = ModeEnum.final;
     currentBattle = new Battle("aragore", [new Aragore()]);
     topWriter.show("Aragore the dragon blocks the exit.");
-});
+};

@@ -225,19 +225,17 @@ Area_Underworld.text = {
     ]
 };
 
-Area.registerArea(Area_Underworld);
-
 //logic
 
-Area_Underworld.talkEmery1 = Area.registerEvent(async function () {
+Area_Underworld.talkEmery1 = async function () {
     file.set("Inspect-Level", 1); //flag for dialogue in-fight.
     sound.pause();
     await new Writer(bottomWriter, Area_Underworld.text.emerySpeak).writeAllAsync();
     sound.unpause();
     DialogueTypewriter.clearAll();
-});
+};
 
-Area_Underworld.meetSkeletons = Area.registerEvent(async function () {
+Area_Underworld.meetSkeletons = async function () {
     contentManager.clear();
     var franklin = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(0.9,1.1)");
     var arnold = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(1.1,0.7)");
@@ -251,9 +249,9 @@ Area_Underworld.meetSkeletons = Area.registerEvent(async function () {
     contentManager.clear();
     sound.unpause();
     DialogueTypewriter.clearAll();
-});
+};
 
-Area_Underworld.talkSkeletons = Area.registerEvent(async function () {
+Area_Underworld.talkSkeletons = async function () {
     sound.pause();
     contentManager.clear();
     var franklin = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(0.9,1.1)");
@@ -271,9 +269,9 @@ Area_Underworld.talkSkeletons = Area.registerEvent(async function () {
     contentManager.clear();
     sound.unpause();
     DialogueTypewriter.clearAll();
-});
+};
 
-Area_Underworld.talkArnold = Area.registerEvent(async function () {
+Area_Underworld.talkArnold = async function () {
     sound.pause();
     contentManager.clear();
     var arnold = $('<div style="height: 140%; width:  70%;"></div>').css("transform-origin", "bottom").css("transform", "scale(1.1,0.7)");
@@ -284,11 +282,11 @@ Area_Underworld.talkArnold = Area.registerEvent(async function () {
     contentManager.clear();
     sound.unpause();
     DialogueTypewriter.clearAll();
-});
+};
 
 Area_Underworld.enterThaddeusDungeon = Area.getBackgroundChangeEvent("You enter Thaddeus' dungeon.", "wideTunnel");
 
-Area_Underworld.fightThaddeus = Area.registerEvent(async function () {
+Area_Underworld.fightThaddeus = async function () {
     changeBackground("bigDoor");
     sound.stop();
     contentManager.clear();
@@ -337,4 +335,4 @@ Area_Underworld.fightThaddeus = Area.registerEvent(async function () {
         await contentManager.approachFromLeft();
         await w.writeAllAsync();
     }
-});
+};
