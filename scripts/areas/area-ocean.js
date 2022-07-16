@@ -1,107 +1,115 @@
-
 class Area_Ocean extends Area {
-	constructor() {
-		super(Area_Ocean.text.flavor, ["Sponge", "Shark", "ManglerFish"], "ocean-fight");
+  constructor() {
+    super(
+      Area_Ocean.text.flavor,
+      ["Sponge", "Shark", "ManglerFish"],
+      "ocean-fight"
+    );
+  }
 
-	}
+  getEvents() {
+    var events = [].concat(
+      [Area_Ocean.firstStep],
+      [Area_Ocean.meetMortimer],
+      this.fillGrabBagThing(9),
+      [Area_Aorta.meetOscar],
+      this.fillGrabBagThing(9),
+      this.fillGrabBagThing(9),
+      [Area_Aorta.meetAmadeus],
+      this.fillGrabBagThing(9, [Area.fightEvent]),
+      this.fillGrabBagThing(10, [Area.meetTroldiers]),
+      this.fillGrabBagThing(),
+      [Area.talkAmadeus],
+      this.fillGrabBagThing(9),
+      this.fillGrabBagThing(),
+      this.fillGrabBagThing(9),
+      this.fillGrabBagThing(9),
+      [Area.fightAmadeus, Area.nextAreaEvent]
+    );
+    return events;
+  }
 
-	getEvents() {
+  getBackgroundMusic() {
+    return "ocean";
+  }
 
-		var events = [].concat(
-			[Area_Ocean.firstStep],
-			[Area_Ocean.meetMortimer],
-			this.fillGrabBagThing(9),
-			[Area_Aorta.meetOscar],
-			this.fillGrabBagThing(9),
-			this.fillGrabBagThing(9),
-			[Area_Aorta.meetAmadeus],
-			this.fillGrabBagThing(9, [Area.fightEvent]),
-			this.fillGrabBagThing(10, [Area.meetTroldiers]),
-			this.fillGrabBagThing(),
-			[Area.talkAmadeus],
-			this.fillGrabBagThing(9),
-			this.fillGrabBagThing(),
-			this.fillGrabBagThing(9),
-			this.fillGrabBagThing(9),
-			[Area.fightAmadeus,
-			Area.nextAreaEvent]
-		);
-		return events;
-	}
+  onStart() {
+    changeBackground("ocean");
+    topWriter.show("You have entered the great Ocean.");
+    sound.playMusic(this.getBackgroundMusic());
+    loadScript("monsters/ocean-monsters.js");
+  }
 
-	getNextArea() {
-		return new Area_Underworld();
-	}
+  fillGrabBagThing(length = 10, a = [Area.fightEvent]) {
+    var _this = this;
 
-	getBackgroundMusic() {
-		return "ocean";
-	}
+    a.push(Area.flavorEvent);
 
-	onStart() {
-		changeBackground("ocean");
-		topWriter.show("You have entered the great Ocean.");
-		sound.playMusic(this.getBackgroundMusic());
-		loadScript("monsters/ocean-monsters.js");
-	}
+    while (a.length < length) {
+      a.push(Area.emptyStep);
+    }
 
-	fillGrabBagThing(length = 10, a = [Area.fightEvent]) {
-		var _this = this;
-
-		a.push(Area.flavorEvent);
-
-		while (a.length < length) {
-			a.push(Area.emptyStep);
-		}
-
-		return GrabBag.shuffle(a);
-	}
+    return GrabBag.shuffle(a);
+  }
 }
 
 Area_Ocean.text = {
-    flavor: [
-        "Somehow you can breathe in this water.",
-        "Even though you cannot see very far, this is some of the clearest water you have ever seen."
-    ]
-}
-
-Area_Ocean.firstStep = async function() {
-    await new Writer(bottomWriter, [
-		"You have just walked into an ocean.",
-        "You clutch at your throat, gasping for breath...",
-        "Except...",
-        "You can breathe.",
-        ["Hey, I forgot to tell you.",expr.emery.happy],
-        ["You can breathe the water!"],
-		"...",
-		["This is the vast underground ocean."],
-		["It's full of dolphins!!!"],
-		["and sharks", expr.emery.annoyed],
-		["and they don't like eachother"],
-        "You push onward."
-	]).writeAllAsync();
-	DialogueTypewriter.clearAll();
+  flavor: [
+    "Somehow you can breathe in this water.",
+    "Even though you cannot see very far, this is some of the clearest water you have ever seen.",
+  ],
 };
 
-Area_Ocean.meetMortimer = async function() {
-	
-	new Writer(topWriter, ["HEEEEEELLLLLLPPP!!!!"]).write();
+Area_Ocean.firstStep = async function () {
+  await new Writer(bottomWriter, [
+    "You have just walked into an ocean.",
+    "You clutch at your throat, gasping for breath...",
+    "Except...",
+    "You can breathe.",
+    ["Hey, I forgot to tell you.", expr.emery.happy],
+    ["You can breathe the water!"],
+    "...",
+    ["This is the vast underground ocean."],
+    ["It's full of dolphins!!!"],
+    ["and sharks", expr.emery.annoyed],
+    ["and they don't like eachother"],
+    "You push onward.",
+  ]).writeAllAsync();
+  DialogueTypewriter.clearAll();
+};
 
-	contentManager.clear();
+Area_Ocean.meetMortimer = async function () {
+  new Writer(topWriter, ["HEEEEEELLLLLLPPP!!!!"]).write();
 
-	var $a = $('<div class="monster"></div>');
-	var $marty = $('<canvas style="height:150%;width:150%;left:-25%;" id="marty"></canvas>');
-    $marty.appendTo($a);
-	var renderer = new SpriteRenderer($marty[0], "./images/Ocean/dolphin.png", 64, 64);
-    renderer.onload = () => {renderer.setSprite(0, 0);};
+  contentManager.clear();
 
-	contentManager.add($a);
-	await contentManager.approach(true);
+  var $a = $('<div class="monster"></div>');
+  var $marty = $(
+    '<canvas style="height:150%;width:150%;left:-25%;" id="marty"></canvas>'
+  );
+  $marty.appendTo($a);
+  var renderer = new SpriteRenderer(
+    $marty[0],
+    "./images/Ocean/dolphin.png",
+    64,
+    64
+  );
+  renderer.onload = () => {
+    renderer.setSprite(0, 0);
+  };
 
-	await new Writer(bottomWriter, [
-		["They're afterrr meee!",expr.martimer.sad],
-		"!?!?!?",
-		["The SHARKS!!!"],
-	]).writeAllAsync();
+  contentManager.add($a);
+  await contentManager.approach(true);
 
-	Battle.current = new Battle("ocean-fight",[new Shark(), new Shark(), new Shark()],true);
+  await new Writer(bottomWriter, [
+    ["They're afterrr meee!", expr.martimer.sad],
+    "!?!?!?",
+    ["The SHARKS!!!"],
+  ]).writeAllAsync();
+
+  Battle.current = new Battle(
+    "ocean-fight",
+    [new Shark(), new Shark(), new Shark()],
+    true
+  );
 };

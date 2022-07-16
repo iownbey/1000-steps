@@ -1,121 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta name="description" content="1000 Steps is an entire turn-based rpg designed for the browser. Save the world by defeating the darkness and make friends throughout the ten layers!">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="description"
+      content="1000 Steps is an entire turn-based rpg designed for the browser. Save the world by defeating the darkness and make friends throughout the ten layers!"
+    />
 
-	<link rel="manifest" href="manifest.webmanifest">
-	<link rel="apple-touch-icon" href="pwa/icon192x192.png">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-	<meta name="theme-color" content="#000000"/>
-	
-	<title>1000 Steps</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="pwa/icon192x192.png" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <meta name="theme-color" content="#000000" />
 
-	<link rel="icon" href="data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2216%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" type="image/svg+xml">
+    <title>1000 Steps</title>
 
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link
+      rel="icon"
+      href="data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2216%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E"
+      type="image/svg+xml"
+    />
 
-	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
-	<link  href="styles/styles.css"     rel="stylesheet">
-	<link  href="styles/animations.css" rel="stylesheet">
-	<link  href="styles/player.css"     rel="stylesheet">
-	<link  href="styles/monsters.css"   rel="stylesheet">
-	<link  href="styles/faces.css"      rel="stylesheet">
-	
-	<script defer src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js" integrity="sha256-D+v9meJzO2kOysLcNsgohfWBprXHO2WJWJj/hUhBX1s=" crossorigin="anonymous"></script>
-	<script defer src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    
-	<script defer src="scripts/classes.js" ></script>
-	<script defer src="scripts/text.js"    ></script>
-	<script defer src="scripts/script.js"  ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
 
-	<script defer src="scripts/areas/area.js"></script>
-	<script defer src="scripts/areas/area-aorta.js"></script>
-	<script defer src="scripts/areas/area-underworld.js"></script>
-	<script defer src="scripts/areas/area-ocean.js"></script>
+    <link href="styles/styles.css" rel="stylesheet" />
+    <link href="styles/animations.css" rel="stylesheet" />
+    <link href="styles/player.css" rel="stylesheet" />
+    <link href="styles/monsters.css" rel="stylesheet" />
+    <link href="styles/faces.css" rel="stylesheet" />
 
-	<script defer src="scripts/monsters.js"></script>
-	<script defer src="scripts/timing.js"  ></script>
-	<script defer src="scripts/libraries/perlin.js"></script>
-	<script defer src="scripts/libraries/Controller.js"></script>
-	<script defer src="scripts/libraries/Controller.layouts.js"></script>
-	<script defer src="https://cdn.jsdelivr.net/npm/granim@2.0.0/dist/granim.min.js" integrity="sha256-79ATLdCUzg3BVrKHvdiOJY47UxdQ3viLUdvEsqh2apI=" crossorigin="anonymous"></script>
-	<script defer src="https://cdn.jsdelivr.net/npm/mo-js@0.288.2/build/mo.min.js"   integrity="sha256-VC3SEa0yDbQY9+b0peWxyR65rJS2eqPWlLSZEtPvAkA=" crossorigin="anonymous"></script>
-	<script defer src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.js" integrity="sha256-icjghcPaibMf1jv4gQIGi5MeWNHem2SispcorCiCfSg=" crossorigin="anonymous"></script>
-	<script defer src="scripts/afterwork.js"  ></script>
-</head>
-<body id="body">
-	<canvas id="back-canvas"></canvas>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js"
+      integrity="sha256-D+v9meJzO2kOysLcNsgohfWBprXHO2WJWJj/hUhBX1s="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
 
-	<div id="gamewindow">
-		<div id="main" class="box" style="visibility: hidden;">
-			<div id="dialogueBox1" class="dialogueBox bordered">
-				<div id="face1"></div>
-				<p   id="output1" style="visibility: hidden;">
-				</p>
-			</div>
-			<div id="dialogueBox2" class="dialogueBox bordered" style="bottom: 0px;">
-				<div id="face2" style="height: 36vh; width: 36vh;"></div>
-				<p   id="output2" style="visibility: hidden;">
-				</p>
-			</div>
-			<img id="back" alt src="images/backgrounds/back.png">
-			<div id="character">
-				<div id="spark" style="display: none;"></div>
-				<div id="flame" style="display: none;"></div>
-				<div id="aura"  style="display: none;"></div>
-			</div>
-			<div id="content"></div>
-			<img id="fore" alt style="display:none;">
-			<div id="battlebuttons">
-				<div id="lButtons"> 
-					<p id="b1" class="bordered" style="display:none;">Attack</p>
-					<p id="b2" class="bordered" style="display:none;">Defend</p>
-					<p id="b3" class="bordered" style="display:none;">Heal</p>
-				</div>
-				<div id="rButtons"> 
-					<p id="b4" class="bordered" style="display:none;">Magics</p>
-					<p id="b5" class="bordered" style="display:none;">Talk</p>
-					<p id="b6" class="bordered" style="display:none;">Run Away</p>
-				</div>
-			</div>
-		</div>
-		<div id="intro1" class="box flexcenterer">
-			<p id="introoutput"></p>
-			<p id="information" style="white-space: pre-wrap;"></p>
-		</div>
-		<div id="intro2" class="box" style="visibility: hidden;">
-			<div id="i2_back"   class="box" style="background-size: contain; background-image: url('./images/cutscenes/intro/back.png')"></div>
-			<p   id="i2_output" class="box" style="z-index: 10; position: fixed; text-align: left; visibility:hidden;" class="bordered"></p>
-			<div id="i2_playerWalking" class="intro_playerWalkingDown"></div>
-			<div id="i2_playerStanding" class="box" style="visibility: hidden; background-size: contain; background-image: url('./images/cutscenes/intro/playerstanding.png')"></div>
-			<div id="i2_playerSitting"  class="box" style="visibility: hidden; background-size: contain; background-image: url('./images/cutscenes/intro/playersitting.png')"></div>
-			<div id="i2_shield" class="box" style="visibility: hidden; background-size: contain; background-image: url('./images/cutscenes/intro/shield.png')"></div>
-			<div id="i2_sword" class="box"  style="visibility: hidden; background-size: contain; background-image: url('./images/cutscenes/intro/sword.png')"></div>
-		</div>
-		<div id="gameover" class="box" style="visibility: hidden;">
-			<h2 style="font-size:4em;">All Alone</h2>
-			<div id="gameover_player" class="ghostPose"></div>
-			<p id="endflavor"></p>
-			<p>Shift + L to load.<br>Refresh to restart.</p>
-		</div>
-	</div>
+    <script defer src="scripts/classes.js"></script>
+    <script defer src="scripts/text.js"></script>
+    <script defer src="scripts/script.js"></script>
+    <script defer src="scripts/areas/area.js"></script>
+    <script defer src="scripts/main-menu.js"></script>
 
-	
+    <script defer src="scripts/monsters.js"></script>
+    <script defer src="scripts/timing.js"></script>
+    <script defer src="scripts/libraries/perlin.js"></script>
+    <script defer src="scripts/libraries/Controller.js"></script>
+    <script defer src="scripts/libraries/Controller.layouts.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/granim@2.0.0/dist/granim.min.js"
+      integrity="sha256-79ATLdCUzg3BVrKHvdiOJY47UxdQ3viLUdvEsqh2apI="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/mo-js@0.288.2/build/mo.min.js"
+      integrity="sha256-VC3SEa0yDbQY9+b0peWxyR65rJS2eqPWlLSZEtPvAkA="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.js"
+      integrity="sha256-icjghcPaibMf1jv4gQIGi5MeWNHem2SispcorCiCfSg="
+      crossorigin="anonymous"
+    ></script>
+    <script defer src="scripts/afterwork.js"></script>
+  </head>
+  <body id="body">
+    <canvas id="back-canvas"></canvas>
 
-	<img id="hcursor" class="cursor" alt src="images/cursor.png">
-	<img id="vcursor" class="cursor" alt src="images/cursor.png">
+    <div id="gamewindow">
+      <div id="main-menu" class="box flexcenterer" style="visibility: hidden">
+        <h1 id="main-heading">1000 Steps</h1>
+        <p id="main-continue" class="main-menu-button">Continue</p>
+        <p id="main-new-game" class="main-menu-button">Start Anew</p>
+        <p id="main-settings" class="main-menu-button">Settings</p>
+        <p id="information" style="white-space: pre-wrap"></p>
+      </div>
+      <div id="main" class="box" style="visibility: hidden">
+        <div id="dialogueBox1" class="dialogueBox bordered">
+          <div id="face1"></div>
+          <p id="output1" style="visibility: hidden"></p>
+        </div>
+        <div id="dialogueBox2" class="dialogueBox bordered" style="bottom: 0px">
+          <div id="face2" style="height: 36vh; width: 36vh"></div>
+          <p id="output2" style="visibility: hidden"></p>
+        </div>
+        <img id="back" alt src="images/backgrounds/back.png" />
+        <div id="character">
+          <div id="spark" style="display: none"></div>
+          <div id="flame" style="display: none"></div>
+          <div id="aura" style="display: none"></div>
+        </div>
+        <div id="content"></div>
+        <img id="fore" alt style="display: none" />
+        <div id="battlebuttons">
+          <div id="lButtons">
+            <p id="b1" class="bordered" style="display: none">Attack</p>
+            <p id="b2" class="bordered" style="display: none">Defend</p>
+            <p id="b3" class="bordered" style="display: none">Heal</p>
+          </div>
+          <div id="rButtons">
+            <p id="b4" class="bordered" style="display: none">Magics</p>
+            <p id="b5" class="bordered" style="display: none">Talk</p>
+            <p id="b6" class="bordered" style="display: none">Run Away</p>
+          </div>
+        </div>
+      </div>
+      <div id="intro1" class="box flexcenterer" style="visibility: hidden">
+        <p id="introoutput"></p>
+      </div>
+      <div id="intro2" class="box" style="visibility: hidden">
+        <div
+          id="i2_back"
+          class="box"
+          style="
+            background-size: contain;
+            background-image: url('./images/cutscenes/intro/back.png');
+          "
+        ></div>
+        <p
+          id="i2_output"
+          class="box"
+          style="
+            z-index: 10;
+            position: fixed;
+            text-align: left;
+            visibility: hidden;
+          "
+          class="bordered"
+        ></p>
+        <div id="i2_playerWalking" class="intro_playerWalkingDown"></div>
+        <div
+          id="i2_playerStanding"
+          class="box"
+          style="
+            visibility: hidden;
+            background-size: contain;
+            background-image: url('./images/cutscenes/intro/playerstanding.png');
+          "
+        ></div>
+        <div
+          id="i2_playerSitting"
+          class="box"
+          style="
+            visibility: hidden;
+            background-size: contain;
+            background-image: url('./images/cutscenes/intro/playersitting.png');
+          "
+        ></div>
+        <div
+          id="i2_shield"
+          class="box"
+          style="
+            visibility: hidden;
+            background-size: contain;
+            background-image: url('./images/cutscenes/intro/shield.png');
+          "
+        ></div>
+        <div
+          id="i2_sword"
+          class="box"
+          style="
+            visibility: hidden;
+            background-size: contain;
+            background-image: url('./images/cutscenes/intro/sword.png');
+          "
+        ></div>
+      </div>
+      <div id="gameover" class="box" style="visibility: hidden">
+        <h2 style="font-size: 4em">All Alone</h2>
+        <div id="gameover_player" class="ghostPose"></div>
+        <p id="endflavor"></p>
+        <p>Shift + L to load.<br />Refresh to restart.</p>
+      </div>
+    </div>
 
-	<p id="notifier" class="bordered"></p>
+    <img id="hcursor" class="cursor" alt src="images/cursor.png" />
+    <img id="vcursor" class="cursor" alt src="images/cursor.png" />
 
-	<p id="health-pop-in" class="bordered big-text"></p>
-	<p id="steps-pop-in" class="bordered big-text"></p>
+    <p id="notifier" class="bordered"></p>
 
-	<div id="particles-js"></div>
-	<canvas id="content-canvas"></canvas>
-	<div id="cover"></div>
-</body>
+    <p id="health-pop-in" class="bordered big-text"></p>
+    <p id="steps-pop-in" class="bordered big-text"></p>
+
+    <div id="particles-js"></div>
+    <canvas id="content-canvas"></canvas>
+    <div id="cover" style="background-color: black; opacity: 1"></div>
+  </body>
 </html>
