@@ -29,7 +29,6 @@ MainMenu.setUpButton = function ($button, $up = null, $down = null) {
       case "Enter":
         {
           $button.click();
-          $button.addClass("activated");
         }
         break;
       case "w":
@@ -46,6 +45,10 @@ MainMenu.setUpButton = function ($button, $up = null, $down = null) {
         break;
     }
   };
+
+  $button.click(() => {
+    $button.addClass("activated");
+  });
 
   $button.focus(() => {
     MainMenu.selected++;

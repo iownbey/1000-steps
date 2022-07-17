@@ -66,6 +66,7 @@ class Battle {
     this.currentMonster = null;
     mode = ModeEnum.fighting;
     DialogueTypewriter.clearAll();
+    var _this = this;
     cover.flash(
       "white",
       () => {
@@ -75,7 +76,7 @@ class Battle {
           var box = $('<div class="monster"></div>');
           contentManager.add(box);
           element.html(box);
-        }, this);
+        });
 
         contentManager.approach(dynamicIntro);
         //start the music without crossfade
@@ -83,19 +84,18 @@ class Battle {
         backgroundCanvas.triggerBattle();
       },
       () => {
-        if (this.monsters.length == 1) {
-          topWriter.show(this.monsters[0].myName + " stands in the way!");
+        if (_this.monsters.length == 1) {
+          topWriter.show(_this.monsters[0].myName + " stands in the way!");
         } else {
-          var index = this.monsters.length == 2 ? 0 : 1;
+          var index = _this.monsters.length == 2 ? 0 : 1;
           topWriter.show(
             this.monsters[index].myName + " and his friends block the path."
           );
         }
 
-        var _this = this;
-        this.charAnim = new CSSAnimation(player.$jobj, "battlePose").start();
-        this.eventQueue = new Queue();
-        this.queueAction(this.startPlayerTurn);
+        _this.charAnim = new CSSAnimation(player.$jobj, "battlePose").start();
+        _this.eventQueue = new Queue();
+        _this.queueAction(() => _this.startPlayerTurn());
       },
       1250
     );
@@ -118,26 +118,25 @@ class Battle {
 
   startPlayerTurn() {
     console.log("BATTLE: Player turn started.");
-    var _this = Battle.current;
-    _this.finishAction();
+    this.finishAction();
     DialogueTypewriter.clearAll();
-    _this.menu = _this.getMenu(_this);
+    this.menu = this.getMenu();
     player.defending = false;
     Player.sprites.setSprite(player.$jobj, 1, 1);
-    _this.menu.setDisplay(true);
+    this.menu.setDisplay(true);
   }
 
   finishPlayerTurn() {
     console.log("BATTLE: Finishing player's turn.");
     var _this = this;
 
-    if (lastCalled != charge) {
-      if (chargeAmount > 0) {
-        chargeAmount = 0;
+    if (player.lastCalled != player.charge) {
+      if (player.chargeAmount > 0) {
+        player.chargeAmount = 0;
         cover.flash("white", null, null, 250);
       }
     }
-    switch (chargeAmount) {
+    switch (player.chargeAmount) {
       case 0:
         sparkHandler.hideAll();
         break;
@@ -218,7 +217,7 @@ class Battle {
     if (!_this.checkFinished()) {
       if (index == _this.monsters.length) {
         console.log("BATTLE: Queuing player start.");
-        _this.queueAction(_this.startPlayerTurn);
+        _this.queueAction(() => _this.startPlayerTurn());
       } else {
         _this.queueAction(function () {
           _this.monsterTurn(index);
@@ -294,17 +293,18 @@ class Battle {
     }
   }
 
-  getMenu(_this) {
+  getMenu() {
+    var _this = this;
     var u_magic = true || file.get("Unlocked_Magic", false);
     var u_run = true || file.get("Unlocked_Run", false);
     var u_charge = true || file.get("Unlocked_Charge", false);
 
     var lCalls = [
       function () {
-        _this.getMonsterPicker(_this.menu, player.attack);
+        _this.getMonsterPicker(_this.menu, (mon) => player.attack(mon));
       },
-      player.defend,
-      player.heal,
+      () => player.defend(),
+      () => player.heal(),
     ];
 
     var lNames = ["ATTACK", "DEFEND", "HEAL"];
@@ -316,16 +316,16 @@ class Battle {
     var menu = this.menu;
 
     var f_cast = function () {
-      _this.getMonsterPicker(menu, player.magics);
+      _this.getMonsterPicker(menu, (mon) => player.magics(mon));
     };
     var f_talk = function () {
-      _this.getMonsterPicker(menu, player.talk);
+      _this.getMonsterPicker(menu, (mon) => player.talk(mon));
     };
     var f_run = function () {
       player.runAway(_this.monsters);
     };
     var f_inspect = function () {
-      _this.getMonsterPicker(menu, player.inspect);
+      _this.getMonsterPicker(menu, (mon) => player.inspect(mon));
     };
 
     var otherActions = [];
@@ -361,9 +361,9 @@ class Battle {
       rCalls.push(f_other);
     }
 
-    if (u_charge && chargeAmount < 3) {
+    if (u_charge && player.chargeAmount < 3) {
       rNames.push("CHARGE");
-      rCalls.push(charge);
+      rCalls.push(() => player.charge());
     }
 
     if (u_run) {
@@ -996,7 +996,7 @@ class InputHandler {
     doc.on(
       "keydown",
       (_this.kbind = (e) => {
-        _this.onkeydown(e);
+        if (!e.shiftKey) _this.onkeydown(e);
       })
     );
     doc.on(
@@ -1098,7 +1098,7 @@ class Player {
     this.$jobj = $jobj;
     this.health = this.maxHealth = health;
     this.wounded = false;
-    this.attack = attack;
+    this.attackPower = attack;
     this.defending = false;
 
     this.chargeAmount = 0;
@@ -1127,7 +1127,7 @@ class Player {
   charge() {
     var onFlash;
     var onFinish;
-    switch (chargeAmount) {
+    switch (this.chargeAmount) {
       case 0:
         {
           onFinish = function () {
@@ -1159,7 +1159,8 @@ class Player {
         }
         break;
     }
-    sound.playFX("charge" + (chargeAmount + 1));
+    console.log(this.chargeAmount);
+    sound.playFX("charge" + (this.chargeAmount + 1));
     cover.flash("white", onFlash, onFinish, 250);
     this.chargeAmount++;
     this.lastCalled = this.charge;
@@ -1170,7 +1171,7 @@ class Player {
     Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
     CSSAnimation.trigger(monster.jobj, "shake");
 
-    var damage = this.attack * 3 ** chargeAmount;
+    var damage = this.attackPower * 3 ** this.chargeAmount;
     const basephrase =
       "You hit " + monster.myName + " and deal " + damage + " damage.";
 
@@ -1295,7 +1296,7 @@ class Player {
       (this.healOffset * Player.healStaleTurnBias +
         Player.healStartValue +
         Math.randomInt(0, randomBias)) *
-      (Player.chargeAmount + 1);
+      (this.chargeAmount + 1);
     if (amount < 0) amount = 0;
     this.changeHealth(amount);
 
@@ -1771,7 +1772,7 @@ class Typewriter {
       if (nextChar == nl) {
         elements += "<br>";
       } else {
-        elements += "<div> </div>";
+        elements += "<span> </span>";
       }
     }
     _this.p.html(elements);
