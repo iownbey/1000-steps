@@ -79,10 +79,8 @@ class Area {
 
   getRandomMonster() {
     var classes = this.toMonsters(this.monsters);
-    var monster = null;
     // Generic instantiation via eval
-    eval("monster = new " + getRandom(classes) + "();");
-    return monster;
+    return eval("new " + getRandom(classes) + "();");
   }
 
   async walk() {
@@ -130,7 +128,7 @@ Area.emptyStep = function () {
 };
 
 Area.fightEvent = function () {
-  currentBattle = new Battle(area.battleTheme, [
+  Battle.current = new Battle(area.battleTheme, [
     area.getRandomMonster(),
     area.getRandomMonster(),
     area.getRandomMonster(),
@@ -180,7 +178,7 @@ Area.fightChain = function () {
         "Prepare to die.",
       ]).writeAllAsync();
 
-      currentBattle = new Battle("chain", [new Chain()], false);
+      Battle.current = new Battle("chain", [new Chain()], false);
     })(),
     input
   );
@@ -188,6 +186,6 @@ Area.fightChain = function () {
 
 Area.fightAragore = function () {
   mode = ModeEnum.final;
-  currentBattle = new Battle("aragore", [new Aragore()]);
+  Battle.current = new Battle("aragore", [new Aragore()]);
   topWriter.show("Aragore the dragon blocks the exit.");
 };

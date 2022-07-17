@@ -166,9 +166,9 @@ class Amadeus extends Monster {
 
   say(text) {
     var w = new Writer(bottomWriter, text);
-    currentBattle.queueAction(function () {
+    Battle.current.queueAction(function () {
       w.write();
-      if (w.complete) currentBattle.finishAction();
+      if (w.complete) Battle.current.finishAction();
     });
   }
 
@@ -702,8 +702,8 @@ class PreMasterSponge extends Monster {
       sound.stop();
       sound.playFX("pre-master-sponge");
       await cover.fadeTo(1, 5000);
-      currentBattle.endNow();
-      currentBattle = new Battle("master-sponge", [new MasterSponge()], false);
+      Battle.current.endNow();
+      Battle.current = new Battle("master-sponge", [new MasterSponge()], false);
     }
 
     return { damage: 0, text: "Nothing happened." };
