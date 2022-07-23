@@ -5,22 +5,26 @@ class Area_Aorta extends Area {
 
   getEvents() {
     return [].concat(
-      [Area_Aorta.meetOscar],
       [Area_Aorta.meetVirgil],
+      Area.getEmptySteps(3),
       [Area_Aorta.meetTroll1],
-      this.fillGrabBagThing(9),
+      Area.getEmptySteps(6),
+      [Area_Aorta.virgil2],
+      Area.getEmptySteps(15),
+      [Area.fightEvent],
+      Area.getEmptySteps(10),
       [Area_Aorta.meetOscar],
-      this.fillGrabBagThing(9),
-      this.fillGrabBagThing(9),
+      Area.getEmptySteps(12),
       [Area_Aorta.meetAmadeus],
-      this.fillGrabBagThing(9, [Area.fightEvent]),
-      this.fillGrabBagThing(10, [Area_Aorta.meetTroldiers]),
-      this.fillGrabBagThing(),
+      Area.getEmptySteps(9),
+      [Area.fightEvent],
+      Area.getEmptySteps(10),
+      [Area_Aorta.meetTroldiers],
+      Area.getEmptySteps(5),
+      [Area.fightEvent],
+      Area.getEmptySteps(5),
       [Area_Aorta.talkAmadeus],
-      this.fillGrabBagThing(9),
-      this.fillGrabBagThing(),
-      this.fillGrabBagThing(9),
-      this.fillGrabBagThing(9),
+      Area.getEmptySteps(17),
       [Area_Aorta.fightAmadeus, Area.nextAreaEvent]
     );
   }
@@ -57,15 +61,14 @@ Area_Aorta.meetVirgil = async function () {
   var $virgil = $(
     '<canvas style="height:180%;width:180%;left:-40%;" id="virgil"></canvas>'
   );
-  $virgil.appendTo($wrapper);
-  contentManager.add($wrapper);
-  contentManager.approach();
 
   var renderer = new SpriteRenderer($virgil[0], "./images/virgil.png", 64, 64);
   await renderer.waitForLoad();
   renderer.setSprite(0, 0);
 
-  await Helper.delay(1);
+  $virgil.appendTo($wrapper);
+  contentManager.add($wrapper);
+  await contentManager.approach();
 
   await new Writer(bottomWriter, [
     "Hello, Harbinger.",
@@ -176,6 +179,38 @@ Area_Aorta.meetTroll1 = async function () {
 
   Battle.current = new Battle("fight", [new Troll()], false);
   await Battle.current.getPromise();
+};
+
+Area_Aorta.virgil2 = async function () {
+  DialogueTypewriter.clearAll();
+  contentManager.clear();
+  var $wrapper = $(
+    '<div class="monster"><img src="./images/virgil/virgil-killed.png" style="height:180%;width:180%;left:-40%;"/></div>'
+  );
+
+  contentManager.add($wrapper);
+  await contentManager.approach();
+
+  await Helper.delay(2);
+
+  await new Writer(bottomWriter, [
+    "It's ugly, isn't it.",
+    "The price we must pay to fight for what we believe in.",
+    "This troll probably had no idea why he had to fight me",
+    "And yet, he fought the same.",
+    "I had to give up my innocence to protect our future.",
+  ]).writeAllAsync();
+
+  await Helper.delay(2);
+
+  await new Writer(bottomWriter, [
+    "We both paid our prices.",
+    "...",
+    "Harbinger, please don't think less of me.",
+    "I will cut my way through this wilderness so that you may run.",
+    "It is my destiny to bear the burden of evil so that you may bear the burden of the world.",
+    "All the same, I wish neither of us had to bear these burdens",
+  ]).writeAllAsync();
 };
 
 Area_Aorta.meetTroldiers = async function () {

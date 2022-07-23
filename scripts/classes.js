@@ -1167,6 +1167,7 @@ class Player {
   }
 
   async attack(monster) {
+    var _this = this;
     this.lastCalled = this.attack;
     Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
     CSSAnimation.trigger(monster.jobj, "shake");
@@ -2190,9 +2191,13 @@ SparkHandler.sparkSprites = new SpriteSheet("images/sparks.png", 2, 2);
 SparkHandler.flameSprites = new SpriteSheet("images/flames.png", 2, 2);
 Player.sprites = new SpriteSheet("images/character.png", 4, 8);
 Player.attackAnim = [
-  { x: 2, y: 1 },
-  { x: 3, y: 1 },
-  { x: 4, y: 1 },
-  { x: 1, y: 2, time: 500 },
+  { x: 1, y: 3 },
+  { x: 2, y: 3 },
+  { x: 3, y: 3 },
+  { x: 4, y: 3, time: 500 },
   { x: 1, y: 1 },
+];
+Player.idleBattleAnim = [
+  { x: 1, y: 1 },
+  { x: 1, y: 2 },
 ];

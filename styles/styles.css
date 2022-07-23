@@ -75,7 +75,7 @@ div {
   bottom: 8px;
   left: 8px;
   font-size: 12px;
-  color: darkgrey;
+  color: darkgray;
 
   transition: opacity, 2s;
   opacity: 0;
@@ -277,10 +277,16 @@ div {
 }
 
 #main-menu {
+  font-variant: none;
+  font-family: "Source Sans Pro", sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+#main-menu h1 {
+  font-weight: 300;
 }
 
 .main-menu-button {
@@ -314,14 +320,15 @@ div {
 .main-menu-button:hover::after,
 .main-menu-button:focus::before,
 .main-menu-button:focus::after {
-  height: 200%;
-  border-left: 2px solid #ffff;
+  height: 150%;
+  border-left: 0.5px solid #ffff;
 }
 
 .main-menu-button.activated::before,
 .main-menu-button.activated::after {
   margin-left: 50vw;
   margin-right: 50vw;
+  height: 200%;
 }
 
 .main-menu-button.activated {

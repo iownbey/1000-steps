@@ -18,10 +18,12 @@ var lastCalled = null;
 // Singletons:
 /** @type {SoundManager} */
 var sound = new SoundManager();
-var speechByte = sound.loadPersistant("speechByte");
-var normalByte = sound.loadPersistant("normalByte");
-var attackBlip = sound.loadPersistant("blip");
-var errorBlip = sound.loadPersistant("errorBlip");
+var fx = {};
+fx.speechByte = sound.loadPersistant("speechByte");
+fx.normalByte = sound.loadPersistant("normalByte");
+fx.attack = sound.loadPersistant("blip");
+fx.errorBlip = sound.loadPersistant("errorBlip");
+fx.footstep = sound.loadPersistant("footstep");
 /** @type {ContentManager} */
 var contentManager;
 
@@ -140,6 +142,11 @@ async function walk() {
   if (!area.busy) {
     CSSAnimation.trigger(player.$jobj, "walk");
     stepsLeft--;
+    sound.playPersistant(fx.footstep);
+    Player.sprites.setSprite(player.$jobj, 4, 2);
+    contentManager.clear();
+    topWriter.clear();
+    bottomWriter.clear();
     stepsPopIn.$jobj.html("STEPS<br/>" + stepsLeft);
     stepsPopIn.show(3000);
     await area.walk();
@@ -498,15 +505,15 @@ function init$() {
     new Typewriter($("#output1"), 20, 500),
     $("#dialogueBox1"),
     faceHandler,
-    speechByte,
-    normalByte
+    fx.speechByte,
+    fx.normalByte
   );
   bottomWriter = new DialogueTypewriter(
     new Typewriter($("#output2"), 20, 500),
     $("#dialogueBox2"),
     faceHandler,
-    speechByte,
-    normalByte
+    fx.speechByte,
+    fx.normalByte
   );
   DialogueTypewriter.clearAll();
 
@@ -527,10 +534,10 @@ function init$() {
       let $info = $("#information");
       $info.html(
         `-1000 Steps-
-Shift+F to toggle fullscreen.
 Last Commit on ${new Date(commit.author.date).toDateString()} by ${
           commit.author.name
-        }: ${commit.message}`
+        }: ${commit.message}
+Shift+F to toggle fullscreen // Shift+S to save // Shift+L to Quick-Load the most recent save.`
       );
       $info.css("opacity", "1");
       setTimeout(() => {
@@ -553,7 +560,7 @@ Last Commit on ${new Date(commit.author.date).toDateString()} by ${
     `${Area.getStepsFromOffsetAndArea(
       file.get("current-area", "Area_Aorta"),
       file.get("area-offset", 0)
-    )} Steps`
+    )} STEPS`
   );
 }
 

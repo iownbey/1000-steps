@@ -83,6 +83,10 @@ class Area {
     return eval("new " + getRandom(classes) + "();");
   }
 
+  static getEmptySteps(n) {
+    return Array(n).fill(Area.emptyStep);
+  }
+
   async walk() {
     if (this.busy) return;
     this.busy = true;
