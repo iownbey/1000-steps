@@ -145,8 +145,7 @@ async function walk() {
     sound.playPersistant(fx.footstep);
     Player.sprites.setSprite(player.$jobj, 4, 2);
     contentManager.clear();
-    topWriter.clear();
-    bottomWriter.clear();
+    DialogueTypewriter.clearAll();
     stepsPopIn.$jobj.html("STEPS<br/>" + stepsLeft);
     stepsPopIn.show(3000);
     await area.walk();

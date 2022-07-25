@@ -62,6 +62,7 @@ class Battle {
     console.log("------------------------------------");
     console.log("BATTLE: Battle started.");
     SaveData.blockSaving = true;
+    if (!(monsters instanceof Array)) monsters = [monsters];
     this.monsters = monsters;
     this.currentMonster = null;
     mode = ModeEnum.fighting;
@@ -435,6 +436,9 @@ class Battle {
 /** @type {Battle} */
 Battle.current = null;
 Battle.damagestr = "{$d}";
+Battle.start = function (music, monsters, dynamicIntro = true) {
+  Battle.current = new Battle(music, monsters, dynamicIntro);
+};
 
 class SpriteRenderer {
   constructor(canvas, src, w, h) {

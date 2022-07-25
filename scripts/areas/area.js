@@ -119,6 +119,51 @@ Area.allScripts = Object.freeze([
   "area-ocean.js",
 ]);
 
+//Utility
+
+Area.attachImageToContent = function (
+  imageUrl,
+  width = 64,
+  height = 64,
+  x = 0,
+  y = 0
+) {
+  var $wrapper = $('<div class="monster"></div>');
+  var $innerWrapper = $(
+    '<canvas style="height:180%;width:180%;left:-40%;"></canvas>'
+  );
+  $innerWrapper.appendTo($wrapper);
+  contentManager.add($wrapper);
+
+  var renderer = new SpriteRenderer(
+    $innerWrapper[0],
+    "./images/" + imageUrl,
+    width,
+    height
+  );
+  renderer.onload = () => {
+    renderer.setSprite(x, y);
+  };
+
+  return $innerWrapper;
+};
+
+Area.writeTop = async function (messages) {
+  await new Writer(topWriter, messages).writeAllAsync();
+};
+
+Area.writeBottom = async function (messages) {
+  await new Writer(bottomWriter, messages).writeAllAsync();
+};
+
+Area.transitionForLeavingCharacter = async function () {
+  DialogueTypewriter.clearAll();
+  await contentManager.recede(true);
+  contentManager.clear();
+};
+
+// Universal steps / step generation helpers
+
 Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
   return function () {
     topWriter.show(flavor);

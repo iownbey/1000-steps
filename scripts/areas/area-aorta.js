@@ -7,9 +7,9 @@ class Area_Aorta extends Area {
     return [].concat(
       [Area_Aorta.meetVirgil],
       Area.getEmptySteps(3),
-      [Area_Aorta.meetTroll1],
+      [Area_Aorta.meetTroll],
       Area.getEmptySteps(6),
-      [Area_Aorta.virgil2],
+      [Area_Aorta.virgilKillScene],
       Area.getEmptySteps(15),
       [Area.fightEvent],
       Area.getEmptySteps(10),
@@ -55,63 +55,47 @@ class Area_Aorta extends Area {
 }
 
 Area_Aorta.meetVirgil = async function () {
-  DialogueTypewriter.clearAll();
-  contentManager.clear();
-  var $wrapper = $('<div class="monster"></div>');
-  var $virgil = $(
-    '<canvas style="height:180%;width:180%;left:-40%;" id="virgil"></canvas>'
-  );
-
-  var renderer = new SpriteRenderer($virgil[0], "./images/virgil.png", 64, 64);
-  await renderer.waitForLoad();
-  renderer.setSprite(0, 0);
-
-  $virgil.appendTo($wrapper);
-  contentManager.add($wrapper);
+  Area.attachImageToContent("virgil.png", 64, 64);
   await contentManager.approach();
 
-  await new Writer(bottomWriter, [
+  await Area.writeBottom([
     "Hello, Harbinger.",
     "I am Virgil.",
     "I am here to teach you how to fight your way to the surface.",
     "Or do you already know how to fight?",
-  ]).writeAllAsync();
+  ]);
 
   var pick = await getChoice(["Yes", "No"], hcursor);
 
   switch (pick) {
     case "Yes":
       {
-        await new Writer(bottomWriter, [
+        await Area.writeBottom([
           "But you have only existed for a short time!",
           "There is no possible way you could have learned.",
           "You must prove this if you are to continue.",
-        ]).writeAllAsync();
+        ]);
 
         var pick2 = await getChoice(["Fine then", "Nevermind"], hcursor);
         switch (pick2) {
           case "Fine then":
             {
-              await new Writer(bottomWriter, [
+              await Area.writeBottom([
                 "If you insist.",
                 "I will not kill you, but I will wound you.",
                 "If this happens, The fight will be over, and you must accept my training.",
                 "Prepare to combat with the master of blade and sorrow.",
-              ]).writeAllAsync();
-              Battle.current = new Battle(
-                "virgil-theme",
-                [new Virgil()],
-                false
-              );
+              ]);
+              Battle.start("virgil-theme", new Virgil(), false);
               await Battle.current.getPromise();
             }
             break;
           case "Nevermind":
             {
-              await new Writer(bottomWriter, [
+              await Area.writeBottom([
                 "Silly Harbinger...",
                 "You know I must teach you the way of blade and sorrow.",
-              ]).writeAllAsync();
+              ]);
               await tutorial();
             }
             break;
@@ -126,8 +110,7 @@ Area_Aorta.meetVirgil = async function () {
   }
 
   async function tutorial() {
-    await new Writer(bottomWriter, [
-      "Good.",
+    await Area.writeBottom([
       "Even now, humans continue to be abducted by the darkness's haze of malice.",
       "You must be prepared to fight your way to the surface, so let's begin.",
       "Just like in a dance, fighting is a dialogue.",
@@ -137,7 +120,7 @@ Area_Aorta.meetVirgil = async function () {
       "If you press space right when their attack enters the center, you can block it.",
       "But beware: too early or too late and your block will fail.",
       "Let's practice. Block my swing.",
-    ]).writeAllAsync();
+    ]);
 
     do {
       var timing = new TimingIndicator(contentCanvas);
@@ -145,14 +128,14 @@ Area_Aorta.meetVirgil = async function () {
       timing.renderers.push(point);
       await timing.getPromise();
       if (point.state === -1) {
-        await new Writer(bottomWriter, [
+        await Area.writeBottom([
           "Remember, you must hit space when the attack enters the center.",
           "The attack will turn blue when you can block it.",
-        ]).writeAllAsync();
+        ]);
       }
     } while (point.state !== 1);
 
-    await new Writer(bottomWriter, [
+    await Area.writeBottom([
       "Good job, Harbinger.",
       "I think this is enough training for now.",
       "Be aware that I was holding back just now. Most monsters won't.",
@@ -161,56 +144,67 @@ Area_Aorta.meetVirgil = async function () {
       "When they do, you must prepare to block their attacks by first DEFENDing with your shield.",
       "If you don't, these attacks will appear yellow and be unblockable.",
       "Good luck, Harbinger.",
-      "May we meet again.",
-    ]).writeAllAsync();
+      "We will meet again.",
+    ]);
   }
 
-  DialogueTypewriter.clearAll();
-  await contentManager.recede(true);
-  contentManager.clear();
-  console.log("done");
+  await Area.transitionForLeavingCharacter();
 };
 
-Area_Aorta.meetTroll1 = async function () {
+Area_Aorta.meetTroll = async function () {
   contentManager.clear();
   contentManager.add($('<div class="monster"><div class="troll"></div></div>'));
   contentManager.approach();
   await new Writer(bottomWriter, text.aorta.trollFoundText).writeAllAsync();
 
-  Battle.current = new Battle("fight", [new Troll()], false);
+  Battle.start("fight", new Troll(), false);
   await Battle.current.getPromise();
 };
 
-Area_Aorta.virgil2 = async function () {
-  DialogueTypewriter.clearAll();
-  contentManager.clear();
-  var $wrapper = $(
-    '<div class="monster"><img src="./images/virgil/virgil-killed.png" style="height:180%;width:180%;left:-40%;"/></div>'
-  );
-
-  contentManager.add($wrapper);
+Area_Aorta.virgilKillScene = async function () {
+  Area.attachImageToContent("virgil/virgil-killed.png");
   await contentManager.approach();
 
   await Helper.delay(2);
 
-  await new Writer(bottomWriter, [
+  await Area.writeBottom([
     "It's ugly, isn't it.",
     "The price we must pay to fight for what we believe in.",
     "This troll probably had no idea why he had to fight me",
     "And yet, he fought the same.",
     "I had to give up my innocence to protect our future.",
-  ]).writeAllAsync();
+  ]);
 
+  bottomWriter.clear();
   await Helper.delay(2);
 
-  await new Writer(bottomWriter, [
+  await Area.writeBottom([
     "We both paid our prices.",
     "...",
     "Harbinger, please don't think less of me.",
     "I will cut my way through this wilderness so that you may run.",
     "It is my destiny to bear the burden of evil so that you may bear the burden of the world.",
     "All the same, I wish neither of us had to bear these burdens",
-  ]).writeAllAsync();
+    "I might rest for a second, don't feel like you have to stay.",
+  ]);
+};
+
+Area_Aorta.UnlockCharge = async function () {
+  $column = Area.attachImageToContent("props/item-column.png");
+  var $item = $('<canvas class="hover"></canvas>');
+  $column.append($item);
+  var items = new SpriteRenderer(
+    $item,
+    "images/props/item-column-items.png",
+    32,
+    32
+  );
+  items.setSprite(2, 1);
+
+  var choice = await getChoice(["Accept", "Decline"], hcursor);
+  if (choice == "Accept") {
+  } else {
+  }
 };
 
 Area_Aorta.meetTroldiers = async function () {
@@ -226,7 +220,7 @@ Area_Aorta.meetTroldiers = async function () {
   await Helper.delay(2);
 
   await new Writer(bottomWriter, text.aorta.meetTroldiersText).writeAllAsync();
-  Battle.current = new Battle(
+  Battle.start(
     "fight",
     [new Troldier(), new Troldier(), new Troldier()],
     false
@@ -236,34 +230,28 @@ Area_Aorta.meetTroldiers = async function () {
 
 Area_Aorta.meetAmadeus = async function () {
   sound.pause();
-  contentManager.clear();
   var $a = $('<div class="monster"></div>');
   var $b = $('<div id="amadeus"></div>');
   contentManager.add($a);
   $a.html($b);
   Amadeus.sprites.setSprite($b, 1, 1);
   await contentManager.approach();
-  await new Writer(bottomWriter, text.aorta.meetAmadeusText).writeAllAsync();
-  await contentManager.recede();
-  contentManager.clear();
+  await Area.writeBottom(text.aorta.meetAmadeusText);
+  await Area.transitionForLeavingCharacter();
   sound.unpause();
-  DialogueTypewriter.clearAll();
 };
 
 Area_Aorta.talkAmadeus = async function () {
   sound.pause();
-  contentManager.clear();
   var $a = $('<div class="monster"></div>');
   var $b = $('<div id="amadeus"></div>');
   contentManager.add($a);
   $a.html($b);
   Amadeus.sprites.setSprite($b, 1, 1);
   await contentManager.approach();
-  await new Writer(bottomWriter, text.aorta.talkToAmadeusText).writeAllAsync();
-  await contentManager.recede();
-  contentManager.clear();
+  await Area.writeBottom(text.aorta.talkToAmadeusText);
+  await Area.transitionForLeavingCharacter();
   sound.unpause();
-  DialogueTypewriter.clearAll();
 };
 
 Area_Aorta.fightAmadeus = async function () {
@@ -276,80 +264,58 @@ Area_Aorta.fightAmadeus = async function () {
   $a.html($b);
   Amadeus.sprites.setSprite($b, 1, 1);
   await contentManager.approachFromLeft();
-  await new Writer(
-    bottomWriter,
-    text.aorta.prefightAmadeusText
-  ).writeAllAsync();
-  Battle.current = new Battle("amadeus", [new Amadeus()], false);
+  await Area.writeBottom(text.aorta.prefightAmadeusText);
+  Battle.start("amadeus", new Amadeus(), false);
   await Battle.current.getPromise();
 };
 
-Area_Aorta.meetOscar = function () {
-  var input = { oninput: () => {} };
-  currentDoer = Doer.ofPromise(
-    (async function () {
-      DialogueTypewriter.clearAll();
-      contentManager.clear();
-      var $wrapper = $('<div class="monster"></div>');
-      var $oscar = $(
-        '<canvas style="height:80%;width:80%;left:10%;" id="oscar"></canvas>'
-      );
-      $oscar.appendTo($wrapper);
-      contentManager.add($wrapper);
-
-      var animHandle;
-      var renderer = new SpriteRenderer(
-        $oscar[0],
-        "./images/oscar.png",
-        32,
-        32
-      );
-      await new Promise((resolve) => {
-        renderer.onload = () => {
-          var fs = new SequenceGetter(
-            [
-              { x: 1, y: 0 },
-              { x: 2, y: 0 },
-            ],
-            true
-          );
-          function animLoop() {
-            let f = fs.get();
-            renderer.setSprite(f.x, f.y);
-          }
-          animHandle = setInterval(animLoop, 480);
-          setTimeout(resolve, 480);
-        };
-      });
-      sound.playMusic("accordion", true);
-
-      await contentManager.approach();
-      clearInterval(animHandle);
-      await Helper.delay(1);
-      sound.pause();
-      await Helper.delay(1);
-      renderer.setSprite(0, 0);
-
-      let textBlob = text.aorta.meetOscar;
-      await new Writer(bottomWriter, textBlob.intro).writeAllAsync();
-      bottomWriter.show(textBlob.choice.prompt);
-      let chose = await getChoice(
-        [textBlob.choice.yes.button, textBlob.choice.no.button],
-        hcursor
-      );
-      if (chose == textBlob.choice.yes.button) {
-        await new Writer(
-          bottomWriter,
-          textBlob.choice.yes.result
-        ).writeAllAsync();
-      } else {
-        await new Writer(
-          bottomWriter,
-          textBlob.choice.no.result
-        ).writeAllAsync();
-      }
-      contentManager.clear();
-    })(),
-    input
+Area_Aorta.meetOscar = async function () {
+  var $wrapper = $('<div class="monster"></div>');
+  var $oscar = $(
+    '<canvas style="height:80%;width:80%;left:10%;" id="oscar"></canvas>'
   );
+  $oscar.appendTo($wrapper);
+  contentManager.add($wrapper);
+
+  var animHandle;
+  var renderer = new SpriteRenderer($oscar[0], "./images/oscar.png", 32, 32);
+  await new Promise((resolve) => {
+    renderer.onload = () => {
+      var fs = new SequenceGetter(
+        [
+          { x: 1, y: 0 },
+          { x: 2, y: 0 },
+        ],
+        true
+      );
+      function animLoop() {
+        let f = fs.get();
+        renderer.setSprite(f.x, f.y);
+      }
+      animHandle = setInterval(animLoop, 480);
+      setTimeout(resolve, 480);
+    };
+  });
+  sound.playMusic("accordion", true);
+
+  await contentManager.approach();
+  clearInterval(animHandle);
+  await Helper.delay(1);
+  sound.pause();
+  await Helper.delay(1);
+  renderer.setSprite(0, 0);
+
+  let textBlob = text.aorta.meetOscar;
+  await new Writer(bottomWriter, textBlob.intro).writeAllAsync();
+  bottomWriter.show(textBlob.choice.prompt);
+  let chose = await getChoice(
+    [textBlob.choice.yes.button, textBlob.choice.no.button],
+    hcursor
+  );
+  if (chose == textBlob.choice.yes.button) {
+    await new Writer(bottomWriter, textBlob.choice.yes.result).writeAllAsync();
+  } else {
+    await new Writer(bottomWriter, textBlob.choice.no.result).writeAllAsync();
+  }
+  contentManager.clear();
 };
