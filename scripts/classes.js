@@ -94,7 +94,10 @@ class Battle {
           );
         }
 
-        _this.charAnim = new CSSAnimation(player.$jobj, "battlePose").start();
+        _this.charAnim = new CSSAnimationController(
+          player.$jobj,
+          "battlePose"
+        ).start();
         _this.eventQueue = new Queue();
         _this.queueAction(() => _this.startPlayerTurn());
       },
@@ -562,11 +565,10 @@ class ContentManager {
   }
 }
 
-class CSSAnimation {
-  constructor(jobj, anim, otherAnims) {
+class CSSAnimationController {
+  constructor(jobj, anim) {
     this.jobj = jobj;
     this.anim = anim;
-    this.otherAnims = otherAnims;
     this.endListener = null;
   }
 
@@ -604,7 +606,7 @@ class CSSAnimation {
   }
 
   static trigger(jobj, anim) {
-    return new CSSAnimation(jobj, anim).trigger();
+    return new CSSAnimationController(jobj, anim).trigger();
   }
 
   trigger() {
@@ -977,7 +979,7 @@ class HealthDisplay {
   }
 
   flashRed() {
-    CSSAnimation.trigger(this.popin.$jobj, "flashRed");
+    CSSAnimationController.trigger(this.popin.$jobj, "flashRed");
   }
 }
 
@@ -988,6 +990,41 @@ class Helper {
 
   static async delay(seconds) {
     await new Promise((resolve) => setTimeout(resolve, seconds * 1000.0));
+  }
+}
+
+class InfoWindow {
+  constructor($inner) {
+    this.$jobj = $inner;
+  }
+
+  setToItemContent(item, name, description) {
+    this.$jobj
+      .children()
+      .html(
+        `<canvas style="height:20%; aspect-ratio: 1;"></canvas><h2>${name}</h2><hr style="width: 100%"><p style="line-height:1.5;text-align: justify;">${description}</p>`
+      );
+
+    var c = this.$jobj.find("canvas");
+    var itemRenderer = new SpriteRenderer(
+      c[0],
+      "images/props/item-column-items.png",
+      32,
+      32
+    );
+    itemRenderer.onload = () => {
+      itemRenderer.setSprite(item, 0);
+    };
+  }
+
+  async show() {
+    this.$jobj.css("width", "100%");
+    await Helper.delay(2);
+  }
+
+  async hide() {
+    this.$jobj.css("width", "0%");
+    await Helper.delay(2);
   }
 }
 
@@ -1122,7 +1159,7 @@ class Player {
     healthDisplay.update(this.health, this.maxHealth);
     if (change < 0) {
       healthDisplay.flashRed();
-      CSSAnimation.trigger(player.$jobj, "shake");
+      CSSAnimationController.trigger(player.$jobj, "shake");
     }
     this.wounded = wounded;
     return wounded;
@@ -1174,7 +1211,7 @@ class Player {
     var _this = this;
     this.lastCalled = this.attack;
     Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
-    CSSAnimation.trigger(monster.jobj, "shake");
+    CSSAnimationController.trigger(monster.jobj, "shake");
 
     var damage = this.attackPower * 3 ** this.chargeAmount;
     const basephrase =
@@ -1257,7 +1294,7 @@ class Player {
 
   inspect(monster) {
     this.lastCalled = this.inspect;
-    level = file.get("Inspect-Level", 0);
+    var level = file.get("Inspect-Level", 0);
 
     var w2 = new Writer(bottomWriter, monster.inspect());
     var doit2 = function () {

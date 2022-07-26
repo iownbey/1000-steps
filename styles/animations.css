@@ -1,284 +1,310 @@
-@keyframes approaching
-{
-	from
-	{
-		left: 33%;
-		right: 33%;
-		height: 10%;
-		bottom: 73.7%;
-	}
+@keyframes approaching {
+  from {
+    left: 33%;
+    right: 33%;
+    height: 10%;
+    bottom: 73.7%;
+  }
 
-	to
-	{
-		left: 0%;
-		right: 0%;
-		height: 30%;
-		bottom: 44%;
-	}
+  to {
+    left: 0%;
+    right: 0%;
+    height: 30%;
+    bottom: 44%;
+  }
 }
 
-@keyframes receding
-{
-	from
-	{
-		left: 0%;
-		right: 0%;
-		height: 30%;
-		bottom: 44%;
-	}
+@keyframes receding {
+  from {
+    left: 0%;
+    right: 0%;
+    height: 30%;
+    bottom: 44%;
+  }
 
-	to
-	{
-		left: 33%;
-		right: 33%;
-		height: 10%;
-		bottom: 73.7%;
-	}
+  to {
+    left: 33%;
+    right: 33%;
+    height: 10%;
+    bottom: 73.7%;
+  }
 }
 
-@keyframes fromLeft
-{
-	from 	{transform: translateX(-150%);};
-	to 	{transform: translateX(0px);}
+@keyframes fromLeft {
+  from {
+    transform: translateX(-150%);
+  }
+  to {
+    transform: translateX(0px);
+  }
 }
 
-.fromLeft
-{
-	animation: fromLeft 1 forwards ease-out 1s;
+.fromLeft {
+  animation: fromLeft 1 forwards ease-out 1s;
 }
 
-.toLeft
-{
-	animation: fromLeft 1 forwards ease-in 1s;
-	animation-direction: reverse;
+.toLeft {
+  animation: fromLeft 1 forwards ease-in 1s;
+  animation-direction: reverse;
 }
 
-.left
-{
-	transform: translateX(-150%);
+.left {
+  transform: translateX(-150%);
 }
 
-.approaching
-{
-	animation: approaching 1 forwards ease-out 1s;
+.approaching {
+  animation: approaching 1 forwards ease-out 1s;
 }
 
-.receding
-{
-	animation: receding 1 forwards ease-out 1s;
+.receding {
+  animation: receding 1 forwards ease-out 1s;
 }
 
-.here
-{
-	left: 0%;
-	right: 0%;
-	height: 30%;
-	bottom: 44%;
+.here {
+  left: 0%;
+  right: 0%;
+  height: 30%;
+  bottom: 44%;
 }
 
-.there
-{
-	left: 33%;
-	right: 33%;
-	height: 10%;
-	bottom: 73.7%;
+.there {
+  left: 33%;
+  right: 33%;
+  height: 10%;
+  bottom: 73.7%;
 }
 
-@keyframes fallOver
-{
-	from 	{transform: rotateX(0deg);}
-	to 	{transform: rotateX(60deg);}
+@keyframes fallOver {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(60deg);
+  }
 }
 
-.fallOver
-{
-	animation: fallOver ease-in 3s forwards;
-	transform-origin: bottom;
-	perspective: 650px;
-	perspective-origin: bottom;
+.fallOver {
+  animation: fallOver ease-in 3s forwards;
+  transform-origin: bottom;
+  perspective: 650px;
+  perspective-origin: bottom;
 }
 
-@keyframes ghostPose
-{
-	0% {transform: translateY(-2px);}
-	50% {transform: translateY(2px);}
-	100% {transform: translateY(-2px);}
+@keyframes ghostPose {
+  0% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+  100% {
+    transform: translateY(-2px);
+  }
 }
 
-.ghostPose
-{
-	animation: ghostPose 4s var(--cos) infinite;
+.ghostPose {
+  animation: ghostPose 4s var(--cos) infinite;
 }
 
-@keyframes trollPose
-{
-	0%  {transform: scaleY(1);}
-	50% {transform: scaleY(1.02);}
-	100%{transform: scaleY(1);}
+@keyframes trollPose {
+  0% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.02);
+  }
+  100% {
+    transform: scaleY(1);
+  }
 }
 
-.trollPose
-{
-	animation: trollPose 4s ease-in-out infinite;
-	transform-origin: bottom;
+.trollPose {
+  animation: trollPose 4s ease-in-out infinite;
+  transform-origin: bottom;
 }
 
-@keyframes spongePose
-{
-	0%  {transform: scaleY(1.04) scaleX(0.96);}
-	50%  {transform: scaleY(0.96) scaleX(1.04);}
-	100%  {transform: scaleY(1.04) scaleX(0.96);}
+@keyframes spongePose {
+  0% {
+    transform: scaleY(1.04) scaleX(0.96);
+  }
+  50% {
+    transform: scaleY(0.96) scaleX(1.04);
+  }
+  100% {
+    transform: scaleY(1.04) scaleX(0.96);
+  }
 }
 
-.spongePose
-{
-	animation: spongePose 4s ease-in-out infinite;
-	transform-origin: bottom;
+.spongePose {
+  animation: spongePose 4s ease-in-out infinite;
+  transform-origin: bottom;
 }
 
-@keyframes spin360
-{
-	from {transform: rotate(0turn);}
-	to   {transform: rotate(1turn);}
+@keyframes spin360 {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
 }
 
-.spin360
-{
-	animation: spin360 0.333s ease-in-out;
-	transform-origin: bottom;
+.spin360 {
+  animation: spin360 0.333s ease-in-out;
+  transform-origin: bottom;
 }
 
-@keyframes shiver
-{
-	0%  {transform: translateX(0px);}
-	25% {transform: translateX(2px);}
-	50% {transform: translateX(-2px);}
-	75% {transform: translateX(2px);}
-	100%{transform: translateX(0px);}
+@keyframes shiver {
+  0% {
+    transform: translateX(0px);
+  }
+  25% {
+    transform: translateX(2px);
+  }
+  50% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }
 
-.shiver
-{
-	animation: shiver 0.1s ease-in-out;
+.shiver {
+  animation: shiver 0.1s ease-in-out;
 }
 
-@keyframes hover
-{
-	0%  {transform: translateY(-4px);}
-	50% {transform: translateY(4px);}
-	100%{transform: translateY(-4px);}
+@keyframes hover {
+  0% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+  100% {
+    transform: translateY(-4px);
+  }
 }
 
-.hover
-{
-	animation: hover 2s var(--cos);
+.hover {
+  animation: hover 2s var(--cos);
 }
 
-@keyframes shake
-{
-	0%  {transform: translateX(0px);}
-	25% {transform: translateX(16px);}
-	50% {transform: translateX(-16px);}
-	75% {transform: translateX(16px);}
-	100%{transform: translateX(0px);}
+.slowHover {
+  animation: hover 10s var(--cos);
 }
 
-.shake
-{
-	animation: shake 0.1s ease-in-out !important; 
+@keyframes shake {
+  0% {
+    transform: translateX(0px);
+  }
+  25% {
+    transform: translateX(16px);
+  }
+  50% {
+    transform: translateX(-16px);
+  }
+  75% {
+    transform: translateX(16px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }
 
-@keyframes aragoreHeadSway
-{
-	25% {transform: translateX(6px);}
-	75% {transform: translateX(-6px);}
+.shake {
+  animation: shake 0.1s ease-in-out !important;
 }
 
-@keyframes fadeInOpacity
-{
-	from
-	{
-		opacity: 0;
-	}
-
-	to
-	{
-		opacity: 1;
-	}
+@keyframes aragoreHeadSway {
+  25% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
 }
 
-.fadeInOpacity
-{
-	animation: fadeInOpacity 0.5s ease-in-out;
+@keyframes fadeInOpacity {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-.introText
-{
-	min-width: 0.5em;
-	display: inline-block;
-	animation: fadeInOpacity 0.5s ease-in-out, hover 2s var(--cos) infinite;
+.fadeInOpacity {
+  animation: fadeInOpacity 0.5s ease-in-out;
 }
 
-@keyframes flashRed
-{
-	0%  {color: red;}
-	100%{color: white;}
+.introText {
+  min-width: 0.5em;
+  display: inline-block;
+  animation: fadeInOpacity 0.5s ease-in-out, hover 2s var(--cos) infinite;
 }
 
-.flashRed
-{
-	animation: flashRed 0.75s ease-out;
+@keyframes flashRed {
+  0% {
+    color: red;
+  }
+  100% {
+    color: white;
+  }
 }
 
-@keyframes dolphinPose
-{
-	 from {
-		transform: translateY(0%) rotate(-0.025turn) scale(1);
-		animation-timing-function: ease-in;
-	 }
-	 50% {
-		transform: translateY(-5%) scale(1.01);
-		animation-timing-function: ease-out;
-	 }
-	 to {
-		transform: translateY(0%) rotate(0.05turn) scale(1);
-		animation-timing-function: ease-in;
-	 }
+.flashRed {
+  animation: flashRed 0.75s ease-out;
 }
 
-.dolphinPose
-{
-	animation-name: dolphinPose;
-	animation-duration: 1s;
-	animation-direction: alternate;
-	animation-iteration-count: infinite;
-
-	transform-origin: 70% 80%;
+@keyframes dolphinPose {
+  from {
+    transform: translateY(0%) rotate(-0.025turn) scale(1);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translateY(-5%) scale(1.01);
+    animation-timing-function: ease-out;
+  }
+  to {
+    transform: translateY(0%) rotate(0.05turn) scale(1);
+    animation-timing-function: ease-in;
+  }
 }
 
-@keyframes scytheSpin
-{
-	from{
-		transform: rotate(0turn);
-	}
-	25%{
-		transform: rotate(3turn);
-	}
-	50%{
-		transform: rotate(2.97turn);
-	}
-	75%{
-		transform: rotate(3.03turn);
-	}
-	100%{
-		transform: rotate(3turn);
-	}
+.dolphinPose {
+  animation-name: dolphinPose;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+
+  transform-origin: 70% 80%;
 }
-.scytheSpin
-{
-	animation-name: scytheSpin;
-	animation-duration: 7.3s;
-	animation-direction: normal;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: infinite;
+
+@keyframes scytheSpin {
+  from {
+    transform: rotate(0turn);
+  }
+  25% {
+    transform: rotate(3turn);
+  }
+  50% {
+    transform: rotate(2.97turn);
+  }
+  75% {
+    transform: rotate(3.03turn);
+  }
+  100% {
+    transform: rotate(3turn);
+  }
+}
+.scytheSpin {
+  animation-name: scytheSpin;
+  animation-duration: 7.3s;
+  animation-direction: normal;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }

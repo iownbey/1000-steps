@@ -344,3 +344,37 @@ div {
     color: #fff8;
   }
 }
+
+.infoWindowBox {
+  position: absolute;
+  top: 2cm;
+  left: 2cm;
+
+  z-index: 9998;
+  pointer-events: none;
+}
+
+.infoWindowBox > div {
+  transition: width 2s ease-in-out;
+  width: 0%;
+  height: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.infoWindowBox > div > div {
+  margin-left: 50%;
+  transform: translateX(-50%);
+
+  width: calc(100vw - 4cm);
+  height: calc(100vh - 4cm);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  background-color: black;
+
+  box-sizing: border-box;
+  padding: 1cm;
+}

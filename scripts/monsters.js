@@ -155,7 +155,7 @@ class Amadeus extends Monster {
   smack() {
     this.shiverAnim.end();
     this.setPicture(4);
-    CSSAnimation.trigger($("#gamewindow"), "shake");
+    CSSAnimationController.trigger($("#gamewindow"), "shake");
     var _this = this;
     setTimeout(function () {
       _this.setPicture(1);
@@ -251,8 +251,8 @@ class Amadeus extends Monster {
     root.append(h);
     this.jobj = h;
     this.setPicture(1);
-    this.shiverAnim = new CSSAnimation(h, "shiver");
-    this.breatheAnim = new CSSAnimation(h, "trollPose").start();
+    this.shiverAnim = new CSSAnimationController(h, "shiver");
+    this.breatheAnim = new CSSAnimationController(h, "trollPose").start();
   }
 
   setPicture(image) {
@@ -377,9 +377,12 @@ class Chain extends Monster {
       _this.renderHandle = requestAnimationFrame(renderLoop);
     }
 
-    this.shakeAnim = new CSSAnimation($content, "shake");
-    this.shiverAnim = new CSSAnimation($content, "shiver");
-    this.breatheAnim = new CSSAnimation($content, "trollPose").start();
+    this.shakeAnim = new CSSAnimationController($content, "shake");
+    this.shiverAnim = new CSSAnimationController($content, "shiver");
+    this.breatheAnim = new CSSAnimationController(
+      $content,
+      "trollPose"
+    ).start();
   }
 
   talk() {
@@ -656,9 +659,9 @@ class MasterSponge extends Monster {
       _this.renderer.setSprite(0, 0);
     };
 
-    this.breatheAnim = new CSSAnimation($virgil, "trollPose").start();
-    this.shakeAnim = new CSSAnimation($virgil, "shake");
-    this.shiverAnim = new CSSAnimation($virgil, "shiver");
+    this.breatheAnim = new CSSAnimationController($virgil, "trollPose").start();
+    this.shakeAnim = new CSSAnimationController($virgil, "shake");
+    this.shiverAnim = new CSSAnimationController($virgil, "shiver");
   }
 
   talk() {
@@ -730,7 +733,7 @@ class PreMasterSponge extends Monster {
     root.append(h);
     this.jobj = h;
 
-    this.shakeAnim = new CSSAnimation(h, "shake");
+    this.shakeAnim = new CSSAnimCSSAnimationControlleration(h, "shake");
   }
 }
 
@@ -751,14 +754,14 @@ class Reaper extends Monster {
     if (point.state == -1) {
       if (player.health >= 14) {
         var damage = Math.randomInt(1, 5);
-        CSSAnimation.trigger(this.sycthe, "spin360");
+        CSSAnimationController.trigger(this.sycthe, "spin360");
         return {
           text: "Reaper dealt " + player.checkDamage(damage) + " damage.",
           damage,
         };
       } else {
         var damage = player.health;
-        CSSAnimation.trigger(this.sycthe, "spin360");
+        CSSAnimationController.trigger(this.sycthe, "spin360");
         await new Promise((resolve) =>
           cover.flash("black", null, resolve, 100)
         );
@@ -891,7 +894,7 @@ class Thaddeus extends Monster {
     if (points.some((a) => a.state === -1)) {
       if (player.health >= 25) {
         var damage = Math.randomInt(6, 13);
-        CSSAnimation.trigger(this.sycthe, "spin360");
+        CSSAnimationController.trigger(this.sycthe, "spin360");
         return {
           text: "Thaddeus dealt " + player.checkDamage(damage) + " damage.",
           damage,
@@ -899,7 +902,7 @@ class Thaddeus extends Monster {
       } else {
         var damage = player.health;
         cover.flash("black", null, null, 100);
-        CSSAnimation.trigger(this.sycthe, "spin360");
+        CSSAnimationController.trigger(this.sycthe, "spin360");
         return { text: 'Thaddeus used "SPECTRAL SLICE++".', damage };
       }
     } else {
@@ -1043,8 +1046,8 @@ class Troldier extends Monster {
     var h = $('<div class="troll-soldier"></div>');
     root.append(h);
     this.jobj = h;
-    this.shiverAnim = new CSSAnimation(h, "shiver");
-    this.breatheAnim = new CSSAnimation(h, "trollPose").start();
+    this.shiverAnim = new CSSAnimationController(h, "shiver");
+    this.breatheAnim = new CSSAnimationController(h, "trollPose").start();
   }
 
   setPicture(image) {
@@ -1133,7 +1136,7 @@ class Troll extends Monster {
 
           this.shiverAnim.end();
           this.setPicture(4);
-          CSSAnimation.trigger($("#gamewindow"), "shake");
+          CSSAnimationController.trigger($("#gamewindow"), "shake");
           var _this = this;
           setTimeout(function () {
             _this.setPicture(1);
@@ -1155,8 +1158,8 @@ class Troll extends Monster {
     var $html = $('<div class="troll"></div>');
     root.append($html);
     this.jobj = $html;
-    this.shiverAnim = new CSSAnimation($html, "shiver");
-    this.breatheAnim = new CSSAnimation($html, "trollPose").start();
+    this.shiverAnim = new CSSAnimationController($html, "shiver");
+    this.breatheAnim = new CSSAnimationController($html, "trollPose").start();
   }
 
   setPicture(image) {
@@ -1287,9 +1290,9 @@ class Virgil extends Monster {
       _this.renderer.setSprite(0, 0);
     };
 
-    this.breatheAnim = new CSSAnimation($virgil, "trollPose").start();
-    this.shakeAnim = new CSSAnimation($virgil, "shake");
-    this.shiverAnim = new CSSAnimation($virgil, "shiver");
+    this.breatheAnim = new CSSAnimationController($virgil, "trollPose").start();
+    this.shakeAnim = new CSSAnimationController($virgil, "shake");
+    this.shiverAnim = new CSSAnimationController($virgil, "shiver");
   }
 
   talk() {

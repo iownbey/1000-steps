@@ -55,7 +55,7 @@ class Area_Aorta extends Area {
 }
 
 Area_Aorta.meetVirgil = async function () {
-  Area.attachImageToContent("virgil.png", 64, 64);
+  Area.attachImageToContent("virgil.png", 64, 64, 0, 0, 1.8);
   await contentManager.approach();
 
   await Area.writeBottom([
@@ -162,7 +162,7 @@ Area_Aorta.meetTroll = async function () {
 };
 
 Area_Aorta.virgilKillScene = async function () {
-  Area.attachImageToContent("virgil/virgil-killed.png");
+  Area.attachImageToContent("virgil/virgil-killed.png", 64, 64, 0, 0, 1.8);
   await contentManager.approach();
 
   await Helper.delay(2);
@@ -191,19 +191,59 @@ Area_Aorta.virgilKillScene = async function () {
 
 Area_Aorta.UnlockCharge = async function () {
   $column = Area.attachImageToContent("props/item-column.png");
-  var $item = $('<canvas class="hover"></canvas>');
-  $column.append($item);
+  var $item = $(
+    '<canvas style="left: 35%; bottom: 90%; width: 30%; height: 30%;"></canvas>'
+  );
+  var hover = new CSSAnimationController($item, "slowHover");
+  hover.start();
+  $item.insertAfter($column);
   var items = new SpriteRenderer(
-    $item,
+    $item[0],
     "images/props/item-column-items.png",
     32,
     32
   );
-  items.setSprite(2, 1);
+
+  items.onload = () => {
+    items.setSprite(1, 0);
+  };
+
+  await contentManager.approach();
+
+  Area.writeBottom(["Will you accept the offering of light?"]);
+
+  async function collect() {
+    cover.color = "white";
+    await cover.fadeTo(1, 200);
+    hover.end();
+    $item.remove();
+    await cover.fadeTo(0, 3000);
+    infoWindow.setToItemContent(
+      1,
+      "CHARGE",
+      'Your maximum charge has been increased from zero to one. Use "CHARGE" in battle to increase your charge, and spend charge to power up your attacks. You can now "STRIKE" which deals immense damage to one target, and you can "BLOCK" which can be used more than one turn in a row, or followed by "QUICK BLOCK". Healing is more potent when you are charged as well.'
+    );
+
+    await infoWindow.show();
+    sound.playFX("item-get");
+    await InputHandler.waitForInput();
+    infoWindow.hide();
+  }
 
   var choice = await getChoice(["Accept", "Decline"], hcursor);
   if (choice == "Accept") {
+    await collect();
   } else {
+    await Area.writeBottom([
+      "If you reject the offering, your journey will be much more difficult—|Possibly impossible.",
+      "Are you sure you want to decline the offering?",
+    ]);
+    var check = await getChoice(["Accept", "Reject"], hcursor);
+    if (check == "Accept") {
+      await collect();
+    } else {
+      Area.writeBottom(["So be it.", "You bear the weight of your own will."]);
+    }
   }
 };
 

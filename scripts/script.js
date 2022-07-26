@@ -36,6 +36,9 @@ var bottomWriter;
 var sparkHandler;
 var healthDisplay;
 
+/** @type {InfoWindow} */
+var infoWindow;
+
 /** @type {PopIn} */
 var healthPopIn;
 /** @type {PopIn} */
@@ -140,7 +143,7 @@ function getRandom(array) {
 
 async function walk() {
   if (!area.busy) {
-    CSSAnimation.trigger(player.$jobj, "walk");
+    CSSAnimationController.trigger(player.$jobj, "walk");
     stepsLeft--;
     sound.playPersistant(fx.footstep);
     Player.sprites.setSprite(player.$jobj, 4, 2);
@@ -554,6 +557,8 @@ Shift+F to toggle fullscreen // Shift+S to save // Shift+L to Quick-Load the mos
   stepsPopIn.setAnchor("top", "0vh");
   stepsPopIn.addActiveAnchor("right");
   stepsPopIn.$jobj.html("STEPS:<br/>" + stepsLeft);
+
+  infoWindow = new InfoWindow($("#innerInfoWindowBox"));
 
   $("#main-heading").text(
     `${Area.getStepsFromOffsetAndArea(

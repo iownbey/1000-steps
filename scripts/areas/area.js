@@ -126,11 +126,15 @@ Area.attachImageToContent = function (
   width = 64,
   height = 64,
   x = 0,
-  y = 0
+  y = 0,
+  sizeMultiplier = 1
 ) {
+  let size = 100 * sizeMultiplier;
+  let offset = (100 - size) / 2;
+
   var $wrapper = $('<div class="monster"></div>');
   var $innerWrapper = $(
-    '<canvas style="height:180%;width:180%;left:-40%;"></canvas>'
+    `<canvas style="height:${size}%;width:${size}%;left:${offset}%;"></canvas>`
   );
   $innerWrapper.appendTo($wrapper);
   contentManager.add($wrapper);
