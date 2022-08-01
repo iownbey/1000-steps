@@ -77,7 +77,7 @@ class Darkness extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     //this.renderer.setSprite(0, 0);
@@ -143,7 +143,7 @@ class Darkness extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     this.floatUpdate = true;
@@ -199,7 +199,7 @@ class Darkness extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     this.floatUpdate = true;

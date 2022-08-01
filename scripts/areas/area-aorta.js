@@ -125,7 +125,7 @@ Area_Aorta.meetVirgil = async function () {
     do {
       var timing = new TimingIndicator(contentCanvas);
       var point = new EaseInOutPoint(new Vector2D(200, 0), 2);
-      timing.renderers.push(point);
+      timing.points.push(point);
       await timing.getPromise();
       if (point.state === -1) {
         await Area.writeBottom([

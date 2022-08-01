@@ -27,7 +27,7 @@ class ManglerFish extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = [point];
+    interaction.points = [point];
     await interaction.getPromise();
 
     if (point.state === -1) {
@@ -158,7 +158,7 @@ class Shark extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     var failed = points.filter((r) => r.state === -1).length;
@@ -334,7 +334,7 @@ class Martimer extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     this.renderer.setSprite(0, 0);

@@ -32,6 +32,8 @@ class TimingIndicator {
   #d;
   #timestamp;
   #onstop;
+  #pressedKeys;
+  #origin;
 
   static current;
   static burstPool;
@@ -43,13 +45,26 @@ class TimingIndicator {
     this.logicalRadius = 50;
     this.#canvas = canvas;
     this.#ctx = canvas.getContext("2d");
-    this.renderers = [];
+    this.points = [];
     this.#renderFlag = true;
     this.#d = $(document);
     this.#onstop = () => {};
-    this.origin = new Vector2D(this.#canvas.width / 2, this.#canvas.height / 2);
+    this.#origin = new Vector2D(
+      this.#canvas.width / 2,
+      this.#canvas.height / 2
+    );
+
+    this.originOffset = new Vector2D(0, 0);
+    this.originOffsetSpeedPerSecond = 100;
+    this.#pressedKeys = {};
 
     this.start();
+  }
+
+  #isPressed(key) {
+    return this.#pressedKeys.hasOwnProperty(key)
+      ? this.#pressedKeys[key] > 0
+      : false;
   }
 
   getPromise() {
@@ -68,16 +83,27 @@ class TimingIndicator {
     });
 
     this.#d.on("keydown.timingIndicator", (e) => {
+      if (!e.repeat) {
+        if (!_this.#pressedKeys.hasOwnProperty(e.key))
+          _this.#pressedKeys[e.key] = 1;
+        else _this.#pressedKeys[e.key]++;
+      }
+
       _this.press(e);
     });
-    this.#d.on("mouseup.timingIndicator", (e) => {
+    this.#d.on("mousedown.timingIndicator", (e) => {
       _this.press(e);
+    });
+    this.#d.on("keyup.timingIndicator", (e) => {
+      if (!_this.#pressedKeys.hasOwnProperty(e.key))
+        _this.#pressedKeys[e.key] = 0;
+      else _this.#pressedKeys[e.key]--;
     });
   }
 
   stop() {
     console.log("stopping");
-    this.renderers = [];
+    this.points = [];
     this.#renderFlag = false;
     this.#d.off(".timingIndicator");
     this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
@@ -85,7 +111,8 @@ class TimingIndicator {
   }
 
   #render(context) {
-    var center = this.getOrigin();
+    var center = this.#origin.add(this.originOffset);
+    context.globalAlpha = 1;
     context.beginPath();
     context.arc(center.x, center.y, this.displayRadius, 0, 2 * Math.PI, false);
     context.lineWidth = 2;
@@ -93,48 +120,76 @@ class TimingIndicator {
     context.stroke();
   }
 
+  #handleOrigin(delta) {
+    var horizontal = 0;
+    var vertical = 0;
+
+    if (this.#isPressed("ArrowLeft") || this.#isPressed("a")) horizontal = -1;
+    if (this.#isPressed("ArrowRight") || this.#isPressed("d")) horizontal = 1;
+
+    if (this.#isPressed("ArrowDown") || this.#isPressed("s")) vertical = 1;
+    if (this.#isPressed("ArrowUp") || this.#isPressed("w")) vertical = -1;
+
+    this.originOffset = this.originOffset.add(
+      new Vector2D(horizontal, vertical)
+        .scale(this.originOffsetSpeedPerSecond)
+        .scale(delta)
+    );
+
+    console.log(this.originOffset, this.#pressedKeys);
+  }
+
+  #checkAndUpdateCanvasSize() {
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    if (this.#canvas.width != width || this.#canvas.height != height) {
+      this.#canvas.width = width;
+      this.#canvas.height = height;
+      //recalculate center
+      this.#origin = new Vector2D(width / 2, height / 2);
+    }
+  }
+
+  #refreshCanvas() {
+    //clear for drawing
+    this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+    //Darken background
+    this.#ctx.fillStyle = "#00000055";
+    this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
+  }
+
+  #updatePoint(point, delta) {
+    var center = this.#origin.add(this.originOffset);
+    var distSqr = (point.x - center.x) ** 2 + (point.y - center.y) ** 2;
+    //update collisions
+    if ((this.logicalRadius + point.radius) ** 2 < distSqr) {
+      //too far away
+      if (point.contacting === true) {
+        point.contacting = false;
+        point.onexit();
+      }
+    } else {
+      if (point.contacting === false) {
+        point.contacting = true;
+        point.onenter();
+      }
+    }
+    this.#ctx.globalAlpha = 1;
+    point.update(delta, this.#ctx);
+  }
+
   #renderLoop(timestamp) {
     var delta = (timestamp - this.#timestamp) / 1000;
     this.#timestamp = timestamp;
     //Update
-    if (this.renderers.length > 0) {
-      //check and update canvas size
-      var width = window.innerWidth;
-      var height = window.innerHeight;
-      if (this.#canvas.width != width || this.#canvas.height != height) {
-        this.#canvas.width = width;
-        this.#canvas.height = height;
-        //recalculate center
-        this.origin = new Vector2D(width / 2, height / 2);
-      }
-      //clear for drawing
-      this.#ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-      //Darken background
-      this.#ctx.fillStyle = "#00000055";
-      this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height);
+    if (this.points.length > 0) {
+      this.#checkAndUpdateCanvasSize();
+      this.#handleOrigin(delta);
+      this.#refreshCanvas();
 
       //update points
-      for (let renderer of this.renderers) {
-        var center = this.origin;
-        var distSqr =
-          (renderer.x - center.x) ** 2 + (renderer.y - center.y) ** 2;
-        //update collisions
-        if ((this.logicalRadius + renderer.radius) ** 2 < distSqr) {
-          //too far away
-          if (renderer.contacting === true) {
-            renderer.contacting = false;
-            renderer.onexit();
-          }
-        } else {
-          if (renderer.contacting === false) {
-            renderer.contacting = true;
-            renderer.onenter();
-          }
-        }
-        this.#ctx.globalAlpha = 1;
-        renderer.update(delta, this.#ctx);
-      }
-      this.#ctx.globalAlpha = 1;
+      for (let point of this.points) this.#updatePoint(point, delta);
+
       this.#render(this.#ctx);
     } else {
       //stop automatically when the canvas is empty
@@ -151,19 +206,63 @@ class TimingIndicator {
 
   press(e) {
     //abort if there are no timing points
-    if (this.renderers.length == 0) return;
+    if (this.points.length == 0) return;
 
     //validate input
-    if (!(e.key === " " || e.type === "mouseup")) return;
+    if (!(e.key === " " || e.type === "mousedown")) return;
 
+    this.#triggerBlock();
+  }
+
+  #handlePointFinish(point) {
+    let burst = TimingIndicator.burstPool.get();
+
+    if (point.contacting === false) {
+      if (!point.isLure) {
+        //too far away
+        point.state = -1;
+        point.onfail();
+        sound.playPersistant(fx.errorBlip);
+
+        // mo.js
+        burst.tune({ x: point.x, y: point.y, children: { fill: "red" } });
+        burst.replay();
+      }
+    } else {
+      //in range!
+      if (point.isLure) {
+        point.state = -1;
+        point.onfail();
+        sound.playPersistant(fx.errorBlip);
+
+        // mo.js
+        burst.tune({ x: point.x, y: point.y, children: { fill: "red" } });
+        burst.replay();
+      } else {
+        point.state = 1;
+        point.onsuccess();
+        sound.playPersistant(fx.attack);
+
+        // mo.js
+        burst.tune({
+          x: point.x,
+          y: point.y,
+          children: { fill: "blue" },
+        });
+        burst.replay();
+      }
+    }
+  }
+
+  #triggerBlock() {
     //Check for collisions
 
     //the closest TimingPoint
     var closest = null;
     //It's distance, squared
     var closestSqrDist = this.logicalRadius ** 2 * 2;
-    var center = this.getOrigin();
-    for (let renderer of this.renderers) {
+    var center = this.#origin;
+    for (let renderer of this.points) {
       //Only block hits that are strong if the player is defending
       if (
         renderer.timeAlive > renderer.delayTime &&
@@ -180,55 +279,19 @@ class TimingIndicator {
     }
 
     if (closest) {
-      let burst = TimingIndicator.burstPool.get();
+      this.#handlePointFinish(closest);
+    }
+  }
 
-      if (closest.contacting === false) {
-        if (!closest.isLure) {
-          //too far away
-          closest.state = -1;
-          closest.onfail();
-          sound.playPersistant(fx.errorBlip);
-
-          // mo.js
-          burst.tune({ x: closest.x, y: closest.y, children: { fill: "red" } });
-          burst.replay();
-        }
-      } else {
-        //in range!
-        if (closest.isLure) {
-          closest.state = -1;
-          closest.onfail();
-          sound.playPersistant(fx.errorBlip);
-
-          // mo.js
-          burst.tune({ x: closest.x, y: closest.y, children: { fill: "red" } });
-          burst.replay();
-        } else {
-          closest.state = 1;
-          closest.onsuccess();
-          sound.playPersistant(fx.attack);
-
-          // mo.js
-          burst.tune({
-            x: closest.x,
-            y: closest.y,
-            children: { fill: "blue" },
-          });
-          burst.replay();
-        }
-      }
+  static MarkDone(point) {
+    var i = TimingIndicator.current.points.indexOf(point);
+    if (i > -1) {
+      TimingIndicator.current.points.splice(i, 1);
     }
   }
 
   getOrigin() {
-    return this.origin;
-  }
-
-  static MarkDone(point) {
-    var i = TimingIndicator.current.renderers.indexOf(point);
-    if (i > -1) {
-      TimingIndicator.current.renderers.splice(i, 1);
-    }
+    return this.#origin;
   }
 }
 

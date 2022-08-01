@@ -304,7 +304,7 @@ class Chain extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     this.shiverAnim.end();
@@ -514,7 +514,7 @@ class IntrovertedGhost extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     if (
@@ -599,7 +599,7 @@ class MasterSponge extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     this.renderer.setSprite(0, 0);
@@ -746,7 +746,7 @@ class Reaper extends Monster {
       document.getElementById("content-canvas")
     );
     var point = new SpinPoint(new Vector2D(0, 150), 3);
-    interaction.renderers.push(point);
+    interaction.points.push(point);
     await interaction.getPromise();
 
     if (point.state == -1) {
@@ -827,7 +827,7 @@ class Skeleton extends Monster {
       document.getElementById("content-canvas")
     );
     var point = new EaseInOutPoint(new Vector2D(0, 150), 1.5);
-    interaction.renderers.push(point);
+    interaction.points.push(point);
     await interaction.getPromise();
 
     if (point.state === -1) {
@@ -890,7 +890,7 @@ class Thaddeus extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
     if (points.some((a) => a.state === -1)) {
       if (player.health >= 25) {
@@ -1008,7 +1008,7 @@ class Troldier extends Monster {
           );
           var point = new EaseInOutPoint(new Vector2D(75, 75), 2);
           point.strong();
-          interaction.renderers.push(point);
+          interaction.points.push(point);
           await interaction.getPromise();
 
           this.shiverAnim.end();
@@ -1125,7 +1125,7 @@ class Troll extends Monster {
           );
           var point = new EaseInOutPoint(new Vector2D(0, 150), 2);
           point.strong();
-          interaction.renderers.push(point);
+          interaction.points.push(point);
           await interaction.getPromise();
 
           this.shiverAnim.end();
@@ -1217,7 +1217,7 @@ class Virgil extends Monster {
     var interaction = new TimingIndicator(
       document.getElementById("content-canvas")
     );
-    interaction.renderers = points.slice(0);
+    interaction.points = points.slice(0);
     await interaction.getPromise();
 
     this.renderer.setSprite(0, 0);
