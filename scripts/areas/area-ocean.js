@@ -107,9 +107,5 @@ Area_Ocean.meetMortimer = async function () {
     ["The SHARKS!!!"],
   ]).writeAllAsync();
 
-  Battle.current = new Battle(
-    "ocean-fight",
-    [new Shark(), new Shark(), new Shark()],
-    true
-  );
+  Battle.start("ocean-fight", [new Shark(), new Shark(), new Shark()], true);
 };

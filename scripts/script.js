@@ -254,7 +254,7 @@ async function shiftKeys(event) {
         file.set("IntroComplete", true);
         StartMainGame();
         //await loadScript("monsters/darkness.js");
-        //Battle.current = new Battle("darkness-fight", [new Darkness()], false);
+        //Battle.start("darkness-fight", [new Darkness()], false);
       }
       break;
   }

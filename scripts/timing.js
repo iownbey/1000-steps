@@ -34,6 +34,7 @@ class TimingIndicator {
   #onstop;
 
   static current;
+  static burstPool;
 
   constructor(canvas) {
     console.log("Init timing");
@@ -230,8 +231,6 @@ class TimingIndicator {
     }
   }
 }
-// see afterwork.js for mo.js
-TimingIndicator.burstPool = undefined;
 
 class TimingPoint {
   constructor(x, y) {

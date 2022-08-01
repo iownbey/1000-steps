@@ -181,7 +181,7 @@ Area.emptyStep = function () {
 };
 
 Area.fightEvent = function () {
-  Battle.current = new Battle(area.battleTheme, [
+  Battle.start(area.battleTheme, [
     area.getRandomMonster(),
     area.getRandomMonster(),
     area.getRandomMonster(),
@@ -231,7 +231,7 @@ Area.fightChain = function () {
         "Prepare to die.",
       ]).writeAllAsync();
 
-      Battle.current = new Battle("chain", [new Chain()], false);
+      Battle.start("chain", [new Chain()], false);
     })(),
     input
   );
@@ -239,6 +239,6 @@ Area.fightChain = function () {
 
 Area.fightAragore = function () {
   mode = ModeEnum.final;
-  Battle.current = new Battle("aragore", [new Aragore()]);
+  Battle.start("aragore", [new Aragore()]);
   topWriter.show("Aragore the dragon blocks the exit.");
 };

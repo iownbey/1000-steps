@@ -138,6 +138,7 @@ class Aragore extends Monster {
 }
 
 class Amadeus extends Monster {
+  static sprites = new SpriteSheet("images/troll2.png", 4, 1);
   constructor() {
     super("Amadeus", 150, 0, 0);
     this.charge = 0;
@@ -264,12 +265,10 @@ class Amadeus extends Monster {
   }
 
   talk() {
-    var _this = this;
     if (this.flavorer.empty) {
       return "Amadeus is all out of things to say.";
     } else {
-      var w = new Writer(topWriter, _this.flavorer.pull());
-      return new Doer([w.getThing()]);
+      return this.flavorer.pull();
     }
   }
 
@@ -283,7 +282,6 @@ class Amadeus extends Monster {
     ];
   }
 }
-Amadeus.sprites = new SpriteSheet("images/troll2.png", 4, 1);
 
 class Chain extends Monster {
   constructor() {
@@ -706,7 +704,7 @@ class PreMasterSponge extends Monster {
       sound.playFX("pre-master-sponge");
       await cover.fadeTo(1, 5000);
       Battle.current.endNow();
-      Battle.current = new Battle("master-sponge", [new MasterSponge()], false);
+      Battle.start("master-sponge", new MasterSponge(), false);
     }
 
     return { damage: 0, text: "Nothing happened." };
@@ -813,6 +811,13 @@ class Reaper extends Monster {
 }
 
 class Skeleton extends Monster {
+  static sprites = new SpriteSheet("images/skeleton.png", 4, 2);
+  static attackAnim = [
+    { x: 4, y: 1 },
+    { x: 4, y: 2, time: 500 },
+    { x: 1, y: 1 },
+  ];
+
   constructor() {
     super("Generic Skeleton", 30, 2, 1);
   }
@@ -857,14 +862,10 @@ class Skeleton extends Monster {
     ];
   }
 }
-Skeleton.attackAnim = [
-  { x: 4, y: 1 },
-  { x: 4, y: 2, time: 500 },
-  { x: 1, y: 1 },
-];
-Skeleton.sprites = new SpriteSheet("images/skeleton.png", 4, 2);
 
 class Thaddeus extends Monster {
+  static sprites = new SpriteSheet("images/thaddeus.png", 2, 2);
+
   constructor() {
     super("Thaddeus", 200, NaN, 0);
     this.sycthe = null;
@@ -948,7 +949,6 @@ class Thaddeus extends Monster {
     ];
   }
 }
-Thaddeus.sprites = new SpriteSheet("images/thaddeus.png", 2, 2);
 
 class Troldier extends Monster {
   constructor() {
@@ -1068,15 +1068,9 @@ class Troldier extends Monster {
     return "The Troll ignored your distracting magics.";
   }
 
-  talk() {
-    const _this = this;
-    return new Doer([
-      {
-        action: function () {
-          topWriter.show(_this.flavorer.get(), expr.troll.default);
-        },
-      },
-    ]);
+  async talk() {
+    topWriter.show(this.flavorer.get(), expr.troll.default);
+    await InputHandler.waitForInput();
   }
 
   inspect() {
@@ -1171,24 +1165,15 @@ class Troll extends Monster {
   }
 
   magic() {
-    if (Math.random() < 0.99) {
-      if (this.charge == 3) stopAnimation(this.jobj, "shiver");
-      this.setPicture(1);
-      this.charge = 0;
-      return "You confused the Troll with bright lights.";
-    }
-    return "The Troll ignored your distracting magics.";
+    if (this.charge == 3) stopAnimation(this.jobj, "shiver");
+    this.setPicture(1);
+    this.charge = 0;
+    return "You stunned the troll!";
   }
 
-  talk() {
-    const _this = this;
-    return new Doer([
-      {
-        action: function () {
-          topWriter.show(_this.flavorer.get(), expr.troll.default);
-        },
-      },
-    ]);
+  async talk() {
+    topWriter.show(this.flavorer.get(), expr.troll.default);
+    await InputHandler.waitForInput();
   }
 
   inspect() {

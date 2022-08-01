@@ -58,6 +58,9 @@ class Queue {
 }
 
 class Battle {
+  /** @type {Battle} */
+  static #current;
+
   constructor(music, monsters, dynamicIntro = true) {
     console.log("------------------------------------");
     console.log("BATTLE: Battle started.");
@@ -103,6 +106,18 @@ class Battle {
       },
       1250
     );
+  }
+
+  static start(music, monsters, dynamicIntro = true) {
+    Battle.#current = new Battle(music, monsters, dynamicIntro);
+  }
+
+  static get current() {
+    return Battle.#current;
+  }
+
+  static get damagestr() {
+    return "{$d}";
   }
 
   queueAction(action) {
@@ -397,7 +412,7 @@ class Battle {
       SaveData.blockSaving = false;
       _this.charAnim.end();
       mode = ModeEnum.walking;
-      Battle.current = null;
+      Battle.#current = null;
       player.defending = false;
       playBackgroundMusic();
       if (_this.onfinish) _this.onfinish();
@@ -423,7 +438,7 @@ class Battle {
     SaveData.blockSaving = false;
     this.charAnim.end();
     mode = ModeEnum.walking;
-    Battle.current = null;
+    Battle.#current = null;
     player.defending = false;
     playBackgroundMusic();
     backgroundCanvas.triggerDefault();
@@ -436,12 +451,6 @@ class Battle {
     });
   }
 }
-/** @type {Battle} */
-Battle.current = null;
-Battle.damagestr = "{$d}";
-Battle.start = function (music, monsters, dynamicIntro = true) {
-  Battle.current = new Battle(music, monsters, dynamicIntro);
-};
 
 class SpriteRenderer {
   constructor(canvas, src, w, h) {
@@ -673,6 +682,8 @@ class DelayedFunction {
 }
 
 class DialogueTypewriter {
+  static instances = [];
+
   constructor(typewriter, $root, face, speechSound = null, normalSound = null) {
     this.typewriter = typewriter;
     this.$root = $root;
@@ -777,7 +788,6 @@ class DialogueTypewriter {
     this.face.hide();
   }
 }
-DialogueTypewriter.instances = [];
 
 class Doer {
   constructor(
@@ -937,6 +947,20 @@ class GrabBag {
     this.itemsInBag.push(itemsToMove[0]);
   }
 
+  static shuffle(array) {
+    var itemsToMove = array.splice(0);
+    var shuffledItems = [];
+
+    while (itemsToMove.length > 1) {
+      var i = Math.floor(Math.random() * itemsToMove.length);
+      var item = itemsToMove[i];
+      itemsToMove.splice(i, 1);
+      shuffledItems.push(item);
+    }
+    shuffledItems.push(itemsToMove[0]);
+    return shuffledItems;
+  }
+
   pull() {
     return this.itemsInBag.pop();
   }
@@ -954,19 +978,6 @@ class GrabBag {
     };
   }
 }
-GrabBag.shuffle = function (array) {
-  var itemsToMove = array.splice(0);
-  var shuffledItems = [];
-
-  while (itemsToMove.length > 1) {
-    var i = Math.floor(Math.random() * itemsToMove.length);
-    var item = itemsToMove[i];
-    itemsToMove.splice(i, 1);
-    shuffledItems.push(item);
-  }
-  shuffledItems.push(itemsToMove[0]);
-  return shuffledItems;
-};
 
 class HealthDisplay {
   constructor(popin) {
@@ -1134,263 +1145,6 @@ class Notifier {
   }
 }
 
-class Player {
-  constructor($jobj, health, attack) {
-    this.$jobj = $jobj;
-    this.health = this.maxHealth = health;
-    this.wounded = false;
-    this.attackPower = attack;
-    this.defending = false;
-
-    this.chargeAmount = 0;
-
-    this.healOffset = 0;
-  }
-
-  checkDamage(damage, alternative = "no") {
-    return this.defending ? alternative : damage;
-  }
-
-  changeHealth(change) {
-    this.health += change;
-    var wounded = this.health <= 1;
-    if (wounded) this.health = 1;
-    else if (this.health > this.maxHealth) this.health = this.maxHealth;
-    healthDisplay.update(this.health, this.maxHealth);
-    if (change < 0) {
-      healthDisplay.flashRed();
-      CSSAnimationController.trigger(player.$jobj, "shake");
-    }
-    this.wounded = wounded;
-    return wounded;
-  }
-
-  charge() {
-    var onFlash;
-    var onFinish;
-    switch (this.chargeAmount) {
-      case 0:
-        {
-          onFinish = function () {
-            topWriter.show("You focus your light into a spark.");
-          };
-          onFlash = function () {
-            sparkHandler.showSpark();
-          };
-        }
-        break;
-      case 1:
-        {
-          onFinish = function () {
-            topWriter.show("You strengthen your spark into a flame.");
-          };
-          onFlash = function () {
-            sparkHandler.showFlame();
-          };
-        }
-        break;
-      case 2:
-        {
-          onFinish = function () {
-            topWriter.show("You fan the flame into a glorious light!");
-          };
-          onFlash = function () {
-            sparkHandler.showAura();
-          };
-        }
-        break;
-    }
-    console.log(this.chargeAmount);
-    sound.playFX("charge" + (this.chargeAmount + 1));
-    cover.flash("white", onFlash, onFinish, 250);
-    this.chargeAmount++;
-    this.lastCalled = this.charge;
-  }
-
-  async attack(monster) {
-    var _this = this;
-    this.lastCalled = this.attack;
-    Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
-    CSSAnimationController.trigger(monster.jobj, "shake");
-
-    var damage = this.attackPower * 3 ** this.chargeAmount;
-    const basephrase =
-      "You hit " + monster.myName + " and deal " + damage + " damage.";
-
-    if (await monster.hit(damage)) {
-      sound.playFX("deathfx");
-      var add = nl + "You killed " + monster.myName + ".";
-      Battle.current.kill(monster);
-      topWriter.show(basephrase + add);
-    } else {
-      sound.playFX("attack");
-      topWriter.show(basephrase);
-    }
-  }
-
-  runAway(monsters) {
-    this.lastCalled = this.runAway;
-    topWriter.show("You run...");
-    Battle.current.recede();
-    Battle.current.queueAction(function () {
-      Battle.current.approach();
-
-      var total = monsters.length;
-      var ranfrom = 0;
-      var ranfromName = monsters[0].myName;
-      monsters.forEach(function (monster) {
-        if (monster.run()) {
-          ranfrom++;
-          Battle.current.kill(monster);
-          ranfromName = monster.myName;
-        }
-      });
-
-      if (total == 1) {
-        if (ranfrom == 1) {
-          topWriter.show("You escape the clutches of " + ranfromName + ".");
-        } else {
-          topWriter.show("You couldn't get away from " + ranfromName + "!");
-        }
-      } else {
-        if (ranfrom == 1) {
-          topWriter.show("You only escaped " + ranfromName + "...");
-        } else if (ranfrom == total) {
-          topWriter.show("You escaped everybody!");
-        } else if (ranfrom > 1) {
-          topWriter.show("You escaped some of the monsters...");
-        } else {
-          topWriter.show("You couldn't get away from anybody!");
-        }
-      }
-
-      Battle.current.finishAction();
-    });
-  }
-
-  talk(monster) {
-    this.lastCalled = this.talk;
-    var response = monster.talk();
-    topWriter.show("You attempt to communicate with " + monster.myName + ".");
-    if (typeof response == "string") {
-      Battle.current.queueAction(function () {
-        topWriter.show(response);
-        Battle.current.finishAction();
-      });
-    } else if (Array.isArray(response)) {
-      var w = new Writer(topWriter, response);
-      Battle.current.queueAction(function () {
-        w.write();
-        if (w.complete) Battle.current.finishAction();
-      });
-    } else {
-      Battle.current.queueAction(function () {
-        console.log("Doer doing");
-        response.do();
-        if (response.complete) Battle.current.finishAction();
-      });
-    }
-  }
-
-  inspect(monster) {
-    this.lastCalled = this.inspect;
-    var level = file.get("Inspect-Level", 0);
-
-    var w2 = new Writer(bottomWriter, monster.inspect());
-    var doit2 = function () {
-      w2.write();
-      if (w2.complete) Battle.current.finishAction();
-    };
-
-    switch (level) {
-      case 2:
-      case 0:
-        {
-          Battle.current.queueAction(doit2);
-        }
-        break;
-
-      case 1:
-        {
-          var w = new Writer(bottomWriter, text.other.aboutInspect);
-          var doit = function () {
-            w.write();
-            if (w.complete) {
-              file.set("Inspect-Level", 2);
-              Battle.current.changeAction(doit2);
-            }
-          };
-          Battle.current.queueAction(doit);
-        }
-        break;
-    }
-  }
-
-  heal() {
-    if (this.lastCalled == this.heal) {
-      this.healOffset--;
-    } else {
-      this.healOffset = 0;
-    }
-    this.lastCalled = this.heal;
-
-    var amount =
-      (this.healOffset * Player.healStaleTurnBias +
-        Player.healStartValue +
-        Math.randomInt(0, randomBias)) *
-      (this.chargeAmount + 1);
-    if (amount < 0) amount = 0;
-    this.changeHealth(amount);
-
-    if (amount == 0) {
-      topWriter.show(
-        "You have exhausted your healing power. Do something else!"
-      );
-      return;
-    } else {
-      topWriter.show("You healed for " + amount + " health.");
-      return;
-    }
-  }
-
-  magics(monster) {
-    this.lastCalled = this.magics;
-    sound.playFX("magic");
-    topWriter.show(monster.magic());
-  }
-
-  defend() {
-    if (this.lastCalled == this.defend) {
-      topWriter.show("You could not defend again.");
-      return;
-    }
-    this.lastCalled = this.chargeAmount ? this.charge : this.defend;
-    if (this.chargeAmount > 0) {
-      this.chargeAmount--;
-      topWriter.show("You brace for the next attack.|You can brace again!");
-    } else {
-      topWriter.show("You brace for the next attack.");
-    }
-
-    this.defending = true;
-    Player.sprites.setSprite(this.$jobj, 2, 2);
-  }
-
-  die() {
-    sound.stop(false);
-    Player.sprites.setSprite(player.$jobj, 3, 2);
-    sound.playFX("die");
-    var _this = this;
-    setTimeout(function () {
-      sound.playFX("deathFX");
-      _this.$jobj.fadeOut(500);
-    }, 600);
-  }
-}
-Player.healStaleTurnBias = 3; //the amount the move is reduced per turn if stale.
-Player.healStartValue = 10; //the amount before turn bias is applied.
-Player.healRandomDrift = 5; //the amount of "extra" health you can randomly get.
-
 class PopIn {
   constructor($jobj) {
     this.$jobj = $jobj;
@@ -1432,6 +1186,8 @@ class SaveData {
     var oldSave = this.#getFromLocalStorage();
     this.obj = oldSave.obj;
   }
+
+  static blockSaving = false;
 
   #showNotification(message) {
     if (this.notifier != null) this.notifier.show(message);
@@ -1492,7 +1248,6 @@ class SaveData {
     localStorage.saveData = JSON.stringify(saveData);
   }
 }
-SaveData.blockSaving = false;
 
 class ScreenCover {
   constructor(jqueryobj) {
@@ -1635,67 +1390,6 @@ class SoundManager {
     new Howl({
       src: [effect + ".wav", effect + ".mp3"],
     }).play();
-  }
-}
-
-class SparkHandler {
-  constructor($spark, $flame, $aura) {
-    this.$spark = $spark;
-    this.$flame = $flame;
-    SparkHandler.flameSprites.animate(
-      $flame,
-      [
-        { x: 1, y: 1 },
-        { x: 2, y: 1 },
-        { x: 1, y: 2 },
-        { x: 2, y: 2 },
-      ],
-      500,
-      true
-    );
-    this.$aura = $aura;
-    this.sparkJob = null;
-  }
-
-  hideAll() {
-    if (this.sparkJob) {
-      clearTimeout(this.sparkJob);
-      this.sparkJob = null;
-    }
-    this.$spark.css("display", "none");
-    this.$flame.css("display", "none");
-    this.$aura.css("display", "none");
-  }
-
-  showSpark() {
-    var _this = this;
-    var s = this.$spark;
-    this.hideAll();
-    s.css("display", "block");
-
-    var lit = false;
-    var flicker = function () {
-      if (lit) {
-        lit = false;
-        SparkHandler.sparkSprites.setRandomSprite(s);
-        _this.sparkJob = setTimeout(flicker, 50);
-      } else {
-        lit = true;
-        SpriteSheet.setSprite(s, "images/sparkBase.png");
-        _this.sparkJob = setTimeout(flicker, Math.randomInt(100, 500));
-      }
-    };
-    flicker();
-  }
-
-  showFlame() {
-    this.hideAll();
-    this.$flame.css("display", "block");
-  }
-
-  showAura() {
-    this.hideAll();
-    this.$aura.css("display", "block");
   }
 }
 
@@ -2225,20 +1919,345 @@ class Writer {
   }
 }
 
-//Static Variables:
+// These classes have static dependencies on other classes, so they are last.
 
-SaveData.blockSaving = false;
-SparkHandler.sparkSprites = new SpriteSheet("images/sparks.png", 2, 2);
-SparkHandler.flameSprites = new SpriteSheet("images/flames.png", 2, 2);
-Player.sprites = new SpriteSheet("images/character.png", 4, 8);
-Player.attackAnim = [
-  { x: 1, y: 3 },
-  { x: 2, y: 3 },
-  { x: 3, y: 3 },
-  { x: 4, y: 3, time: 500 },
-  { x: 1, y: 1 },
-];
-Player.idleBattleAnim = [
-  { x: 1, y: 1 },
-  { x: 1, y: 2 },
-];
+class Player {
+  constructor($jobj, health, attack) {
+    this.$jobj = $jobj;
+    this.health = this.maxHealth = health;
+    this.wounded = false;
+    this.attackPower = attack;
+    this.defending = false;
+
+    this.chargeAmount = 0;
+
+    this.healOffset = 0;
+  }
+
+  /**The amount heal is reduced per turn if stale.*/
+  static get healStaleTurnBias() {
+    return 3;
+  }
+  /**The amount of a unstale, uncharged heal */
+  static get healStartValue() {
+    return 10;
+  }
+  /**The amount heal value can drift to make values less predictable*/
+  static get healRandomDrift() {
+    return 5;
+  }
+
+  static #sprites = new SpriteSheet("images/character.png", 4, 8);
+  static get sprites() {
+    return Player.#sprites;
+  }
+  static get attackAnim() {
+    return [
+      { x: 1, y: 3 },
+      { x: 2, y: 3 },
+      { x: 3, y: 3 },
+      { x: 4, y: 3, time: 500 },
+      { x: 1, y: 1 },
+    ];
+  }
+
+  static get idleBattleAnim() {
+    return [
+      { x: 1, y: 1 },
+      { x: 1, y: 2 },
+    ];
+  }
+
+  checkDamage(damage, alternative = "no") {
+    return this.defending ? alternative : damage;
+  }
+
+  changeHealth(change) {
+    this.health += change;
+    var wounded = this.health <= 1;
+    if (wounded) this.health = 1;
+    else if (this.health > this.maxHealth) this.health = this.maxHealth;
+    healthDisplay.update(this.health, this.maxHealth);
+    if (change < 0) {
+      healthDisplay.flashRed();
+      CSSAnimationController.trigger(player.$jobj, "shake");
+    }
+    this.wounded = wounded;
+    return wounded;
+  }
+
+  charge() {
+    var onFlash;
+    var onFinish;
+    switch (this.chargeAmount) {
+      case 0:
+        {
+          onFinish = function () {
+            topWriter.show("You focus your light into a spark.");
+          };
+          onFlash = function () {
+            sparkHandler.showSpark();
+          };
+        }
+        break;
+      case 1:
+        {
+          onFinish = function () {
+            topWriter.show("You strengthen your spark into a flame.");
+          };
+          onFlash = function () {
+            sparkHandler.showFlame();
+          };
+        }
+        break;
+      case 2:
+        {
+          onFinish = function () {
+            topWriter.show("You fan the flame into a glorious light!");
+          };
+          onFlash = function () {
+            sparkHandler.showAura();
+          };
+        }
+        break;
+    }
+    console.log(this.chargeAmount);
+    sound.playFX("charge" + (this.chargeAmount + 1));
+    cover.flash("white", onFlash, onFinish, 250);
+    this.chargeAmount++;
+    this.lastCalled = this.charge;
+  }
+
+  async attack(monster) {
+    var _this = this;
+    this.lastCalled = this.attack;
+    Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
+    CSSAnimationController.trigger(monster.jobj, "shake");
+
+    var damage = this.attackPower * 3 ** this.chargeAmount;
+    const basephrase =
+      "You hit " + monster.myName + " and deal " + damage + " damage.";
+
+    if (await monster.hit(damage)) {
+      sound.playFX("deathfx");
+      var add = nl + "You killed " + monster.myName + ".";
+      Battle.current.kill(monster);
+      topWriter.show(basephrase + add);
+    } else {
+      sound.playFX("attack");
+      topWriter.show(basephrase);
+    }
+  }
+
+  runAway(monsters) {
+    this.lastCalled = this.runAway;
+    topWriter.show("You run...");
+    Battle.current.recede();
+    Battle.current.queueAction(function () {
+      Battle.current.approach();
+
+      var total = monsters.length;
+      var ranfrom = 0;
+      var ranfromName = monsters[0].myName;
+      monsters.forEach(function (monster) {
+        if (monster.run()) {
+          ranfrom++;
+          Battle.current.kill(monster);
+          ranfromName = monster.myName;
+        }
+      });
+
+      if (total == 1) {
+        if (ranfrom == 1) {
+          topWriter.show("You escape the clutches of " + ranfromName + ".");
+        } else {
+          topWriter.show("You couldn't get away from " + ranfromName + "!");
+        }
+      } else {
+        if (ranfrom == 1) {
+          topWriter.show("You only escaped " + ranfromName + "...");
+        } else if (ranfrom == total) {
+          topWriter.show("You escaped everybody!");
+        } else if (ranfrom > 1) {
+          topWriter.show("You escaped some of the monsters...");
+        } else {
+          topWriter.show("You couldn't get away from anybody!");
+        }
+      }
+
+      Battle.current.finishAction();
+    });
+  }
+
+  async talk(monster) {
+    this.lastCalled = this.talk;
+    topWriter.show("You attempt to communicate with " + monster.myName + ".");
+    await InputHandler.waitForInput();
+    var response = monster.talk();
+    if (typeof response == "string") {
+      topWriter.show(response);
+      await InputHandler.waitForInput();
+    } else if (Array.isArray(response))
+      await new Writer(topWriter, response).writeAllAsync();
+    else await response;
+  }
+
+  inspect(monster) {
+    this.lastCalled = this.inspect;
+    var level = file.get("Inspect-Level", 0);
+
+    var w2 = new Writer(bottomWriter, monster.inspect());
+    var doit2 = function () {
+      w2.write();
+      if (w2.complete) Battle.current.finishAction();
+    };
+
+    switch (level) {
+      case 2:
+      case 0:
+        {
+          Battle.current.queueAction(doit2);
+        }
+        break;
+
+      case 1:
+        {
+          var w = new Writer(bottomWriter, text.other.aboutInspect);
+          var doit = function () {
+            w.write();
+            if (w.complete) {
+              file.set("Inspect-Level", 2);
+              Battle.current.changeAction(doit2);
+            }
+          };
+          Battle.current.queueAction(doit);
+        }
+        break;
+    }
+  }
+
+  heal() {
+    if (this.lastCalled == this.heal) {
+      this.healOffset--;
+    } else {
+      this.healOffset = 0;
+    }
+    this.lastCalled = this.heal;
+
+    var amount =
+      (this.healOffset * Player.healStaleTurnBias +
+        Player.healStartValue +
+        Math.randomInt(0, Player.healRandomDrift)) *
+      (this.chargeAmount + 1);
+    if (amount < 0) amount = 0;
+    this.changeHealth(amount);
+
+    if (amount == 0) {
+      topWriter.show(
+        "You have exhausted your healing power. Do something else!"
+      );
+      return;
+    } else {
+      topWriter.show("You healed for " + amount + " health.");
+      return;
+    }
+  }
+
+  magics(monster) {
+    this.lastCalled = this.magics;
+    sound.playFX("magic");
+    topWriter.show(monster.magic());
+  }
+
+  defend() {
+    if (this.lastCalled == this.defend) {
+      topWriter.show("You could not defend again.");
+      return;
+    }
+    this.lastCalled = this.chargeAmount ? this.charge : this.defend;
+    if (this.chargeAmount > 0) {
+      this.chargeAmount--;
+      topWriter.show("You brace for the next attack.|You can brace again!");
+    } else {
+      topWriter.show("You brace for the next attack.");
+    }
+
+    this.defending = true;
+    Player.sprites.setSprite(this.$jobj, 2, 2);
+  }
+
+  die() {
+    sound.stop(false);
+    Player.sprites.setSprite(player.$jobj, 3, 2);
+    sound.playFX("die");
+    var _this = this;
+    setTimeout(function () {
+      sound.playFX("deathFX");
+      _this.$jobj.fadeOut(500);
+    }, 600);
+  }
+}
+
+class SparkHandler {
+  static sparkSprites = new SpriteSheet("images/sparks.png", 2, 2);
+  static flameSprites = new SpriteSheet("images/flames.png", 2, 2);
+
+  constructor($spark, $flame, $aura) {
+    this.$spark = $spark;
+    this.$flame = $flame;
+    SparkHandler.flameSprites.animate(
+      $flame,
+      [
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+      ],
+      500,
+      true
+    );
+    this.$aura = $aura;
+    this.sparkJob = null;
+  }
+
+  hideAll() {
+    if (this.sparkJob) {
+      clearTimeout(this.sparkJob);
+      this.sparkJob = null;
+    }
+    this.$spark.css("display", "none");
+    this.$flame.css("display", "none");
+    this.$aura.css("display", "none");
+  }
+
+  showSpark() {
+    var _this = this;
+    var s = this.$spark;
+    this.hideAll();
+    s.css("display", "block");
+
+    var lit = false;
+    var flicker = function () {
+      if (lit) {
+        lit = false;
+        SparkHandler.sparkSprites.setRandomSprite(s);
+        _this.sparkJob = setTimeout(flicker, 50);
+      } else {
+        lit = true;
+        SpriteSheet.setSprite(s, "images/sparkBase.png");
+        _this.sparkJob = setTimeout(flicker, Math.randomInt(100, 500));
+      }
+    };
+    flicker();
+  }
+
+  showFlame() {
+    this.hideAll();
+    this.$flame.css("display", "block");
+  }
+
+  showAura() {
+    this.hideAll();
+    this.$aura.css("display", "block");
+  }
+}
