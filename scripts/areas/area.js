@@ -166,7 +166,67 @@ Area.transitionForLeavingCharacter = async function () {
   contentManager.clear();
 };
 
-// Universal steps / step generation helpers
+// Step generation helpers
+
+Area.getUnlockEvent = function (imageX, name, description, saveKey) {
+  return async function () {
+    $column = Area.attachImageToContent("props/item-column.png");
+    var $item = $(
+      '<canvas style="left: 35%; bottom: 90%; width: 30%; height: 30%;"></canvas>'
+    );
+    var hover = new CSSAnimationController($item, "slowHover");
+    hover.start();
+    $item.insertAfter($column);
+    var items = new SpriteRenderer(
+      $item[0],
+      "images/props/item-column-items.png",
+      32,
+      32
+    );
+
+    items.onload = () => {
+      items.setSprite(imageX, 0);
+    };
+
+    await contentManager.approach();
+
+    Area.writeBottom(["Will you accept the offering of light?"]);
+
+    async function collect() {
+      cover.color = "white";
+      await cover.fadeTo(1, 200);
+      hover.end();
+      $item.remove();
+      await cover.fadeTo(0, 3000);
+      infoWindow.setToItemContent(1, name, description);
+      file.setFlag(saveKey);
+
+      await infoWindow.show();
+      sound.playFX("item-get");
+      await InputHandler.waitForInput();
+      infoWindow.hide();
+    }
+
+    var choice = await getChoice(["Accept", "Decline"], hcursor);
+    if (choice == "Accept") {
+      await collect();
+    } else {
+      await Area.writeBottom([
+        "If you reject the offering, your journey will be much more difficult—|Possibly impossible.",
+        "Are you sure you want to decline the offering?",
+      ]);
+      var check = await getChoice(["Accept", "Reject"], hcursor);
+      if (check == "Accept") {
+        await collect();
+      } else {
+        Area.writeBottom([
+          "So be it.",
+          "You bear the weight of your own will.",
+        ]);
+      }
+    }
+  };
+};
 
 Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
   return function () {
@@ -175,6 +235,8 @@ Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
     changeForeground(fore);
   };
 };
+
+// Universal steps
 
 Area.emptyStep = function () {
   // Do Nothing
@@ -200,41 +262,39 @@ Area.nextAreaEvent = async function () {
 
 // Prototype Events
 
-Area.fightChain = function () {
-  var input = { oninput: () => {} };
-  currentDoer = Doer.ofPromise(
-    (async function () {
-      DialogueTypewriter.clearAll();
-      contentManager.clear();
-      var $wrapper = $('<div class="monster"></div>');
-      var $virgil = $(
-        '<canvas style="height:180%;width:180%;left:-40%;" id="chain"></canvas>'
-      );
-      $virgil.appendTo($wrapper);
-      contentManager.add($wrapper);
-
-      var renderer = new SpriteRenderer(
-        $virgil[0],
-        "./images/chain.png",
-        64,
-        64
-      );
-      renderer.onload = () => {
-        renderer.setSprite(0, 0);
-      };
-
-      await contentManager.approach();
-
-      await new Writer(bottomWriter, [
-        "Hello, Harbinger.",
-        "The name's Chain.",
-        "Prepare to die.",
-      ]).writeAllAsync();
-
-      Battle.start("chain", [new Chain()], false);
-    })(),
-    input
+Area.fightChain = async function () {
+  DialogueTypewriter.clearAll();
+  contentManager.clear();
+  var $wrapper = $('<div class="monster"></div>');
+  var $virgil = $(
+    '<canvas style="height:180%;width:180%;left:-40%;" id="chain"></canvas>'
   );
+  $virgil.appendTo($wrapper);
+  contentManager.add($wrapper);
+
+  var renderer = new SpriteRenderer($virgil[0], "./images/chain.png", 64, 64);
+  renderer.onload = () => {
+    renderer.setSprite(0, 0);
+  };
+
+  await contentManager.approach();
+
+  await new Writer(bottomWriter, [
+    "Hello, Harbinger.",
+    "Perhaps you've heard of me...|Chain.",
+    "...",
+    "No?",
+    "I guess you were born yesterday.",
+    "Whatever.",
+    "Regardless, I've been itching at a chance to fight a deity.",
+    "The big dark was defintiely out of the question, given that he's gained so much power",
+    "But you on the other hand...",
+    "Also, The big dark promised whoever imprisons you control over their own world when he completes his design.",
+    "Finally I'll get the true recognition I deserve; not as an assassin, but as a king!",
+    "Get ready to taste steel!",
+  ]).writeAllAsync();
+
+  Battle.start("chain", [new Chain()], false);
 };
 
 Area.fightAragore = function () {

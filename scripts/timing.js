@@ -35,10 +35,14 @@ class TimingIndicator {
   #pressedKeys;
   #origin;
 
+  #unlockedMovement;
+
   static current;
   static burstPool;
 
   constructor(canvas) {
+    this.#unlockedMovement = file.getFlag("unlocked-moving-block");
+
     console.log("Init timing");
     TimingIndicator.current = this;
     this.displayRadius = 30;
@@ -120,7 +124,7 @@ class TimingIndicator {
     context.stroke();
   }
 
-  #handleOrigin(delta) {
+  #handleOriginOffset(delta) {
     var horizontal = 0;
     var vertical = 0;
 
@@ -182,7 +186,7 @@ class TimingIndicator {
     //Update
     if (this.points.length > 0) {
       this.#checkAndUpdateCanvasSize();
-      this.#handleOrigin(delta);
+      if (this.#unlockedMovement) this.#handleOriginOffset(delta);
       this.#refreshCanvas();
 
       //update points

@@ -314,9 +314,10 @@ class Battle {
 
   getMenu() {
     var _this = this;
-    var u_magic = true || file.get("Unlocked_Magic", false);
-    var u_run = true || file.get("Unlocked_Run", false);
-    var u_charge = true || file.get("Unlocked_Charge", false);
+    var u_stun = file.getFlag("unlocked-stun");
+    var u_run = file.getFlag("unlocked-run");
+    var u_charge = file.getFlag("unlocked-charge");
+    var u_inspect = file.getFlag("unlocked-inspect");
 
     var lCalls = [
       function () {
@@ -334,8 +335,8 @@ class Battle {
 
     var menu = this.menu;
 
-    var f_cast = function () {
-      _this.getMonsterPicker(menu, (mon) => player.magics(mon));
+    var f_stun = function () {
+      _this.getMonsterPicker(menu, (mon) => player.stun(mon));
     };
     var f_talk = function () {
       _this.getMonsterPicker(menu, (mon) => player.talk(mon));
@@ -349,9 +350,12 @@ class Battle {
 
     var otherActions = [];
 
-    if (u_magic) otherActions.push({ callback: f_cast, name: "CAST" });
+    if (u_stun) otherActions.push({ callback: f_stun, name: "STUN" });
     otherActions.push({ callback: f_talk, name: "TALK" });
-    otherActions.push({ callback: f_inspect, name: "INSPECT" });
+    otherActions.push({
+      callback: f_inspect,
+      name: u_inspect ? "INSPECT" : "DESCRIBE",
+    });
 
     if (otherActions.length == 1) {
       rNames.push(otherActions[0].name);
@@ -1202,8 +1206,16 @@ class SaveData {
     }
   }
 
+  getFlag(key) {
+    this.get(key, false);
+  }
+
   set(key, value) {
     this.obj[key] = value;
+  }
+
+  setFlag(key) {
+    this.set(key, true);
   }
 
   #getFromLocalStorage() {
@@ -2102,38 +2114,20 @@ class Player {
     else await response;
   }
 
-  inspect(monster) {
+  async inspect(monster) {
     this.lastCalled = this.inspect;
-    var level = file.get("Inspect-Level", 0);
+    var unlockedInspect = file.getFlag("unlocked-inspect");
+    var inspectIntro = file.getFlag("inspect-intro-displayed");
 
-    var w2 = new Writer(bottomWriter, monster.inspect());
-    var doit2 = function () {
-      w2.write();
-      if (w2.complete) Battle.current.finishAction();
-    };
-
-    switch (level) {
-      case 2:
-      case 0:
-        {
-          Battle.current.queueAction(doit2);
-        }
-        break;
-
-      case 1:
-        {
-          var w = new Writer(bottomWriter, text.other.aboutInspect);
-          var doit = function () {
-            w.write();
-            if (w.complete) {
-              file.set("Inspect-Level", 2);
-              Battle.current.changeAction(doit2);
-            }
-          };
-          Battle.current.queueAction(doit);
-        }
-        break;
+    if (unlockedInspect) {
+      if (!inspectIntro) {
+        await new Writer(bottomWriter, text.other.aboutInspect).writeAllAsync();
+        file.setFlag("inspect-intro-displayed");
+      }
     }
+
+    var message = await monster.inspect(unlockedInspect);
+    if (message) await new Writer(bottomWriter, message).writeAllAsync();
   }
 
   heal() {
@@ -2163,8 +2157,8 @@ class Player {
     }
   }
 
-  magics(monster) {
-    this.lastCalled = this.magics;
+  stun(monster) {
+    this.lastCalled = this.stun;
     sound.playFX("magic");
     topWriter.show(monster.magic());
   }

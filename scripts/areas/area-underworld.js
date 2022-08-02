@@ -306,14 +306,13 @@ Area_Underworld.text = {
 //logic
 
 Area_Underworld.talkEmery1 = async function () {
-  file.set("Inspect-Level", 1); //flag for dialogue in-fight.
+  file.setFlag("unlocked-inspect"); //flag for dialogue in-fight.
   sound.pause();
   await new Writer(
     bottomWriter,
     Area_Underworld.text.emerySpeak
   ).writeAllAsync();
   sound.unpause();
-  DialogueTypewriter.clearAll();
 };
 
 Area_Underworld.meetSkeletons = async function () {

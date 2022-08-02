@@ -5,27 +5,31 @@ class Area_Aorta extends Area {
 
   getEvents() {
     return [].concat(
-      [Area_Aorta.meetVirgil],
-      Area.getEmptySteps(3),
-      [Area_Aorta.meetTroll],
-      Area.getEmptySteps(6),
-      [Area_Aorta.virgilKillScene],
-      Area.getEmptySteps(15),
-      [Area.fightEvent],
-      Area.getEmptySteps(10),
-      [Area_Aorta.meetOscar],
-      Area.getEmptySteps(12),
-      [Area_Aorta.meetAmadeus],
-      Area.getEmptySteps(9),
-      [Area.fightEvent],
-      Area.getEmptySteps(10),
-      [Area_Aorta.meetTroldiers],
-      Area.getEmptySteps(5),
-      [Area.fightEvent],
-      Area.getEmptySteps(5),
-      [Area_Aorta.talkAmadeus],
-      Area.getEmptySteps(17),
-      [Area_Aorta.fightAmadeus, Area.nextAreaEvent]
+      [Area_Aorta.meetVirgil], //1
+      Area.getEmptySteps(3), //4
+      [Area_Aorta.meetTroll], //5
+      Area.getEmptySteps(6), //11
+      [Area_Aorta.virgilKillScene], //12
+      Area.getEmptySteps(7), //19
+      [Area_Aorta.UnlockStun],
+      Area.getEmptySteps(7), //27
+      [Area.fightEvent], //28
+      Area.getEmptySteps(10), //38
+      [Area_Aorta.meetOscar], //39
+      Area.getEmptySteps(9), //48
+      [Area_Aorta.UnlockCharge], //49
+      Area.getEmptySteps(2), //51
+      [Area_Aorta.meetAmadeus], //52
+      Area.getEmptySteps(9), //61
+      [Area.fightEvent], //62
+      Area.getEmptySteps(10), //72
+      [Area_Aorta.meetTroldiers], //73
+      Area.getEmptySteps(5), //78
+      [Area.fightEvent], //79
+      Area.getEmptySteps(5), //84
+      [Area_Aorta.talkAmadeus], //85
+      Area.getEmptySteps(14), //99
+      [Area_Aorta.fightAmadeus, Area.nextAreaEvent] //100
     );
   }
 
@@ -189,63 +193,19 @@ Area_Aorta.virgilKillScene = async function () {
   ]);
 };
 
-Area_Aorta.UnlockCharge = async function () {
-  $column = Area.attachImageToContent("props/item-column.png");
-  var $item = $(
-    '<canvas style="left: 35%; bottom: 90%; width: 30%; height: 30%;"></canvas>'
-  );
-  var hover = new CSSAnimationController($item, "slowHover");
-  hover.start();
-  $item.insertAfter($column);
-  var items = new SpriteRenderer(
-    $item[0],
-    "images/props/item-column-items.png",
-    32,
-    32
-  );
+Area_Aorta.UnlockCharge = Area.getUnlockEvent(
+  1,
+  "CHARGE",
+  'Your maximum charge has been increased from zero to one. Use "CHARGE" in battle to increase your charge, and spend charge to power up your attacks. You can now "STRIKE" which deals immense damage to one target, and you can "BLOCK" which can be used more than one turn in a row, or followed by "QUICK BLOCK". Healing is more potent when you are charged as well.',
+  "unlocked-charge"
+);
 
-  items.onload = () => {
-    items.setSprite(1, 0);
-  };
-
-  await contentManager.approach();
-
-  Area.writeBottom(["Will you accept the offering of light?"]);
-
-  async function collect() {
-    cover.color = "white";
-    await cover.fadeTo(1, 200);
-    hover.end();
-    $item.remove();
-    await cover.fadeTo(0, 3000);
-    infoWindow.setToItemContent(
-      1,
-      "CHARGE",
-      'Your maximum charge has been increased from zero to one. Use "CHARGE" in battle to increase your charge, and spend charge to power up your attacks. You can now "STRIKE" which deals immense damage to one target, and you can "BLOCK" which can be used more than one turn in a row, or followed by "QUICK BLOCK". Healing is more potent when you are charged as well.'
-    );
-
-    await infoWindow.show();
-    sound.playFX("item-get");
-    await InputHandler.waitForInput();
-    infoWindow.hide();
-  }
-
-  var choice = await getChoice(["Accept", "Decline"], hcursor);
-  if (choice == "Accept") {
-    await collect();
-  } else {
-    await Area.writeBottom([
-      "If you reject the offering, your journey will be much more difficult—|Possibly impossible.",
-      "Are you sure you want to decline the offering?",
-    ]);
-    var check = await getChoice(["Accept", "Reject"], hcursor);
-    if (check == "Accept") {
-      await collect();
-    } else {
-      Area.writeBottom(["So be it.", "You bear the weight of your own will."]);
-    }
-  }
-};
+Area_Aorta.UnlockStun = Area.getUnlockEvent(
+  1,
+  "STUN",
+  'Concentrate the light that makes up your form into a burst, stunning an enemy. Every monster reacts to "STUN" differently, but it is almost always beneficial. The light within you once again comes to aid in your quest to defeat the scourge of existence known as the DARKNESS. Your powers are beginning to resurge in your physical form.',
+  "unlocked-stun"
+);
 
 Area_Aorta.meetTroldiers = async function () {
   sound.stop();

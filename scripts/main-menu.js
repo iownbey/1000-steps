@@ -26,6 +26,7 @@ MainMenu.setUpButton = function ($button, $up = null, $down = null) {
 
   var onkey = (e) => {
     switch (e.key) {
+      case " ":
       case "Enter":
         {
           $button.click();
@@ -46,18 +47,22 @@ MainMenu.setUpButton = function ($button, $up = null, $down = null) {
     }
   };
 
+  $doc = $(document);
+
   $button.click(() => {
     $button.addClass("activated");
+    $doc.off("keydown", onkey);
+    MainMenu.selected = 0;
   });
 
   $button.focus(() => {
     MainMenu.selected++;
-    $button.keydown(onkey);
+    $doc.keydown(onkey);
   });
 
   $button.focusout(() => {
     MainMenu.selected--;
-    $button.off("keydown", onkey);
+    $doc.off("keydown", onkey);
   });
 };
 
