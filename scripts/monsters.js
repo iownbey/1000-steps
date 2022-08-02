@@ -147,9 +147,9 @@ class Amadeus extends Monster {
     this.breatheAnim;
     this.intelligence = 0;
     this.flavorer = new GrabBag([
-      text.amadeusFight.flavor1,
-      text.amadeusFight.flavor2,
-      text.amadeusFight.flavor3,
+      text.aorta.amadeusFight.flavor1,
+      text.aorta.amadeusFight.flavor2,
+      text.aorta.amadeusFight.flavor3,
     ]);
   }
 
@@ -165,15 +165,16 @@ class Amadeus extends Monster {
     this.charge = 0;
   }
 
-  say(text) {
-    var w = new Writer(bottomWriter, text);
-    Battle.current.queueAction(function () {
-      w.write();
-      if (w.complete) Battle.current.finishAction();
-    });
-  }
-
   async attack() {
+    if (this.stunned == 1) {
+      await new Writer(topWriter, [
+        ["Ugh.", expr.amadeus.confused],
+        ["That did NOT feel good."],
+      ]).writeAllAsync();
+      this.stunned = 2;
+      return { text: "Amadeus prepared his mind against your light." };
+    }
+
     this.charge++;
     switch (this.charge) {
       case 1:
@@ -201,7 +202,10 @@ class Amadeus extends Monster {
             if (this.intelligence == 0) {
               this.smack();
               this.intelligence = 1;
-              this.say(text.amadeusFight.banter1);
+              await new Writer(
+                topWriter,
+                text.aorta.amadeusFight.banter1
+              ).writeAllAsync();
               return {
                 damage: 0,
                 text: "Amadeus crashes his mallet upon you, dealing absolutely no damage.",
@@ -209,7 +213,10 @@ class Amadeus extends Monster {
             } else if (this.intelligence == 1) {
               this.smack();
               this.intelligence = 2;
-              this.say(text.amadeusFight.banter2);
+              await new Writer(
+                topWriter,
+                text.aorta.amadeusFight.banter2
+              ).writeAllAsync();
               return {
                 damage: 0,
                 text: "Amadeus crashes his mallet upon you, dealing absolutely no damage...",
@@ -220,7 +227,10 @@ class Amadeus extends Monster {
                 this.waited = false;
                 if (this.intelligence == 2) {
                   this.intelligence = 3;
-                  this.say(text.amadeusFight.banter4);
+                  await new Writer(
+                    topWriter,
+                    text.aorta.amadeusFight.banter4
+                  ).writeAllAsync();
                 }
                 return {
                   damage: 0,
@@ -228,7 +238,10 @@ class Amadeus extends Monster {
                 };
               } else {
                 this.charge--;
-                this.say(text.amadeusFight.banter3);
+                await new Writer(
+                  topWriter,
+                  text.aorta.amadeusFight.banter3
+                ).writeAllAsync();
                 this.waited = true;
                 return { damage: 0, text: "Amadeus hesitates." };
               }
@@ -261,7 +274,15 @@ class Amadeus extends Monster {
   }
 
   magic() {
-    return "Amadeus' golden tunic reflected all the light, making it useless.";
+    if (this.stunned == false) {
+      if (this.charge == 3) stopAnimation(this.jobj, "shiver");
+      this.setPicture(1);
+      this.charge = 0;
+      this.stunned = 1;
+      return "You stunned Amadeus!";
+    } else {
+      return "Amadeus closed his eyes so he couldn't be stunned!";
+    }
   }
 
   talk() {

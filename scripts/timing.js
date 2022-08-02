@@ -55,7 +55,7 @@ class TimingIndicator {
     );
 
     this.originOffset = new Vector2D(0, 0);
-    this.originOffsetSpeedPerSecond = 100;
+    this.originOffsetSpeedPerSecond = 200;
     this.#pressedKeys = {};
 
     this.start();
@@ -135,8 +135,6 @@ class TimingIndicator {
         .scale(this.originOffsetSpeedPerSecond)
         .scale(delta)
     );
-
-    console.log(this.originOffset, this.#pressedKeys);
   }
 
   #checkAndUpdateCanvasSize() {
