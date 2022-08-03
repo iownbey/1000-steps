@@ -148,7 +148,7 @@ tsParticles.load("particles-js", {
   fullScreen: {
     zIndex: 9995,
   },
-  fpsLimit: 60,
+  fpsLimit: 30,
   particles: {
     move: {
       speed: 0.25,
