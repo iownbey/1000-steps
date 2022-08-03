@@ -552,21 +552,21 @@ class ContentManager {
     this.resetContentAnim();
     if (animate) this.$jobj.addClass("approaching");
     else this.$jobj.addClass("here");
-    await Helper.delay(1);
+    await Helper.delaySeconds(1);
   }
 
   async recede(animate = true) {
     this.resetContentAnim();
     if (animate) this.$jobj.addClass("receding");
     else this.$jobj.addClass("there");
-    await Helper.delay(1);
+    await Helper.delaySeconds(1);
   }
 
   async approachFromLeft(animate = true) {
     this.resetContentAnim();
     this.$jobj.addClass("here");
     if (animate) this.$jobj.addClass("fromLeft");
-    await Helper.delay(1);
+    await Helper.delaySeconds(1);
   }
 
   async recedeToLeft(animate = true) {
@@ -574,7 +574,7 @@ class ContentManager {
     this.$jobj.addClass("here");
     if (animate) this.$jobj.addClass("toLeft");
     else this.$jobj.addClass("left");
-    await Helper.delay(1);
+    await Helper.delaySeconds(1);
   }
 }
 
@@ -897,7 +897,7 @@ class Helper {
     return "images/" + name + ".png";
   }
 
-  static async delay(seconds) {
+  static async delaySeconds(seconds) {
     await new Promise((resolve) => setTimeout(resolve, seconds * 1000.0));
   }
 }
@@ -928,12 +928,12 @@ class InfoWindow {
 
   async show() {
     this.$jobj.css("width", "100%");
-    await Helper.delay(2);
+    await Helper.delaySeconds(2);
   }
 
   async hide() {
     this.$jobj.css("width", "0%");
-    await Helper.delay(2);
+    await Helper.delaySeconds(2);
   }
 }
 

@@ -418,7 +418,7 @@ Area_Underworld.fightThaddeus = async function () {
     await Battle.current.getPromise();
 
     DialogueTypewriter.clearAll();
-    await Helper.delay(2);
+    await Helper.delaySeconds(2);
 
     sound.stop();
     var $a = $('<div class="monster fadeInOpacity"></div>');
@@ -428,12 +428,12 @@ Area_Underworld.fightThaddeus = async function () {
     $a.html($b);
     Thaddeus.sprites.setSprite($b, 1, 1);
 
-    await Helper.delay(2);
+    await Helper.delaySeconds(2);
 
     var w = new Writer(bottomWriter, Area_Underworld.text.postFightThaddeus);
     await w.writeAllAsync();
     await contentManager.recedeToLeft();
-    await Helper.delay(1);
+    await Helper.delaySeconds(1);
     // Thaddeus leaves, arnold enters
     contentManager.clear();
     var arnold = $('<div style="height: 140%; width:  70%;"></div>')

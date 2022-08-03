@@ -169,7 +169,7 @@ Area_Aorta.virgilKillScene = async function () {
   Area.attachImageToContent("virgil/virgil-killed.png", 64, 64, 0, 0, 1.8);
   await contentManager.approach();
 
-  await Helper.delay(2);
+  await Helper.delaySeconds(2);
 
   await Area.writeBottom([
     "It's ugly, isn't it.",
@@ -180,7 +180,7 @@ Area_Aorta.virgilKillScene = async function () {
   ]);
 
   bottomWriter.clear();
-  await Helper.delay(2);
+  await Helper.delaySeconds(2);
 
   await Area.writeBottom([
     "We both paid our prices.",
@@ -217,7 +217,7 @@ Area_Aorta.meetTroldiers = async function () {
   );
   contentManager.approach();
   sound.playFX("troll-fanfare");
-  await Helper.delay(2);
+  await Helper.delaySeconds(2);
 
   await new Writer(bottomWriter, text.aorta.meetTroldiersText).writeAllAsync();
   Battle.start(
@@ -300,9 +300,9 @@ Area_Aorta.meetOscar = async function () {
 
   await contentManager.approach();
   clearInterval(animHandle);
-  await Helper.delay(1);
+  await Helper.delaySeconds(1);
   sound.pause();
-  await Helper.delay(1);
+  await Helper.delaySeconds(1);
   renderer.setSprite(0, 0);
 
   let textBlob = text.aorta.meetOscar;

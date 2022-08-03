@@ -358,9 +358,9 @@ async function startIntro() {
 
   var pickUp = async function (jobj) {
     wakeWriter.clear();
-    await Helper.delay(1000);
+    await Helper.delaySeconds(1);
     jobj.css("visibility", "hidden");
-    await Helper.delay(1000);
+    await Helper.delaySeconds(1);
     await wakeWriter.writeOnceAsync();
     await wakeWriter.writeOnceAsync();
   };
@@ -377,14 +377,14 @@ async function startIntro() {
 
   await firstWriter.writeAllAsync();
   firstWriter.clear();
-  await Helper.delay(3000);
+  await Helper.delaySeconds(3);
   await secondWriter.writeAllAsync();
 
   cover.color = "black";
   await cover.fadeTo(1, 1500);
   InitCut();
   await cover.fadeTo(0, 1500);
-  await Helper.delay(2000);
+  await Helper.delaySeconds(2);
 
   cover.color = "white";
   await cover.fadeTo(1, 150);
@@ -396,7 +396,7 @@ async function startIntro() {
 
   sitting.css("visibility", "hidden");
   standing.css("visibility", "visible");
-  await Helper.delay(2000);
+  await Helper.delaySeconds(2);
 
   await wakeWriter.writeOnceAsync();
   await wakeWriter.writeOnceAsync();
@@ -405,13 +405,14 @@ async function startIntro() {
   await pickUp(sword);
   await pickUp(shield);
 
-  await wakeWriter.writeOnceAsync();
+  await wakeWriter.writeAllAsync();
+  wakeWriter.clear();
 
-  walking.css("visibility", "visible");
-  await Helper.delay(400);
+  //walking.css("visibility", "visible");
+  //await Helper.delaySeconds(4);
 
-  walking.css("visibility", "hidden");
-  await Helper.delay(400);
+  //walking.css("visibility", "hidden");
+  //await Helper.delaySeconds(4);
 
   file.setFlag("IntroComplete");
   cover.color = "black";
