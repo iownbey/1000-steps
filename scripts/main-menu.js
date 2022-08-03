@@ -21,7 +21,11 @@ MainMenu.settings = function () {
   //settings menu
 };
 
+MainMenu.$objects = $(document);
+
 MainMenu.setUpButton = function ($button, $up = null, $down = null) {
+  MainMenu.$objects.add($button);
+
   $button.attr("tabindex", 0);
 
   var onkey = (e) => {
@@ -49,21 +53,25 @@ MainMenu.setUpButton = function ($button, $up = null, $down = null) {
 
   $doc = $(document);
 
-  $button.click(() => {
+  $button.on("click.mainmenu", () => {
     $button.addClass("activated");
-    $doc.off("keydown", onkey);
+    $doc.off("keydown.mainmenu");
     MainMenu.selected = 0;
   });
 
   $button.focus(() => {
     MainMenu.selected++;
-    $doc.keydown(onkey);
+    $doc.on("keydown.mainmenu", onkey);
   });
 
   $button.focusout(() => {
     MainMenu.selected--;
-    $doc.off("keydown", onkey);
+    $doc.off("keydown.mainmenu");
   });
+};
+
+MainMenu.removeEventListeners = () => {
+  MainMenu.$objects.off(".mainmenu");
 };
 
 var startNewGameButton = $("#main-new-game");
@@ -81,7 +89,7 @@ MainMenu.setUpButton(settingsButton, startNewGameButton, continueGameButton);
 MainMenu.selected = 0;
 
 $(document).ready(() => {
-  document.addEventListener("keydown", () => {
+  document.addEventListener("keydown.mainmenu", () => {
     if (MainMenu.selected == 0) startNewGameButton.focus();
   });
 });

@@ -1,5 +1,3 @@
-/** @type {?Doer} */
-var currentDoer = null;
 var ModeEnum = Object.freeze({
   walking: 1,
   fighting: 2,
@@ -251,7 +249,8 @@ async function shiftKeys(event) {
       break;
     case "N":
       {
-        file.set("IntroComplete", true);
+        file.setFlag("IntroComplete");
+        MainMenu.removeEventListeners();
         StartMainGame();
         //await loadScript("monsters/darkness.js");
         //Battle.start("darkness-fight", [new Darkness()], false);
@@ -273,9 +272,6 @@ function handleInput(event) {
   } else if (event.key == "Backspace" || event.repeat != true) {
     if (mode == ModeEnum.fighting) {
       Battle.current.handleInput(event);
-    } else if (currentDoer != null) {
-      currentDoer.do();
-      if (currentDoer.complete) currentDoer = null;
     } else if (mode == ModeEnum.walking) {
       if (
         event.key == " " ||
@@ -336,7 +332,7 @@ async function StartMainGame() {
 
 var doc = $(document);
 
-function startIntro() {
+async function startIntro() {
   var firstWriter = new Writer(
     new Typewriter($("#introoutput"), 50).setTextClass("introText"),
     text.intro.emerySpeak
@@ -359,25 +355,14 @@ function startIntro() {
   var initgroup = $().add(sitting).add(sword).add(shield);
   standing.css("visibility", "hidden");
   initgroup.css("visibility", "hidden");
-  var pickUp = function (jobj) {
-    return new Doer([
-      {
-        action: function () {
-          wakeWriter.clear();
-        },
-        time: 2000,
-        waitForInput: false,
-      },
-      {
-        action: function () {
-          jobj.css("visibility", "hidden");
-        },
-        time: 2000,
-        waitForInput: false,
-      },
-      wakeWriter.getOnceThing(),
-      wakeWriter.getOnceThing(),
-    ]).getThing();
+
+  var pickUp = async function (jobj) {
+    wakeWriter.clear();
+    await Helper.delay(1000);
+    jobj.css("visibility", "hidden");
+    await Helper.delay(1000);
+    await wakeWriter.writeOnceAsync();
+    await wakeWriter.writeOnceAsync();
   };
 
   var InitCut = function () {
@@ -387,87 +372,52 @@ function startIntro() {
     initgroup.css("visibility", "hidden");
   };
 
+  setCurrentScope($("#intro1"));
   sound.playMusic("ambientNoise");
 
-  currentDoer = new Doer([
-    firstWriter.getThing(),
+  await firstWriter.writeAllAsync();
+  firstWriter.clear();
+  await Helper.delay(3000);
+  await secondWriter.writeAllAsync();
 
-    {
-      action: function () {
-        firstWriter.clear();
-      },
-      time: 3000,
-      waitForInput: false,
-    },
-    secondWriter.getThing(),
+  cover.color = "black";
+  await cover.fadeTo(1, 1500);
+  InitCut();
+  await cover.fadeTo(0, 1500);
+  await Helper.delay(2000);
 
-    {
-      action: function () {
-        cover.flash(
-          "black",
-          function () {
-            InitCut();
-          },
-          null,
-          3000
-        );
-      },
-      time: 5000,
-      waitForInput: false,
-    },
-    {
-      action: function () {
-        cover.flash(
-          "white",
-          function () {
-            initgroup.css("visibility", "visible");
-          },
-          function () {
-            wakeWriter.write();
-          },
-          300
-        );
-      },
-      time: 600,
-      waitForInput: true,
-    },
-    {
-      action: function () {
-        wakeWriter.clear();
-        sitting.css("visibility", "hidden");
-        standing.css("visibility", "visible");
-      },
-      time: 2000,
-      waitForInput: false,
-    },
-    wakeWriter.getOnceThing(),
-    wakeWriter.getOnceThing(),
-    wakeWriter.getOnceThing(),
-    pickUp(sword),
-    pickUp(shield),
-    wakeWriter.getThing(),
-    {
-      action: function () {
-        walking.css("visibility", "visible");
-      },
-      waitForInput: false,
-    },
-    {
-      action: function () {
-        walking.css("visibility", "hidden");
-      },
-      waitForInput: false,
-      time: 400,
-    },
-    {
-      action: function () {
-        file.set("IntroComplete", true);
-        cover.flash("black", StartMainGame);
-      },
-    },
-  ]);
+  cover.color = "white";
+  await cover.fadeTo(1, 150);
+  initgroup.css("visibility", "visible");
+  await cover.fadeTo(0, 150);
 
-  setCurrentScope($("#intro1"));
+  await wakeWriter.writeOnceAsync();
+  wakeWriter.clear();
+
+  sitting.css("visibility", "hidden");
+  standing.css("visibility", "visible");
+  await Helper.delay(2000);
+
+  await wakeWriter.writeOnceAsync();
+  await wakeWriter.writeOnceAsync();
+  await wakeWriter.writeOnceAsync();
+
+  await pickUp(sword);
+  await pickUp(shield);
+
+  await wakeWriter.writeOnceAsync();
+
+  walking.css("visibility", "visible");
+  await Helper.delay(400);
+
+  walking.css("visibility", "hidden");
+  await Helper.delay(400);
+
+  file.setFlag("IntroComplete");
+  cover.color = "black";
+  await cover.fadeTo(1, 2000);
+  await StartMainGame();
+  await cover.fadeTo(0, 2000);
 }
 
 async function loadGame() {

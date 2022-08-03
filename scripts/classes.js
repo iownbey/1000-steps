@@ -793,99 +793,6 @@ class DialogueTypewriter {
   }
 }
 
-class Doer {
-  constructor(
-    things //thing = {action: function (){},time: milliseconds,condition:if this evaluates to false then the action will be repeated,waitForInput: whether or not the next action requires a call to do()}
-  ) {
-    this.things = things.splice(0); //make shallow copy.
-    this.happening = null;
-    this.currentThing = null;
-    this.complete = false;
-  }
-
-  do() {
-    if (this.complete) return;
-
-    if (this.happening != null) {
-      if (this.happening.complete) {
-        this.happening = null;
-      } else return;
-    }
-
-    var thing;
-    if (
-      this.currentThing != null &&
-      this.currentThing.condition != null &&
-      !this.currentThing.condition()
-    ) {
-      thing = this.currentThing;
-    } else {
-      if (this.things.length == 0) {
-        this.complete = true;
-        return;
-      } else {
-        var thing = (this.currentThing = this.things.shift());
-      }
-    }
-
-    if (thing.action != undefined) thing.action();
-
-    if (thing.time != undefined) {
-      let callback;
-      if (thing.waitForInput == false) {
-        let _this = this;
-        callback = function () {
-          _this.do();
-        };
-      } else {
-        callback = function () {};
-      }
-
-      this.happening = new DelayedFunction(callback, thing.time);
-    } else {
-      if (thing.waitForInput == false) {
-        this.do();
-      }
-    }
-  }
-
-  getThing() {
-    var _this = this;
-    return {
-      action: function () {
-        _this.do();
-      },
-      condition: function () {
-        return _this.complete;
-      },
-    };
-  }
-
-  asPromise() {
-    return new Promise((resolve) => {
-      this.things.push({ action: () => resolve(), waitForInput: false });
-    });
-  }
-
-  //first parameter is the promise to wrap. second parameter is an object with a property named oninput of type action
-  static ofPromise(promise, input) {
-    var done = false;
-    promise.then(() => {
-      done = true;
-    });
-    return new Doer([
-      {
-        action: function () {
-          input.oninput();
-        },
-        condition: function () {
-          return done;
-        },
-      },
-    ]);
-  }
-}
-
 class FaceHandler {
   constructor() {
     this.expressions = [];
@@ -967,19 +874,6 @@ class GrabBag {
 
   pull() {
     return this.itemsInBag.pop();
-  }
-
-  getThing(applicator) {
-    var _this = this;
-    return {
-      action: function () {
-        var t = _this.pull();
-        applicator(t);
-      },
-      condition: function () {
-        return _this.empty;
-      },
-    };
   }
 }
 
@@ -1900,33 +1794,15 @@ class Writer {
     this.typewriter.clear();
   }
 
-  getThing() {
-    var _this = this;
-    return {
-      action: function () {
-        _this.write();
-      },
-      condition: function () {
-        return _this.complete || _this.break;
-      },
-    };
-  }
-
-  getOnceThing() {
-    var _this = this;
-    return {
-      action: function () {
-        _this.write();
-      },
-    };
+  async writeOnceAsync() {
+    this.write();
+    await InputHandler.waitForInput();
   }
 
   async writeAllAsync() {
     this.break = false;
     while (!(this.complete || this.break)) {
-      this.write();
-      //wait for input.
-      await InputHandler.waitForInput();
+      await this.writeOnceAsync();
     }
   }
 }
