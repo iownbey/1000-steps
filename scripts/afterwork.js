@@ -142,8 +142,51 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 }
 
-// register particles.js
-particlesJS.load("particles-js", "scripts/libraries/particlesjs-config.json");
+// register tsParticles.js
+tsParticles.load("particles-js", {
+  background: {},
+  fullScreen: {
+    zIndex: 9995,
+  },
+  fpsLimit: 60,
+  particles: {
+    move: {
+      speed: 0.25,
+      direction: "bottom",
+      enable: true,
+      outModes: {
+        bottom: "out",
+        left: "out",
+        right: "out",
+        top: "out",
+      },
+    },
+    number: {
+      density: {
+        enable: true,
+      },
+      value: 10,
+    },
+    opacity: {
+      random: {
+        enable: true,
+      },
+      value: {
+        min: 0.1,
+        max: 0.5,
+      },
+    },
+    size: {
+      random: {
+        enable: true,
+      },
+      value: {
+        min: 1,
+        max: 5,
+      },
+    },
+  },
+});
 
 // register mo.js objects
 let burstPool = [];
