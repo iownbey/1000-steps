@@ -120,24 +120,8 @@ class Battle {
     return "{$d}";
   }
 
-  queueAction(action) {
-    console.log("QUEUE : Queueing Action.");
-    this.eventQueue.push(action);
-  }
-
-  changeAction(action) {
-    console.log("QUEUE : Changing Action.");
-    this.eventQueue.replace(action);
-  }
-
-  finishAction() {
-    console.log("QUEUE : Finishing Action.");
-    this.eventQueue.pop();
-  }
-
   startPlayerTurn() {
     console.log("BATTLE: Player turn started.");
-    this.finishAction();
     DialogueTypewriter.clearAll();
     this.menu = this.getMenu();
     player.defending = false;
@@ -145,7 +129,7 @@ class Battle {
     this.menu.setDisplay(true);
   }
 
-  finishPlayerTurn() {
+  async finishPlayerTurn() {
     console.log("BATTLE: Finishing player's turn.");
     var _this = this;
 
@@ -171,49 +155,37 @@ class Battle {
     }
 
     this.menu.setDisplay(false);
-    this.queueAction(function () {
-      if (_this.checkFinished()) {
-        _this.finishAction();
-        _this.end();
+
+    if (_this.checkBattleOver()) {
+      _this.end();
+    } else {
+      if (player.wounded) {
+        topWriter.show('The enemy team used "IMPRISON"');
+        await InputHandler.waitForInput();
+        player.die();
+        topWriter.show("You were banished to an alternate world...");
+        await InputHandler.waitForInput();
+        mode = ModeEnum.dead;
+        file.forceSet("unlocked-run", true);
+        sound.playMusic("gameover");
+        setCurrentScope($("#gameover"));
       } else {
-        if (player.wounded) {
-          topWriter.show('The enemy team used "IMPRISON"');
-          _this.changeAction(function () {
-            player.die();
-            topWriter.show("You were banished to an alternate world...");
-            _this.changeAction(function () {
-              mode = ModeEnum.dead;
-              file.forceSet("Unlocked_Run", true);
-              sound.playMusic("gameover");
-              setCurrentScope($("#gameover"));
-              _this.finishAction();
-            });
-          });
-        } else {
-          console.log("BATTLE: Starting Monster turns.");
-          _this.monsterTurn(0);
-        }
+        console.log("BATTLE: Starting Monster turns.");
+        _this.monsterTurn(0);
       }
-    });
+    }
   }
 
-  dealPlayerDamage(damage) {
+  async dealPlayerDamage(damage) {
     if (player.changeHealth(-damage)) {
-      var _this = this;
-      this.queueAction(function () {
-        topWriter.show(
-          _this.currentMonster.myName + " has mortally wounded you!"
-        );
-        _this.finishAction();
-      });
+      topWriter.show(this.currentMonster.myName + " has mortally wounded you!");
+      await InputHandler.waitForInput();
     }
   }
 
   async monsterTurn(index) {
     console.log("BATTLE: Starting Monster " + index + " Turn");
     DialogueTypewriter.clearAll();
-    var _this = Battle.current;
-    _this.finishAction();
     var monster = (this.currentMonster = this.monsters[index]);
     var attack = await monster.attack();
     if (monster.dieAtEndOfTurn) {
@@ -229,29 +201,28 @@ class Battle {
       if (attack.text)
         topWriter.show(attack.text.replace(Battle.damagestr, damage));
 
-      this.dealPlayerDamage(damage);
+      await this.dealPlayerDamage(damage);
     }
 
+    await InputHandler.waitForInput();
+
     index++;
-    if (!_this.checkFinished()) {
+    if (!this.checkBattleOver()) {
       if (index == _this.monsters.length) {
-        console.log("BATTLE: Queuing player start.");
-        _this.queueAction(() => _this.startPlayerTurn());
+        console.log("BATTLE: Player start.");
+        this.startPlayerTurn();
       } else {
-        _this.queueAction(function () {
-          _this.monsterTurn(index);
-        });
+        this.monsterTurn(index);
       }
     } else {
-      _this.end();
+      this.end();
     }
   }
 
-  checkFinished() {
-    var _this = Battle.current;
+  checkBattleOver() {
     var finished = true;
-    if (_this.monsters.length > 0) {
-      _this.monsters.forEach(function (element) {
+    if (this.monsters.length > 0) {
+      this.monsters.forEach(function (element) {
         if (element.important) finished = false;
       });
     }
@@ -259,26 +230,7 @@ class Battle {
   }
 
   handleInput(event) {
-    console.log("------------------------------------");
-    console.log(
-      "QUEUE : queue " +
-        (this.eventQueue.empty
-          ? "is empty."
-          : "has " + this.eventQueue.events.length + " elements.")
-    );
-    if (!this.eventQueue.empty) {
-      console.log("BATTLE: sending input to queue.");
-      this.handleQueue();
-    } else {
-      console.log("BATTLE: sending input to menu.");
-      this.menu.handleInput(event);
-    }
-  }
-
-  handleQueue() {
-    console.log("QUEUE : Starting Action.");
-    topWriter.clear();
-    this.eventQueue.peek()();
+    this.menu.handleInput(event);
   }
 
   recede() {
@@ -409,33 +361,21 @@ class Battle {
     monster.remove();
   }
 
-  end() {
-    var _this = this;
-    var finishEnd = function () {
-      _this.finishAction();
-      SaveData.blockSaving = false;
-      _this.charAnim.end();
-      mode = ModeEnum.walking;
-      Battle.#current = null;
-      player.defending = false;
-      playBackgroundMusic();
-      if (_this.onfinish) _this.onfinish();
-      _this.finishAction();
-      backgroundCanvas.triggerDefault();
-    };
-
+  async end() {
     if (Battle.current.monsters.length > 0) {
-      this.eventQueue.priorityPush(finishEnd);
-      this.eventQueue.priorityPush(function () {
-        topWriter.show("Everyone else was unimportant.");
-        _this.monsters.forEach(function (element) {
-          element.remove();
-        });
-        _this.finishAction();
-      });
-    } else {
-      finishEnd();
+      topWriter.show("Everyone else was unimportant.");
+      this.monsters.forEach((element) => element.remove());
+      await InputHandler.waitForInput();
     }
+
+    SaveData.blockSaving = false;
+    this.charAnim.end();
+    mode = ModeEnum.walking;
+    Battle.#current = null;
+    player.defending = false;
+    playBackgroundMusic();
+    if (this.onfinish) _this.onfinish();
+    backgroundCanvas.triggerDefault();
   }
 
   endNow() {
@@ -1101,7 +1041,7 @@ class SaveData {
   }
 
   getFlag(key) {
-    this.get(key, false);
+    return this.get(key, false);
   }
 
   set(key, value) {
@@ -1646,7 +1586,7 @@ class Menu {
           this.cursor.update(b);
         }
       }
-    } else this.child.handleInput(event);
+    } else await this.child.handleInput(event);
   }
 
   setDisplay(show) {
@@ -1937,44 +1877,42 @@ class Player {
     }
   }
 
-  runAway(monsters) {
+  async runAway(monsters) {
     this.lastCalled = this.runAway;
     topWriter.show("You run...");
     Battle.current.recede();
-    Battle.current.queueAction(function () {
-      Battle.current.approach();
+    await InputHandler.waitForInput();
+    Battle.current.approach();
 
-      var total = monsters.length;
-      var ranfrom = 0;
-      var ranfromName = monsters[0].myName;
-      monsters.forEach(function (monster) {
-        if (monster.run()) {
-          ranfrom++;
-          Battle.current.kill(monster);
-          ranfromName = monster.myName;
-        }
-      });
-
-      if (total == 1) {
-        if (ranfrom == 1) {
-          topWriter.show("You escape the clutches of " + ranfromName + ".");
-        } else {
-          topWriter.show("You couldn't get away from " + ranfromName + "!");
-        }
-      } else {
-        if (ranfrom == 1) {
-          topWriter.show("You only escaped " + ranfromName + "...");
-        } else if (ranfrom == total) {
-          topWriter.show("You escaped everybody!");
-        } else if (ranfrom > 1) {
-          topWriter.show("You escaped some of the monsters...");
-        } else {
-          topWriter.show("You couldn't get away from anybody!");
-        }
+    var total = monsters.length;
+    var ranfrom = 0;
+    var ranfromName = monsters[0].myName;
+    monsters.forEach(function (monster) {
+      if (monster.run()) {
+        ranfrom++;
+        Battle.current.kill(monster);
+        ranfromName = monster.myName;
       }
-
-      Battle.current.finishAction();
     });
+
+    if (total == 1) {
+      if (ranfrom == 1) {
+        topWriter.show("You escape the clutches of " + ranfromName + ".");
+      } else {
+        topWriter.show("You couldn't get away from " + ranfromName + "!");
+      }
+    } else {
+      if (ranfrom == 1) {
+        topWriter.show("You only escaped " + ranfromName + "...");
+      } else if (ranfrom == total) {
+        topWriter.show("You escaped everybody!");
+      } else if (ranfrom > 1) {
+        topWriter.show("You escaped some of the monsters...");
+      } else {
+        topWriter.show("You couldn't get away from anybody!");
+      }
+    }
+    await InputHandler.waitForInput();
   }
 
   async talk(monster) {
