@@ -62,50 +62,49 @@ class Battle {
   static #current;
 
   constructor(music, monsters, dynamicIntro = true) {
-    console.log("------------------------------------");
-    console.log("BATTLE: Battle started.");
     SaveData.blockSaving = true;
     if (!(monsters instanceof Array)) monsters = [monsters];
     this.monsters = monsters;
     this.currentMonster = null;
     mode = ModeEnum.fighting;
     DialogueTypewriter.clearAll();
-    var _this = this;
-    cover.flash(
-      "white",
-      () => {
-        contentManager.clear();
+    this.generateBattleMenu();
+    this.menu.setDisplay(false);
+    this.#battleStart(music, dynamicIntro);
+  }
 
-        monsters.forEach(function (element) {
-          var box = $('<div class="monster"></div>');
-          contentManager.add(box);
-          element.html(box);
-        });
+  async #battleStart(music, dynamicIntro) {
+    cover.color = "white";
+    await cover.fadeTo(1, 600);
 
-        contentManager.approach(dynamicIntro);
-        //start the music without crossfade
-        sound.playMusic(music, false);
-        backgroundCanvas.triggerBattle();
-      },
-      () => {
-        if (_this.monsters.length == 1) {
-          topWriter.show(_this.monsters[0].myName + " stands in the way!");
-        } else {
-          var index = _this.monsters.length == 2 ? 0 : 1;
-          topWriter.show(
-            this.monsters[index].myName + " and his friends block the path."
-          );
-        }
+    contentManager.clear();
+    this.monsters.forEach(function (element) {
+      var box = $('<div class="monster"></div>');
+      contentManager.add(box);
+      element.html(box);
+    });
+    contentManager.approach(dynamicIntro);
+    sound.playMusic(music, false);
+    backgroundCanvas.triggerBattle();
 
-        _this.charAnim = new CSSAnimationController(
-          player.$jobj,
-          "battlePose"
-        ).start();
-        _this.eventQueue = new Queue();
-        _this.queueAction(() => _this.startPlayerTurn());
-      },
-      1250
-    );
+    await cover.fadeTo(0, 600);
+
+    if (this.monsters.length == 1) {
+      topWriter.show(this.monsters[0].myName + " stands in the way!");
+    } else {
+      var index = this.monsters.length == 2 ? 0 : 1;
+      topWriter.show(
+        this.monsters[index].myName + " and his friends block the path."
+      );
+    }
+
+    this.charAnim = new CSSAnimationController(
+      player.$jobj,
+      "battlePose"
+    ).start();
+
+    await InputHandler.waitForInput();
+    this.startPlayerTurn();
   }
 
   static start(music, monsters, dynamicIntro = true) {
@@ -123,7 +122,6 @@ class Battle {
   startPlayerTurn() {
     console.log("BATTLE: Player turn started.");
     DialogueTypewriter.clearAll();
-    this.menu = this.getMenu();
     player.defending = false;
     Player.sprites.setSprite(player.$jobj, 1, 1);
     this.menu.setDisplay(true);
@@ -131,7 +129,6 @@ class Battle {
 
   async finishPlayerTurn() {
     console.log("BATTLE: Finishing player's turn.");
-    var _this = this;
 
     if (player.lastCalled != player.charge) {
       if (player.chargeAmount > 0) {
@@ -154,10 +151,8 @@ class Battle {
         break;
     }
 
-    this.menu.setDisplay(false);
-
-    if (_this.checkBattleOver()) {
-      _this.end();
+    if (this.checkBattleOver()) {
+      this.end();
     } else {
       if (player.wounded) {
         topWriter.show('The enemy team used "IMPRISON"');
@@ -171,7 +166,7 @@ class Battle {
         setCurrentScope($("#gameover"));
       } else {
         console.log("BATTLE: Starting Monster turns.");
-        _this.monsterTurn(0);
+        this.monsterTurn(0);
       }
     }
   }
@@ -208,7 +203,7 @@ class Battle {
 
     index++;
     if (!this.checkBattleOver()) {
-      if (index == _this.monsters.length) {
+      if (index == this.monsters.length) {
         console.log("BATTLE: Player start.");
         this.startPlayerTurn();
       } else {
@@ -230,26 +225,16 @@ class Battle {
   }
 
   handleInput(event) {
-    this.menu.handleInput(event);
+    this.menu?.handleInput(event);
   }
 
-  recede() {
-    contentManager.recede();
-  }
-
-  approach() {
-    contentManager.approach();
-  }
-
-  getMonsterPicker(menu, callback) {
+  async getMonsterPicker(menu, callback) {
     if (this.monsters.length > 1) {
       var buttons = [];
       var names = [];
       this.monsters.forEach(function (element) {
         buttons.push([
-          new MenuButton(element.jobj, function () {
-            callback(element);
-          }),
+          new MenuButton(element.jobj, async () => await callback(element)),
         ]);
         names.push(element.myName);
       });
@@ -260,11 +245,11 @@ class Battle {
       m.hideButtons = false;
       console.log(m);
     } else {
-      callback(this.monsters[0]);
+      await callback(this.monsters[0]);
     }
   }
 
-  getMenu() {
+  generateBattleMenu() {
     var _this = this;
     var u_stun = file.getFlag("unlocked-stun");
     var u_run = file.getFlag("unlocked-run");
@@ -272,8 +257,11 @@ class Battle {
     var u_inspect = file.getFlag("unlocked-inspect");
 
     var lCalls = [
-      function () {
-        _this.getMonsterPicker(_this.menu, (mon) => player.attack(mon));
+      async function () {
+        await _this.getMonsterPicker(_this.menu, async (mon) => {
+          await player.attack(mon);
+          console.log("Attack started");
+        });
       },
       () => player.defend(),
       () => player.heal(),
@@ -285,55 +273,59 @@ class Battle {
 
     var rNames = [];
 
-    var menu = this.menu;
-
     var f_stun = function () {
-      _this.getMonsterPicker(menu, (mon) => player.stun(mon));
+      _this.getMonsterPicker(_this.menu, (mon) => player.stun(mon));
     };
     var f_talk = function () {
-      _this.getMonsterPicker(menu, (mon) => player.talk(mon));
+      _this.getMonsterPicker(_this.menu, (mon) => player.talk(mon));
     };
     var f_run = function () {
       player.runAway(_this.monsters);
     };
     var f_inspect = function () {
-      _this.getMonsterPicker(menu, (mon) => player.inspect(mon));
+      _this.getMonsterPicker(_this.menu, (mon) => player.inspect(mon));
     };
 
     var otherActions = [];
 
-    if (u_stun) otherActions.push({ callback: f_stun, name: "STUN" });
+    if (u_stun) {
+      otherActions.push({ callback: f_stun, name: "STUN" });
+    }
+
     otherActions.push({ callback: f_talk, name: "TALK" });
+
     otherActions.push({
       callback: f_inspect,
       name: u_inspect ? "INSPECT" : "DESCRIBE",
     });
 
-    if (otherActions.length == 1) {
-      rNames.push(otherActions[0].name);
-      rCalls.push(otherActions[0].callback);
-    } else if (otherActions.length > 1) {
-      var others = otherActions.slice(0);
-      var subcallbacks = [[], []];
-      var subnames = [[], []];
-      var i = 0;
+    if (otherActions > 0) {
+      if (otherActions == 1) {
+        rNames.push(otherActions[0].name);
+        rCalls.push(otherActions[0].callback);
+      } else {
+        var others = otherActions.slice(0);
+        var subcallbacks = [[], []];
+        var subnames = [[], []];
+        var i = 0;
 
-      otherActions.forEach(function (element) {
-        var x = Math.floor(i / 3);
-        var o = others.shift();
-        subcallbacks[x].push(o.callback);
-        subnames[x].push(o.name);
-        i++;
-      });
+        otherActions.forEach(() => {
+          var x = Math.floor(i / 3);
+          var o = others.shift();
+          subcallbacks[x].push(o.callback);
+          subnames[x].push(o.name);
+          i++;
+        });
 
-      var f_other = function () {
-        var otherMenu = getGameMenu(subcallbacks, subnames, hcursor);
-        //console.log("Opened Other: " + otherMenu);
-        menu = _this.menu.subMenu(otherMenu);
-      };
+        var f_other = function () {
+          var otherMenu = getGameMenu(subcallbacks, subnames, hcursor);
+          //console.log("Opened Other: " + otherMenu);
+          _this.menu.subMenu(otherMenu);
+        };
 
-      rNames.push("OTHER");
-      rCalls.push(f_other);
+        rNames.push("OTHER");
+        rCalls.push(f_other);
+      }
     }
 
     if (u_charge && player.chargeAmount < 3) {
@@ -349,11 +341,13 @@ class Battle {
     var callbacks = [lCalls, rCalls];
     var names = [lNames, rNames];
 
-    var returnMenu = getGameMenu(callbacks, names, hcursor);
-    returnMenu.oninput(function () {
-      _this.finishPlayerTurn(_this);
-    });
-    return returnMenu;
+    this.menu = getGameMenu(callbacks, names, hcursor);
+    this.menu.hideOnInput = true;
+    this.menu.oninput = async () => {
+      await InputHandler.waitForInput();
+      console.log("Finishing Player Turn");
+      _this.finishPlayerTurn();
+    };
   }
 
   kill(monster) {
@@ -374,7 +368,7 @@ class Battle {
     Battle.#current = null;
     player.defending = false;
     playBackgroundMusic();
-    if (this.onfinish) _this.onfinish();
+    this.onfinish?.();
     backgroundCanvas.triggerDefault();
   }
 
@@ -1453,9 +1447,10 @@ class Menu {
     this.hideButtons = true;
     var _this = this;
     setTimeout(function () {
-      _this.cursor.update(buttons[0][0].jobj());
+      _this.cursor.update(buttons[0][0].jobj);
     });
     this.blockInput = false;
+    this.hideOnInput = false;
     this.inputHandler = null;
     this.posChangedHandler = null;
     this.onactivated = null;
@@ -1463,54 +1458,66 @@ class Menu {
     this.updateClickListeners();
   }
 
-  oninput(event) {
-    this.inputHandler = event;
+  /** @arg {function} value */
+  set oninput(value) {
+    this.inputHandler = value;
   }
 
-  onPosChanged(event) {
-    this.posChangedHandler = event;
+  /** @arg {function} value */
+  set onPosChanged(value) {
+    this.posChangedHandler = value;
+  }
+
+  async pressButton(button) {
+    if (this.hideOnInput) this.setDisplay(false);
+    await button.activate();
+    await this.afterButton();
+  }
+
+  async afterButton() {
+    console.log("afterbutton");
+    if (!this.subMenued) {
+      this.removeClickListeners();
+      await this.onMenuTreeComplete();
+    } else {
+      this.subMenued = false;
+    }
   }
 
   updateClickListeners() {
     var _this = this;
-    this.buttons.forEach(function (column) {
-      column.forEach(function (element) {
-        element.jobj().off("mouseup");
-        element.jobj().on("mouseup", function () {
-          element.activate();
-          _this.afterButton();
-        });
-        element.jobj().off("mouseenter");
-        element.jobj().on("mouseenter", function () {
-          _this.cursor.update(element.jobj());
-        });
+    this.buttons.forEach((column) => {
+      column.forEach((element) => {
+        element.jobj.off(".menu-click");
+        element.jobj.on(
+          "mouseup.menu-click",
+          async () => await _this.pressButton(element)
+        );
+        element.jobj.on("mouseenter.menu-click", () =>
+          _this.cursor.update(element.jobj)
+        );
       });
     });
   }
 
   removeClickListeners() {
-    this.buttons.forEach(function (column) {
-      column.forEach(function (element) {
-        element.jobj().off("mouseup");
-        element.jobj().off("mouseenter");
-      });
-    });
+    this.buttons.forEach((column) =>
+      column.forEach((button) => button.jobj.off(".menu-click"))
+    );
   }
 
   reset() {
     this.pos = { x: 0, y: 0 };
-    this.cursor.update(this.buttons[0][0].jobj());
+    this.cursor.update(this.buttons[0][0].jobj);
   }
 
-  onMenuTreeComplete() {
-    if (this.inputHandler != null) {
-      this.inputHandler(this.pos);
-    }
+  async onMenuTreeComplete() {
+    await this.inputHandler?.(this.pos);
 
     if (this.parent != null) {
       this.setDisplay(false);
       this.parent.child = null;
-      this.parent.onMenuTreeComplete();
+      await this.parent.onMenuTreeComplete();
     }
   }
 
@@ -1520,30 +1527,16 @@ class Menu {
     this.child.setDisplay(false);
     this.child = null;
     this.setDisplay(true);
-    if (this.onactivated != null) this.onactivated(this);
-  }
-
-  afterButton() {
-    if (!this.subMenued) {
-      //console.log("MenuTree finished");
-      this.removeClickListeners();
-      this.onMenuTreeComplete();
-    } else {
-      //console.log("submenu opened");
-      this.subMenued = false;
-    }
+    this?.onactivated(this);
   }
 
   async handleInput(event) {
     if (this.child == null) {
       if (!this.blockInput) {
         if (event.key == " ") {
-          await this.buttons[this.pos.x][this.pos.y].activate();
-          this.afterButton();
+          await this.pressButton(this.buttons[this.pos.x][this.pos.y]);
         } else if (event.key == "Backspace") {
-          if (this.parent != null) {
-            this.parent.returnControl();
-          }
+          this.parent?.returnControl();
         } else {
           switch (event.key) {
             case "ArrowDown":
@@ -1581,8 +1574,8 @@ class Menu {
               }
               break;
           }
-          if (this.posChangedHandler) this.posChangedHandler(this.pos);
-          var b = this.buttons[this.pos.x][this.pos.y].jobj();
+          this.posChangedHandler?.(this.pos);
+          var b = this.buttons[this.pos.x][this.pos.y].jobj;
           this.cursor.update(b);
         }
       }
@@ -1595,37 +1588,39 @@ class Menu {
     if (this.hideButtons) {
       this.buttons.forEach(function (element) {
         element.forEach(function (element) {
-          element.jobj().css("display", v);
+          element.jobj.css("display", v);
         });
       });
     }
     this.cursor.setDisplay(show);
   }
 
-  subMenu(sub) {
-    this.child = sub;
+  /** @arg {Menu} value */
+  set subMenu(value) {
+    this.child = value;
     sub.parent = this;
     sub.updateClickListeners();
     this.setDisplay(false);
     sub.setDisplay(true);
     this.subMenued = true;
-    return this.child;
   }
 }
 
 class MenuButton {
+  #jobj;
+  #callback;
+
   constructor(jobj, callback) {
-    this.$jobj = jobj;
-    this.call = callback;
+    this.#jobj = jobj;
+    this.#callback = callback;
   }
 
   async activate() {
-    var w = this.call();
-    if (w != null) await w;
+    await this.#callback();
   }
 
-  jobj() {
-    return this.$jobj;
+  get jobj() {
+    return this.#jobj;
   }
 }
 
@@ -1857,7 +1852,6 @@ class Player {
   }
 
   async attack(monster) {
-    var _this = this;
     this.lastCalled = this.attack;
     Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
     CSSAnimationController.trigger(monster.jobj, "shake");
@@ -1880,9 +1874,9 @@ class Player {
   async runAway(monsters) {
     this.lastCalled = this.runAway;
     topWriter.show("You run...");
-    Battle.current.recede();
+    contentManager.recede();
     await InputHandler.waitForInput();
-    Battle.current.approach();
+    contentManager.approach();
 
     var total = monsters.length;
     var ranfrom = 0;

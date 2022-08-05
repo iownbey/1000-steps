@@ -187,7 +187,6 @@ function getGameMenu(callbacks, names, cursor) {
     var buttons = menu.buttons;
     buttons.forEach(function (element, i) {
       var x = i;
-      var column = [];
       element.forEach(function (element, i) {
         var y = i;
 
