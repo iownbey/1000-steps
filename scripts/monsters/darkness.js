@@ -134,7 +134,7 @@ class Darkness extends Monster {
     this.renderer.setSprite(2, 0);
     var _this = this;
     setTimeout(() => {
-      CSSACSSAnimationControllernimation.trigger(_this.jobj, "shake");
+      CSSAnimationController.trigger(_this.jobj, "shake");
       _this.shiverAnim.start();
       _this.renderer.setSprite(2, 1);
       sound.playPersistant(this.rushSound);

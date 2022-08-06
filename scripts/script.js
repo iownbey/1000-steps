@@ -9,6 +9,7 @@ var ModeEnum = Object.freeze({
 });
 var mode = null;
 
+/** @type {Player} */
 var player;
 
 var lastCalled = null;
@@ -132,7 +133,7 @@ function changeForeground(newImage) {
 }
 
 function playBackgroundMusic() {
-  sound.playMusic(area.getBackgroundMusic());
+  sound.playMusic(area.music);
 }
 
 function getRandom(array) {
@@ -144,7 +145,7 @@ async function walk() {
     CSSAnimationController.trigger(player.$jobj, "walk");
     stepsLeft--;
     sound.playPersistant(fx.footstep);
-    Player.sprites.setSprite(player.$jobj, 4, 2);
+    Player.sprites.setSprite(player.$jobj, 4, 1);
     contentManager.clear();
     DialogueTypewriter.clearAll();
     stepsPopIn.$jobj.html("STEPS<br/>" + stepsLeft);
@@ -251,8 +252,8 @@ async function shiftKeys(event) {
         file.setFlag("IntroComplete");
         MainMenu.removeEventListeners();
         StartMainGame();
-        //await loadScript("monsters/darkness.js");
-        //Battle.start("darkness-fight", [new Darkness()], false);
+        await loadScript("monsters/darkness.js");
+        Battle.start("darkness-fight", new Darkness(), false);
       }
       break;
   }

@@ -29,7 +29,7 @@ class Area_Ocean extends Area {
     return events;
   }
 
-  getBackgroundMusic() {
+  get music() {
     return "ocean";
   }
 

@@ -29,6 +29,10 @@ class Area {
     console.log(this.monsters);
   }
 
+  get music() {
+    return "back";
+  }
+
   static getStepsFromOffsetAndArea(area, offset) {
     var i = 10 - Area.allAreas.indexOf(area);
     var steps = i * 100;
@@ -50,10 +54,6 @@ class Area {
   getNextArea() {
     console.error("Area Engine has nowhere to go.");
     return {};
-  }
-
-  getBackgroundMusic() {
-    return "back";
   }
 
   onEnd() {}
@@ -253,10 +253,11 @@ Area.fightEvent = function () {
 Area.flavorEvent = function () {
   topWriter.show(area.flavor.get());
 };
+
 Area.nextAreaEvent = async function () {
   this.onEnd();
   area = await this.getNextArea();
-  sound.playMusic(area.getBackgroundMusic());
+  sound.playMusic(area.music);
   area.onStart();
 };
 

@@ -37,7 +37,7 @@ class Area_Aorta extends Area {
     return await Area.load("Area_Underworld");
   }
 
-  getBackgroundMusic() {
+  get music() {
     return "back";
   }
 
@@ -45,16 +45,6 @@ class Area_Aorta extends Area {
     changeBackground("back");
     topWriter.show('Press "Space" to walk forward.');
     sound.playMusic(this.getBackgroundMusic());
-  }
-
-  fillGrabBagThing(length = 10, a = [Area.fightEvent]) {
-    a.push(Area.flavorEvent);
-
-    while (a.length < length) {
-      a.push(Area.emptyStep);
-    }
-
-    return GrabBag.shuffle(a);
   }
 }
 
@@ -90,8 +80,7 @@ Area_Aorta.meetVirgil = async function () {
                 "If this happens, The fight will be over, and you must accept my training.",
                 "Prepare to combat with the master of blade and sorrow.",
               ]);
-              Battle.start("virgil-theme", new Virgil(), false);
-              await Battle.current.getPromise();
+              await Battle.start("virgil-theme", new Virgil(), false);
             }
             break;
           case "Nevermind":
@@ -161,8 +150,7 @@ Area_Aorta.meetTroll = async function () {
   contentManager.approach();
   await new Writer(bottomWriter, text.aorta.trollFoundText).writeAllAsync();
 
-  Battle.start("fight", new Troll(), false);
-  await Battle.current.getPromise();
+  await Battle.start("fight", new Troll(), false);
 };
 
 Area_Aorta.virgilKillScene = async function () {
@@ -220,12 +208,11 @@ Area_Aorta.meetTroldiers = async function () {
   await Helper.delaySeconds(2);
 
   await new Writer(bottomWriter, text.aorta.meetTroldiersText).writeAllAsync();
-  Battle.start(
+  await Battle.start(
     "fight",
     [new Troldier(), new Troldier(), new Troldier()],
     false
   );
-  await Battle.current.getPromise();
 };
 
 Area_Aorta.meetAmadeus = async function () {
@@ -265,8 +252,7 @@ Area_Aorta.fightAmadeus = async function () {
   Amadeus.sprites.setSprite($b, 1, 1);
   await contentManager.approachFromLeft();
   await Area.writeBottom(text.aorta.prefightAmadeusText);
-  Battle.start("amadeus", new Amadeus(), false);
-  await Battle.current.getPromise();
+  await Battle.start("amadeus", new Amadeus(), false);
 };
 
 Area_Aorta.meetOscar = async function () {

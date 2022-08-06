@@ -41,7 +41,7 @@ class Area_Underworld extends Area {
   onStart() {
     changeBackground("back2");
     changeForeground("deadTrees");
-    sound.playMusic(this.getBackgroundMusic());
+    sound.playMusic(this.music);
     topWriter.show("You have exited the Aorta, and entered the underworld...");
   }
 
@@ -414,8 +414,7 @@ Area_Underworld.fightThaddeus = async function () {
       bottomWriter,
       Area_Underworld.text.preFightThaddeus.chooseNo
     ).writeAllAsync();
-    Battle.current = new Battle("thaddeus", [new Thaddeus()], false);
-    await Battle.current.getPromise();
+    await Battle.start("thaddeus", [new Thaddeus()], false);
 
     DialogueTypewriter.clearAll();
     await Helper.delaySeconds(2);

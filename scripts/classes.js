@@ -58,57 +58,23 @@ class Queue {
 }
 
 class Battle {
+  /** @type {Menu} */
+  #menu;
+  #ended = false;
+
   /** @type {Battle} */
   static #current;
 
   constructor(music, monsters, dynamicIntro = true) {
+    DialogueTypewriter.clearAll();
     SaveData.blockSaving = true;
+    mode = ModeEnum.fighting;
     if (!(monsters instanceof Array)) monsters = [monsters];
     this.monsters = monsters;
     this.currentMonster = null;
-    mode = ModeEnum.fighting;
-    DialogueTypewriter.clearAll();
     this.generateBattleMenu();
-    this.menu.setDisplay(false);
+    this.#menu.setDisplay(false);
     this.#battleStart(music, dynamicIntro);
-  }
-
-  async #battleStart(music, dynamicIntro) {
-    cover.color = "white";
-    await cover.fadeTo(1, 600);
-
-    contentManager.clear();
-    this.monsters.forEach(function (element) {
-      var box = $('<div class="monster"></div>');
-      contentManager.add(box);
-      element.html(box);
-    });
-    contentManager.approach(dynamicIntro);
-    sound.playMusic(music, false);
-    backgroundCanvas.triggerBattle();
-
-    await cover.fadeTo(0, 600);
-
-    if (this.monsters.length == 1) {
-      topWriter.show(this.monsters[0].myName + " stands in the way!");
-    } else {
-      var index = this.monsters.length == 2 ? 0 : 1;
-      topWriter.show(
-        this.monsters[index].myName + " and his friends block the path."
-      );
-    }
-
-    this.charAnim = new CSSAnimationController(
-      player.$jobj,
-      "battlePose"
-    ).start();
-
-    await InputHandler.waitForInput();
-    this.startPlayerTurn();
-  }
-
-  static start(music, monsters, dynamicIntro = true) {
-    Battle.#current = new Battle(music, monsters, dynamicIntro);
   }
 
   static get current() {
@@ -119,134 +85,9 @@ class Battle {
     return "{$d}";
   }
 
-  startPlayerTurn() {
-    console.log("BATTLE: Player turn started.");
-    DialogueTypewriter.clearAll();
-    player.defending = false;
-    Player.sprites.setSprite(player.$jobj, 1, 1);
-    this.menu.setDisplay(true);
-  }
-
-  async finishPlayerTurn() {
-    console.log("BATTLE: Finishing player's turn.");
-
-    if (player.lastCalled != player.charge) {
-      if (player.chargeAmount > 0) {
-        player.chargeAmount = 0;
-        cover.flash("white", null, null, 250);
-      }
-    }
-    switch (player.chargeAmount) {
-      case 0:
-        sparkHandler.hideAll();
-        break;
-      case 1:
-        sparkHandler.showSpark();
-        break;
-      case 2:
-        sparkHandler.showFlame();
-        break;
-      case 3:
-        sparkHandler.showAura();
-        break;
-    }
-
-    if (this.checkBattleOver()) {
-      this.end();
-    } else {
-      if (player.wounded) {
-        topWriter.show('The enemy team used "IMPRISON"');
-        await InputHandler.waitForInput();
-        player.die();
-        topWriter.show("You were banished to an alternate world...");
-        await InputHandler.waitForInput();
-        mode = ModeEnum.dead;
-        file.forceSet("unlocked-run", true);
-        sound.playMusic("gameover");
-        setCurrentScope($("#gameover"));
-      } else {
-        console.log("BATTLE: Starting Monster turns.");
-        this.monsterTurn(0);
-      }
-    }
-  }
-
-  async dealPlayerDamage(damage) {
-    if (player.changeHealth(-damage)) {
-      topWriter.show(this.currentMonster.myName + " has mortally wounded you!");
-      await InputHandler.waitForInput();
-    }
-  }
-
-  async monsterTurn(index) {
-    console.log("BATTLE: Starting Monster " + index + " Turn");
-    DialogueTypewriter.clearAll();
-    var monster = (this.currentMonster = this.monsters[index]);
-    var attack = await monster.attack();
-    if (monster.dieAtEndOfTurn) {
-      index--;
-      this.monsters = this.monsters.remove(monster);
-      monster.jobj.remove();
-    } else {
-      var damage = attack.damage || 0;
-      if (player.defending) {
-        damage = Math.round(damage * 0.5);
-      }
-
-      if (attack.text)
-        topWriter.show(attack.text.replace(Battle.damagestr, damage));
-
-      await this.dealPlayerDamage(damage);
-    }
-
-    await InputHandler.waitForInput();
-
-    index++;
-    if (!this.checkBattleOver()) {
-      if (index == this.monsters.length) {
-        console.log("BATTLE: Player start.");
-        this.startPlayerTurn();
-      } else {
-        this.monsterTurn(index);
-      }
-    } else {
-      this.end();
-    }
-  }
-
-  checkBattleOver() {
-    var finished = true;
-    if (this.monsters.length > 0) {
-      this.monsters.forEach(function (element) {
-        if (element.important) finished = false;
-      });
-    }
-    return finished;
-  }
-
-  handleInput(event) {
-    this.menu?.handleInput(event);
-  }
-
-  async getMonsterPicker(menu, callback) {
-    if (this.monsters.length > 1) {
-      var buttons = [];
-      var names = [];
-      this.monsters.forEach(function (element) {
-        buttons.push([
-          new MenuButton(element.jobj, async () => await callback(element)),
-        ]);
-        names.push(element.myName);
-      });
-      var m = menu.subMenu(new Menu(buttons, vcursor));
-      m.onPosChanged(function (pos) {
-        topWriter.show(names[pos.x]);
-      });
-      m.hideButtons = false;
-      console.log(m);
-    } else {
-      await callback(this.monsters[0]);
-    }
+  /** @returns {Battle}*/
+  static start(music, monsters, dynamicIntro = true) {
+    return (Battle.#current = new Battle(music, monsters, dynamicIntro));
   }
 
   generateBattleMenu() {
@@ -257,14 +98,14 @@ class Battle {
     var u_inspect = file.getFlag("unlocked-inspect");
 
     var lCalls = [
-      async function () {
-        await _this.getMonsterPicker(_this.menu, async (mon) => {
+      async () => {
+        await _this.#getMonsterPicker(_this.#menu, async (mon) => {
           await player.attack(mon);
           console.log("Attack started");
         });
       },
       () => player.defend(),
-      () => player.heal(),
+      async () => await player.heal(),
     ];
 
     var lNames = ["ATTACK", "DEFEND", "HEAL"];
@@ -274,16 +115,16 @@ class Battle {
     var rNames = [];
 
     var f_stun = function () {
-      _this.getMonsterPicker(_this.menu, (mon) => player.stun(mon));
+      _this.#getMonsterPicker(_this.#menu, (mon) => player.stun(mon));
     };
     var f_talk = function () {
-      _this.getMonsterPicker(_this.menu, (mon) => player.talk(mon));
+      _this.#getMonsterPicker(_this.#menu, (mon) => player.talk(mon));
     };
     var f_run = function () {
       player.runAway(_this.monsters);
     };
     var f_inspect = function () {
-      _this.getMonsterPicker(_this.menu, (mon) => player.inspect(mon));
+      _this.#getMonsterPicker(_this.#menu, (mon) => player.inspect(mon));
     };
 
     var otherActions = [];
@@ -320,7 +161,7 @@ class Battle {
         var f_other = function () {
           var otherMenu = getGameMenu(subcallbacks, subnames, hcursor);
           //console.log("Opened Other: " + otherMenu);
-          _this.menu.subMenu(otherMenu);
+          _this.#menu.subMenu(otherMenu);
         };
 
         rNames.push("OTHER");
@@ -341,40 +182,218 @@ class Battle {
     var callbacks = [lCalls, rCalls];
     var names = [lNames, rNames];
 
-    this.menu = getGameMenu(callbacks, names, hcursor);
-    this.menu.hideOnInput = true;
-    this.menu.oninput = async () => {
+    this.#menu = getGameMenu(callbacks, names, hcursor);
+    this.#menu.hideOnInput = true;
+    this.#menu.oninput = async () => {
       await InputHandler.waitForInput();
       console.log("Finishing Player Turn");
-      _this.finishPlayerTurn();
+      _this.#finishPlayerTurn();
     };
   }
 
-  kill(monster) {
+  async #getMonsterPicker(menu, callback) {
+    if (this.monsters.length > 1) {
+      var buttons = [];
+      var names = [];
+      this.monsters.forEach(function (element) {
+        buttons.push([
+          new MenuButton(element.jobj, async () => await callback(element)),
+        ]);
+        names.push(element.myName);
+      });
+      var m = menu.subMenu(new Menu(buttons, vcursor));
+      m.onPosChanged(function (pos) {
+        topWriter.show(names[pos.x]);
+      });
+      m.hideButtons = false;
+      console.log(m);
+    } else {
+      await callback(this.monsters[0]);
+    }
+  }
+
+  async #battleStart(music, dynamicIntro) {
+    cover.color = "white";
+    await cover.fadeTo(1, 600);
+
+    contentManager.clear();
+    this.monsters.forEach(function (element) {
+      var box = $('<div class="monster"></div>');
+      contentManager.add(box);
+      element.html(box);
+    });
+    contentManager.approach(dynamicIntro);
+    sound.playMusic(music, false);
+    backgroundCanvas.triggerBattle();
+
+    await cover.fadeTo(0, 600);
+
+    if (this.monsters.length == 1) {
+      topWriter.show(this.monsters[0].myName + " stands in the way!");
+    } else {
+      var index = this.monsters.length == 2 ? 0 : 1;
+      topWriter.show(
+        this.monsters[index].myName + " and his friends block the path."
+      );
+    }
+
+    this.charAnim = new CSSAnimationController(
+      player.$jobj,
+      "battlePose"
+    ).start();
+
+    await InputHandler.waitForInput();
+    this.#startPlayerTurn();
+  }
+
+  #startPlayerTurn() {
+    console.log("BATTLE: Player turn started.");
+    DialogueTypewriter.clearAll();
+    player.defending = false;
+    Player.sprites.setSprite(player.$jobj, 1, 1);
+    this.#menu.setDisplay(true);
+  }
+
+  async #finishPlayerTurn() {
+    console.log("BATTLE: Finishing player's turn.");
+
+    if (player.lastCalled != player.charge) {
+      if (player.chargeAmount > 0) {
+        player.chargeAmount = 0;
+        cover.flash("white", null, null, 250);
+      }
+    }
+    switch (player.chargeAmount) {
+      case 0:
+        sparkHandler.hideAll();
+        break;
+      case 1:
+        sparkHandler.showSpark();
+        break;
+      case 2:
+        sparkHandler.showFlame();
+        break;
+      case 3:
+        sparkHandler.showAura();
+        break;
+    }
+
+    if (this.#checkWin()) {
+      this.#end();
+    } else {
+      if (player.wounded) {
+        topWriter.show('The enemy team used "IMPRISON"');
+        await InputHandler.waitForInput();
+        player.die();
+        topWriter.show("You were banished to an alternate world...");
+        await InputHandler.waitForInput();
+        mode = ModeEnum.dead;
+        file.forceSet("unlocked-run", true);
+        sound.playMusic("gameover");
+        setCurrentScope($("#gameover"));
+      } else {
+        console.log("BATTLE: Starting Monster turns.");
+        this.monsterTurns(0);
+      }
+    }
+  }
+
+  async monsterTurns() {
+    var i = 0;
+    while (i < this.monsters.length) {
+      var monstersBefore = this.monsters;
+      var thisMonster = this.monsters[i];
+      thisMonster.currentMonster = thisMonster;
+
+      await this.monsterTurn(thisMonster);
+
+      if (this.#checkWin()) {
+        this.#end();
+      } else {
+        var newIndex = this.monsters.indexOf(thisMonster);
+        if (newIndex === -1) {
+          var found = false;
+          for (var mi = 0; mi < this.monsters.length; mi++) {
+            if (this.monsters[mi] != monstersBefore[mi]) {
+              i = mi;
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) break;
+        } else {
+          i = newIndex + 1;
+        }
+      }
+    }
+
+    if (!this.#ended) this.#startPlayerTurn();
+  }
+
+  async monsterTurn(monster) {
+    console.log("BATTLE: Starting Monster Turn");
+    DialogueTypewriter.clearAll();
+
+    var attack = await monster.attack();
+    if (monster.dieAtEndOfTurn) {
+      this.killMonster(monster);
+    } else {
+      var damage = attack.damage || 0;
+      if (player.defending) {
+        damage = Math.round(damage * 0.5);
+      }
+
+      if (attack.text)
+        topWriter.show(attack.text.replace(Battle.damagestr, damage));
+
+      await this.dealPlayerDamage(damage);
+    }
+
+    await InputHandler.waitForInput();
+  }
+
+  async dealPlayerDamage(damage) {
+    if (player.changeHealth(-damage)) {
+      topWriter.show(this.currentMonster.myName + " has mortally wounded you!");
+      await InputHandler.waitForInput();
+    }
+  }
+
+  #checkWin() {
+    var finished = true;
+    if (this.monsters.length > 0) {
+      this.monsters.forEach(function (element) {
+        if (element.important) finished = false;
+      });
+    }
+    return finished;
+  }
+
+  handleInput(event) {
+    this.#menu?.handleInput(event);
+  }
+
+  killMonster(monster) {
     this.monsters = this.monsters.remove(monster);
     monster.remove();
   }
 
-  async end() {
+  async #end() {
     if (Battle.current.monsters.length > 0) {
       topWriter.show("Everyone else was unimportant.");
       this.monsters.forEach((element) => element.remove());
       await InputHandler.waitForInput();
     }
 
-    SaveData.blockSaving = false;
-    this.charAnim.end();
-    mode = ModeEnum.walking;
-    Battle.#current = null;
-    player.defending = false;
-    playBackgroundMusic();
     this.onfinish?.();
-    backgroundCanvas.triggerDefault();
+    this.endNow();
   }
 
   endNow() {
     SaveData.blockSaving = false;
     this.charAnim.end();
+    this.#ended = true;
     mode = ModeEnum.walking;
     Battle.#current = null;
     player.defending = false;
@@ -382,11 +401,8 @@ class Battle {
     backgroundCanvas.triggerDefault();
   }
 
-  getPromise() {
-    var _this = this;
-    return new Promise((r) => {
-      _this.onfinish = r;
-    });
+  then(res) {
+    this.onfinish = res;
   }
 }
 
@@ -594,28 +610,6 @@ class Cursor {
 
   setDisplay(show) {
     this.cursor.css("display", show ? "initial" : "none");
-  }
-}
-
-class DelayedFunction {
-  constructor(callback, delay) {
-    var _this = this;
-    this.callback = callback;
-    this.complete = false;
-    this.delay = delay;
-    this.timeoutID = setTimeout(function () {
-      _this.complete = true;
-      callback();
-    }, delay);
-  }
-
-  happen() {
-    this.callback();
-    clearTimeout(this.timeoutID);
-  }
-
-  dontHappen() {
-    clearTimeout(this.timeoutID);
   }
 }
 
@@ -832,7 +826,11 @@ class Helper {
   }
 
   static async delaySeconds(seconds) {
-    await new Promise((resolve) => setTimeout(resolve, seconds * 1000.0));
+    await this.delayMillis(seconds * 1000.0);
+  }
+
+  static async delayMillis(millis) {
+    await new Promise((resolve) => setTimeout(resolve, millis));
   }
 }
 
@@ -933,6 +931,7 @@ class InputHandler {
     doc.off("mouseup", _this.mbind);
   }
 
+  /** @type {Promise} */
   static waitForInput() {
     return new Promise((resolve) => {
       var i = new InputHandler((e) => {
@@ -1779,8 +1778,16 @@ class Player {
       { x: 1, y: 3 },
       { x: 2, y: 3 },
       { x: 3, y: 3 },
-      { x: 4, y: 3, time: 500 },
-      { x: 1, y: 1 },
+      { x: 4, y: 3, time: 100 },
+      { x: 1, y: 2 },
+    ];
+  }
+
+  static get rallyAnim() {
+    return [
+      { x: 1, y: 2 },
+      { x: 3, y: 1 },
+      { x: 1, y: 2 },
     ];
   }
 
@@ -1853,22 +1860,27 @@ class Player {
 
   async attack(monster) {
     this.lastCalled = this.attack;
-    Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
-    CSSAnimationController.trigger(monster.jobj, "shake");
 
-    var damage = this.attackPower * 3 ** this.chargeAmount;
-    const basephrase =
-      "You hit " + monster.myName + " and deal " + damage + " damage.";
+    const damage = this.attackPower * 3 ** this.chargeAmount;
+    var phrase = `You hit ${monster.myName} and deal ${damage} damage.`;
+
+    Player.sprites.animate(this.$jobj, Player.attackAnim, 25);
+    await Helper.delayMillis(175);
 
     if (await monster.hit(damage)) {
       sound.playFX("deathfx");
-      var add = nl + "You killed " + monster.myName + ".";
-      Battle.current.kill(monster);
-      topWriter.show(basephrase + add);
+      phrase += nl + `You killed ${monster.myName}.`;
+      Battle.current.killMonster(monster);
     } else {
       sound.playFX("attack");
-      topWriter.show(basephrase);
     }
+
+    CSSAnimationController.trigger(monster.jobj, "shake");
+    await Helper.delayMillis(500);
+    topWriter.show(phrase);
+    await InputHandler.waitForInput();
+
+    Player.sprites.setSprite(this.$jobj, 1, 1);
   }
 
   async runAway(monsters) {
@@ -1884,7 +1896,7 @@ class Player {
     monsters.forEach(function (monster) {
       if (monster.run()) {
         ranfrom++;
-        Battle.current.kill(monster);
+        Battle.current.killMonster(monster);
         ranfromName = monster.myName;
       }
     });
@@ -1938,7 +1950,7 @@ class Player {
     if (message) await new Writer(bottomWriter, message).writeAllAsync();
   }
 
-  heal() {
+  async heal() {
     if (this.lastCalled == this.heal) {
       this.healOffset--;
     } else {
@@ -1958,11 +1970,15 @@ class Player {
       topWriter.show(
         "You have exhausted your healing power. Do something else!"
       );
-      return;
     } else {
-      topWriter.show("You healed for " + amount + " health.");
-      return;
+      cover.color = "green";
+      Player.sprites.animate(this.$jobj, Player.attackAnim, 100);
+      await cover.fadeTo(1, 500);
+      await cover.fadeTo(0, 500);
+      topWriter.show(`You healed for ${amount} health.`);
     }
+
+    await InputHandler.waitForInput();
   }
 
   stun(monster) {
@@ -1985,7 +2001,7 @@ class Player {
     }
 
     this.defending = true;
-    Player.sprites.setSprite(this.$jobj, 2, 2);
+    Player.sprites.setSprite(this.$jobj, 4, 2);
   }
 
   die() {
