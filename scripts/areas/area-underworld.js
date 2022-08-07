@@ -1,64 +1,205 @@
 class Area_Underworld extends Area {
   constructor() {
-    super(
-      Area_Underworld.text.flavor,
-      ["IntrovertedGhost", "Skeleton", "Reaper"],
-      "underworld-fight"
-    );
+    super(Area_Underworld.text.flavor);
   }
 
   getEvents() {
     var events = [].concat(
-      [
-        Area_Underworld.talkEmery1,
-        Area.flavorEvent,
-        Area.flavorEvent,
-        Area.flavorEvent,
-        Area_Underworld.meetSkeletons,
-      ],
-      this.fillGrabBagThing(8),
-      this.fillGrabBagThing(8),
-      this.fillGrabBagThing(9),
-      [Area_Underworld.talkSkeletons],
-      this.fillGrabBagThing(9),
-      this.fillGrabBagThing(),
-      this.fillGrabBagThing(),
-      [Area_Underworld.talkArnold],
-      this.fillGrabBagThing(9),
-      [Area_Underworld.enterThaddeusDungeon],
-      this.fillGrabBagThing(9),
-      this.fillGrabBagThing(),
-      this.fillGrabBagThing(9),
-      [Area_Underworld.fightThaddeus]
+      Area_Underworld.talkEmery1,
+      Area.flavorEvent,
+      Area.flavorEvent,
+      Area.flavorEvent,
+      Area_Underworld.meetSkeletons,
+      Area.getEmptySteps(7),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(7),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(7),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(4),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(4),
+      Area_Underworld.talkSkeletons,
+      Area.getEmptySteps(8),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(9),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(9),
+      Area_Underworld.fightEvent,
+      Area_Underworld.talkArnold,
+      Area.getEmptySteps(8),
+      Area_Underworld.fightEvent,
+      Area_Underworld.enterThaddeusDungeon,
+      Area.getEmptySteps(8),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(9),
+      Area_Underworld.fightEvent,
+      Area.getEmptySteps(8),
+      Area_Underworld.fightEvent,
+      [Area_Underworld.fightThaddeus, Area.endOfDemo]
     );
     return events;
   }
 
-  async getNextArea() {
-    return await Area.load("Area_Ocean");
+  get music() {
+    return "underworld";
   }
 
   onStart() {
     changeBackground("back2");
     changeForeground("deadTrees");
     sound.playMusic(this.music);
-    topWriter.show("You have exited the Aorta, and entered the underworld...");
+    topWriter.show("You have entered the underworld...");
   }
 
-  fillGrabBagThing(length = 10) {
-    var _this = this;
-    var a = [Area.fightEvent];
+  // Events
 
-    while (a.length < length) {
-      a.push(Area.flavorEvent);
+  static fightEvent = Area.getRandomizedFightEvent(
+    [IntrovertedGhost, Skeleton, Reaper],
+    "underworld-fight"
+  );
+
+  static async talkEmery1() {
+    file.setFlag("unlocked-inspect"); //flag for dialogue in-fight.
+    sound.pause();
+    await new Writer(
+      bottomWriter,
+      Area_Underworld.text.emerySpeak
+    ).writeAllAsync();
+    sound.unpause();
+  }
+
+  static async meetSkeletons() {
+    contentManager.clear();
+    var franklin = $('<div style="height: 140%; width:  70%;"></div>')
+      .css("transform-origin", "bottom")
+      .css("transform", "scale(0.9,1.1)");
+    var arnold = $('<div style="height: 140%; width:  70%;"></div>')
+      .css("transform-origin", "bottom")
+      .css("transform", "scale(1.1,0.7)");
+    Skeleton.sprites.setSprite(arnold, 1, 2);
+    Skeleton.sprites.setSprite(franklin, 1, 2);
+    contentManager.add($('<div class="monster"></div>').html(arnold));
+    contentManager.add($('<div class="monster"></div>').html(franklin));
+    await contentManager.approach();
+    await new Writer(
+      bottomWriter,
+      Area_Underworld.text.meetSkeletonsText
+    ).writeAllAsync();
+    await contentManager.recede();
+    contentManager.clear();
+    sound.unpause();
+    DialogueTypewriter.clearAll();
+  }
+
+  static async talkskeletons() {
+    sound.pause();
+    contentManager.clear();
+    var franklin = $('<div style="height: 140%; width:  70%;"></div>')
+      .css("transform-origin", "bottom")
+      .css("transform", "scale(0.9,1.1)");
+    var arnold = $('<div style="height: 140%; width:  70%;"></div>')
+      .css("transform-origin", "bottom")
+      .css("transform", "scale(1.1,0.7)");
+    Skeleton.sprites.setSprite(arnold, 2, 2);
+    Skeleton.sprites.setSprite(franklin, 1, 2);
+    contentManager.add($('<div class="monster"></div>').html(franklin));
+    contentManager.add($('<div class="monster"></div>').html(arnold));
+    contentManager.approach();
+    var w = new Writer(bottomWriter, Area_Underworld.text.meetSkeletons2Text);
+    await w.writeAllAsync();
+    Skeleton.sprites.setSprite(arnold, 1, 2);
+    await w.writeAllAsync();
+    await contentManager.recede();
+    contentManager.clear();
+    sound.unpause();
+    DialogueTypewriter.clearAll();
+  }
+
+  static async talkArnold() {
+    sound.pause();
+    contentManager.clear();
+    var arnold = $('<div style="height: 140%; width:  70%;"></div>')
+      .css("transform-origin", "bottom")
+      .css("transform", "scale(1.1,0.7)");
+    Skeleton.sprites.setSprite(arnold, 1, 1);
+    contentManager.add($('<div class="monster"></div>').html(arnold));
+    contentManager.approach();
+    await new Writer(
+      bottomWriter,
+      Area_Underworld.text.talkArnoldText
+    ).writeAllAsync();
+    contentManager.clear();
+    sound.unpause();
+    DialogueTypewriter.clearAll();
+  }
+
+  static enterThaddeusDungeon = Area.getBackgroundChangeEvent(
+    "You enter Thaddeus' dungeon.",
+    "wideTunnel"
+  );
+
+  static async fightThaddeus() {
+    changeBackground("bigDoor");
+    sound.stop();
+    contentManager.clear();
+    var $a = $('<div class="monster"></div>');
+    var $b = $('<div id="thaddeus"></div>');
+    contentManager.add($a);
+    $a.html($b);
+    Thaddeus.sprites.setSprite($b, 1, 1);
+    await contentManager.approachFromLeft();
+
+    await new Writer(
+      bottomWriter,
+      Area_Underworld.text.preFightThaddeus.intro
+    ).writeAllAsync();
+    var answer = await getChoice(["Accept", "Decline"], hcursor);
+    if (answer === "Accept") {
+      await new Writer(
+        bottomWriter,
+        Area_Underworld.text.preFightThaddeus.chooseYes
+      ).writeAllAsync();
+      //Cut to black, then fade in to looping footage of the harbinger sitting in the underworld.
+      //Something telling you to load or reset the game appears.
+    } // Decline
+    else {
+      await new Writer(
+        bottomWriter,
+        Area_Underworld.text.preFightThaddeus.chooseNo
+      ).writeAllAsync();
+      await Battle.start("thaddeus", [new Thaddeus()], false);
+
+      DialogueTypewriter.clearAll();
+      await Helper.delaySeconds(2);
+
+      sound.stop();
+      var $a = $('<div class="monster fadeInOpacity"></div>');
+      var $b = $('<div id="thaddeus"></div>');
+      contentManager.add($a);
+      contentManager.approach(false);
+      $a.html($b);
+      Thaddeus.sprites.setSprite($b, 1, 1);
+
+      await Helper.delaySeconds(2);
+
+      var w = new Writer(bottomWriter, Area_Underworld.text.postFightThaddeus);
+      await w.writeAllAsync();
+      await contentManager.recedeToLeft();
+      await Helper.delaySeconds(1);
+      // Thaddeus leaves, arnold enters
+      contentManager.clear();
+      var arnold = $('<div style="height: 140%; width:  70%;"></div>')
+        .css("transform-origin", "bottom")
+        .css("transform", "scale(1.1,0.7)");
+      Skeleton.sprites.setSprite(arnold, 1, 1);
+      contentManager.add($('<div class="monster"></div>').html(arnold));
+      await contentManager.approachFromLeft();
+      await w.writeAllAsync();
     }
-
-    return GrabBag.shuffle(a);
   }
 
-  getBackgroundMusic() {
-    return "underworld";
-  }
+  static next = Area.getNextAreaEvent("Area_Ocean");
 }
 
 //text
@@ -301,146 +442,4 @@ Area_Underworld.text = {
     ],
     ["Go. I'll find Franklin."],
   ],
-};
-
-//logic
-
-Area_Underworld.talkEmery1 = async function () {
-  file.setFlag("unlocked-inspect"); //flag for dialogue in-fight.
-  sound.pause();
-  await new Writer(
-    bottomWriter,
-    Area_Underworld.text.emerySpeak
-  ).writeAllAsync();
-  sound.unpause();
-};
-
-Area_Underworld.meetSkeletons = async function () {
-  contentManager.clear();
-  var franklin = $('<div style="height: 140%; width:  70%;"></div>')
-    .css("transform-origin", "bottom")
-    .css("transform", "scale(0.9,1.1)");
-  var arnold = $('<div style="height: 140%; width:  70%;"></div>')
-    .css("transform-origin", "bottom")
-    .css("transform", "scale(1.1,0.7)");
-  Skeleton.sprites.setSprite(arnold, 1, 2);
-  Skeleton.sprites.setSprite(franklin, 1, 2);
-  contentManager.add($('<div class="monster"></div>').html(arnold));
-  contentManager.add($('<div class="monster"></div>').html(franklin));
-  await contentManager.approach();
-  await new Writer(
-    bottomWriter,
-    Area_Underworld.text.meetSkeletonsText
-  ).writeAllAsync();
-  await contentManager.recede();
-  contentManager.clear();
-  sound.unpause();
-  DialogueTypewriter.clearAll();
-};
-
-Area_Underworld.talkSkeletons = async function () {
-  sound.pause();
-  contentManager.clear();
-  var franklin = $('<div style="height: 140%; width:  70%;"></div>')
-    .css("transform-origin", "bottom")
-    .css("transform", "scale(0.9,1.1)");
-  var arnold = $('<div style="height: 140%; width:  70%;"></div>')
-    .css("transform-origin", "bottom")
-    .css("transform", "scale(1.1,0.7)");
-  Skeleton.sprites.setSprite(arnold, 2, 2);
-  Skeleton.sprites.setSprite(franklin, 1, 2);
-  contentManager.add($('<div class="monster"></div>').html(franklin));
-  contentManager.add($('<div class="monster"></div>').html(arnold));
-  contentManager.approach();
-  var w = new Writer(bottomWriter, Area_Underworld.text.meetSkeletons2Text);
-  await w.writeAllAsync();
-  Skeleton.sprites.setSprite(arnold, 1, 2);
-  await w.writeAllAsync();
-  await contentManager.recede();
-  contentManager.clear();
-  sound.unpause();
-  DialogueTypewriter.clearAll();
-};
-
-Area_Underworld.talkArnold = async function () {
-  sound.pause();
-  contentManager.clear();
-  var arnold = $('<div style="height: 140%; width:  70%;"></div>')
-    .css("transform-origin", "bottom")
-    .css("transform", "scale(1.1,0.7)");
-  Skeleton.sprites.setSprite(arnold, 1, 1);
-  contentManager.add($('<div class="monster"></div>').html(arnold));
-  contentManager.approach();
-  await new Writer(
-    bottomWriter,
-    Area_Underworld.text.talkArnoldText
-  ).writeAllAsync();
-  contentManager.clear();
-  sound.unpause();
-  DialogueTypewriter.clearAll();
-};
-
-Area_Underworld.enterThaddeusDungeon = Area.getBackgroundChangeEvent(
-  "You enter Thaddeus' dungeon.",
-  "wideTunnel"
-);
-
-Area_Underworld.fightThaddeus = async function () {
-  changeBackground("bigDoor");
-  sound.stop();
-  contentManager.clear();
-  var $a = $('<div class="monster"></div>');
-  var $b = $('<div id="thaddeus"></div>');
-  contentManager.add($a);
-  $a.html($b);
-  Thaddeus.sprites.setSprite($b, 1, 1);
-  await contentManager.approachFromLeft();
-
-  await new Writer(
-    bottomWriter,
-    Area_Underworld.text.preFightThaddeus.intro
-  ).writeAllAsync();
-  var answer = await getChoice(["Accept", "Decline"], hcursor);
-  if (answer === "Accept") {
-    await new Writer(
-      bottomWriter,
-      Area_Underworld.text.preFightThaddeus.chooseYes
-    ).writeAllAsync();
-    //Cut to black, then fade in to looping footage of the harbinger sitting in the underworld.
-    //Something telling you to load or reset the game appears.
-  } // Decline
-  else {
-    await new Writer(
-      bottomWriter,
-      Area_Underworld.text.preFightThaddeus.chooseNo
-    ).writeAllAsync();
-    await Battle.start("thaddeus", [new Thaddeus()], false);
-
-    DialogueTypewriter.clearAll();
-    await Helper.delaySeconds(2);
-
-    sound.stop();
-    var $a = $('<div class="monster fadeInOpacity"></div>');
-    var $b = $('<div id="thaddeus"></div>');
-    contentManager.add($a);
-    contentManager.approach(false);
-    $a.html($b);
-    Thaddeus.sprites.setSprite($b, 1, 1);
-
-    await Helper.delaySeconds(2);
-
-    var w = new Writer(bottomWriter, Area_Underworld.text.postFightThaddeus);
-    await w.writeAllAsync();
-    await contentManager.recedeToLeft();
-    await Helper.delaySeconds(1);
-    // Thaddeus leaves, arnold enters
-    contentManager.clear();
-    var arnold = $('<div style="height: 140%; width:  70%;"></div>')
-      .css("transform-origin", "bottom")
-      .css("transform", "scale(1.1,0.7)");
-    Skeleton.sprites.setSprite(arnold, 1, 1);
-    contentManager.add($('<div class="monster"></div>').html(arnold));
-    await contentManager.approachFromLeft();
-    await w.writeAllAsync();
-  }
 };

@@ -1,32 +1,11 @@
-/**
- * A whitelist for the code that allows generics in monster creation.
- * This list should contain every monster involved in random encounters
- */
-const allMonsters = Object.freeze([
-  "Troll",
-  "Sponge",
-  "IntrovertedGhost",
-  "Door",
-  "Decoy",
-  "Skeleton",
-  "Reaper",
-  "Troldier",
-]);
-
-/**
- * The base class for areas.
- */
 class Area {
-  constructor(flavor, monsters, battleTheme = "fight") {
+  constructor(flavor) {
     this.stepsTaken = 0;
     this.flavor = new SequenceGetter(flavor);
-    this.battleTheme = battleTheme;
     this.events = this.getEvents();
     this.currentEvent = null;
-    this.monsters = this.toInts(monsters);
     this.busy = false;
     this.offset = 0;
-    console.log(this.monsters);
   }
 
   get music() {
@@ -51,37 +30,11 @@ class Area {
     return [];
   }
 
-  getNextArea() {
-    console.error("Area Engine has nowhere to go.");
-    return {};
-  }
+  async onEnd() {}
 
-  onEnd() {}
+  async onStart() {}
 
-  onStart() {}
-
-  toMonsters(ints) {
-    var monsters = [];
-    ints.forEach(function (element) {
-      monsters.push(allMonsters[element]);
-    });
-    return monsters;
-  }
-
-  toInts(monsters) {
-    var ints = [];
-    monsters.forEach(function (element) {
-      var i = allMonsters.indexOf(element);
-      if (i != -1) ints.push(i);
-    });
-    return ints;
-  }
-
-  getRandomMonster() {
-    var classes = this.toMonsters(this.monsters);
-    // Generic instantiation via eval
-    return eval("new " + getRandom(classes) + "();");
-  }
+  async onWalk() {}
 
   static getEmptySteps(n) {
     return Array(n).fill(Area.emptyStep);
@@ -91,15 +44,13 @@ class Area {
     if (this.busy) return;
     this.busy = true;
     this.stepsTaken++;
-    this.onWalk();
+    await this.onWalk();
     var event = this.events.shift();
     this.offset++;
     if (!Array.isArray(event)) event = [event];
     for (var subEvent of event) await subEvent();
     this.busy = false;
   }
-
-  onWalk() {}
 
   static async load(area) {
     var i = Area.allAreas.indexOf(area);
@@ -112,11 +63,17 @@ class Area {
     }
   }
 }
-Area.allAreas = Object.freeze(["Area_Aorta", "Area_Underworld", "Area_Ocean"]);
+Area.allAreas = Object.freeze([
+  "Area_Aorta",
+  "Area_Underworld",
+  "Area_Ocean",
+  "Area_Meadow",
+]);
 Area.allScripts = Object.freeze([
   "area-aorta.js",
   "area-underworld.js",
   "area-ocean.js",
+  "area-meadow.js",
 ]);
 
 //Utility
@@ -236,29 +193,39 @@ Area.getBackgroundChangeEvent = function (flavor, back, fore = null) {
   };
 };
 
+Area.getFightEvent = function (monsterTypes, music) {
+  return async function () {
+    await Battle.start(
+      music,
+      monsterTypes.map((t) => new t()),
+      true
+    );
+  };
+};
+
+Area.getRandomizedFightEvent = function (monsterTypePool, music) {
+  var monsterTypes = [];
+  for (let i = 0; i < 3; i++) monsterTypes.push(getRandom(monsterTypePool));
+  return Area.getFightEvent(monsterTypes, music);
+};
+
+Area.getNextAreaEvent = function (area) {
+  return async function () {
+    await area.onEnd();
+    area = await Area.load(area);
+    sound.playMusic(area.music);
+    await area.onStart();
+  };
+};
+
 // Universal steps
 
 Area.emptyStep = function () {
   // Do Nothing
 };
 
-Area.fightEvent = function () {
-  Battle.start(area.battleTheme, [
-    area.getRandomMonster(),
-    area.getRandomMonster(),
-    area.getRandomMonster(),
-  ]);
-};
-
 Area.flavorEvent = function () {
   topWriter.show(area.flavor.get());
-};
-
-Area.nextAreaEvent = async function () {
-  this.onEnd();
-  area = await this.getNextArea();
-  sound.playMusic(area.music);
-  area.onStart();
 };
 
 // Prototype Events
@@ -302,4 +269,13 @@ Area.fightAragore = function () {
   mode = ModeEnum.final;
   Battle.start("aragore", [new Aragore()]);
   topWriter.show("Aragore the dragon blocks the exit.");
+};
+
+Area.endOfDemo = function () {
+  infoWindow.setToItemContent(
+    1,
+    "Thank you!",
+    "This is currently the end of developed content for 1000 steps. keep on the lookout for updates, and give me any feedback or ideas you have! They make my game better. Thank you for taking the time to listen to part of the story I want to tell!"
+  );
+  infoWindow.show();
 };

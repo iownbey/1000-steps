@@ -441,6 +441,7 @@ function init$() {
 
   contentManager = new ContentManager($("#content"));
   player = new Player($("#character"), 50, 5);
+  Player.sprites.setSprite(player.$jobj, 4, 1);
   notifier = new Notifier();
   file = new SaveData(notifier);
   hcursor = new Cursor($("#hcursor"), { x: -32, y: 0 });
