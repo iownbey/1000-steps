@@ -50,6 +50,12 @@ ex.martimer.happy = faceHandler.registerExpression(1, 7);
 ex.martimer.sad = faceHandler.registerExpression(3, 7);
 ex.martimer.angry = faceHandler.registerExpression(5, 7);
 
+ex.abigail = {
+  happy: faceHandler.registerExpression(7, 1),
+  sad: faceHandler.registerExpression(9, 1),
+  sadEyeContact: faceHandler.registerExpression(11, 1),
+};
+
 const expr = Object.freeze(ex);
 delete ex;
 

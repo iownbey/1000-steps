@@ -72,8 +72,6 @@ class Battle {
     if (!(monsters instanceof Array)) monsters = [monsters];
     this.monsters = monsters;
     this.currentMonster = null;
-    this.generateBattleMenu();
-    this.#menu.setDisplay(false);
     this.#battleStart(music, dynamicIntro);
   }
 
@@ -97,35 +95,48 @@ class Battle {
     var u_charge = file.getFlag("unlocked-charge");
     var u_inspect = file.getFlag("unlocked-inspect");
 
-    var lCalls = [
-      async () => {
-        await _this.#getMonsterPicker(_this.#menu, async (mon) => {
-          await player.attack(mon);
-          console.log("Attack started");
-        });
-      },
-      () => player.defend(),
-      async () => await player.heal(),
-    ];
+    var f_attack = async () => {
+      await _this.#getMonsterPicker(
+        _this.#menu,
+        async (mon) => await player.attack(mon)
+      );
+    };
+
+    var f_defend = () => player.defend();
+
+    var f_heal = async () => await player.heal();
+
+    var f_charge = async () => await player.charge();
+
+    var f_stun = async () => {
+      await _this.#getMonsterPicker(
+        _this.#menu,
+        async (mon) => await player.stun(mon)
+      );
+    };
+    var f_talk = async () => {
+      await _this.#getMonsterPicker(
+        _this.#menu,
+        async (mon) => await player.talk(mon)
+      );
+    };
+    var f_run = async () => {
+      await player.runAway(_this.monsters);
+    };
+    var f_inspect = async () => {
+      await _this.#getMonsterPicker(
+        _this.#menu,
+        async (mon) => await player.inspect(mon)
+      );
+    };
+
+    var lCalls = [f_attack, f_defend, f_heal];
 
     var lNames = ["ATTACK", "DEFEND", "HEAL"];
 
     var rCalls = [];
 
     var rNames = [];
-
-    var f_stun = function () {
-      _this.#getMonsterPicker(_this.#menu, (mon) => player.stun(mon));
-    };
-    var f_talk = function () {
-      _this.#getMonsterPicker(_this.#menu, (mon) => player.talk(mon));
-    };
-    var f_run = function () {
-      player.runAway(_this.monsters);
-    };
-    var f_inspect = function () {
-      _this.#getMonsterPicker(_this.#menu, (mon) => player.inspect(mon));
-    };
 
     var otherActions = [];
 
@@ -140,8 +151,8 @@ class Battle {
       name: u_inspect ? "INSPECT" : "DESCRIBE",
     });
 
-    if (otherActions > 0) {
-      if (otherActions == 1) {
+    if (otherActions.length > 0) {
+      if (otherActions.length == 1) {
         rNames.push(otherActions[0].name);
         rCalls.push(otherActions[0].callback);
       } else {
@@ -161,7 +172,7 @@ class Battle {
         var f_other = function () {
           var otherMenu = getGameMenu(subcallbacks, subnames, hcursor);
           //console.log("Opened Other: " + otherMenu);
-          _this.#menu.subMenu(otherMenu);
+          _this.#menu.subMenu = otherMenu;
         };
 
         rNames.push("OTHER");
@@ -171,7 +182,7 @@ class Battle {
 
     if (u_charge && player.chargeAmount < 3) {
       rNames.push("CHARGE");
-      rCalls.push(() => player.charge());
+      rCalls.push(f_charge);
     }
 
     if (u_run) {
@@ -184,9 +195,7 @@ class Battle {
 
     this.#menu = getGameMenu(callbacks, names, hcursor);
     this.#menu.hideOnInput = true;
-    this.#menu.oninput = async () => {
-      await InputHandler.waitForInput();
-      console.log("Finishing Player Turn");
+    this.#menu.oninput = () => {
       _this.#finishPlayerTurn();
     };
   }
@@ -201,7 +210,8 @@ class Battle {
         ]);
         names.push(element.myName);
       });
-      var m = menu.subMenu(new Menu(buttons, vcursor));
+      var m = new Menu(buttons, vcursor);
+      menu.subMenu = m;
       m.onPosChanged(function (pos) {
         topWriter.show(names[pos.x]);
       });
@@ -251,6 +261,7 @@ class Battle {
     DialogueTypewriter.clearAll();
     player.defending = false;
     Player.sprites.setSprite(player.$jobj, 1, 1);
+    this.generateBattleMenu();
     this.#menu.setDisplay(true);
   }
 
@@ -284,7 +295,7 @@ class Battle {
       if (player.wounded) {
         topWriter.show('The enemy team used "IMPRISON"');
         await InputHandler.waitForInput();
-        player.die();
+        await player.die();
         topWriter.show("You were banished to an alternate world...");
         await InputHandler.waitForInput();
         mode = ModeEnum.dead;
@@ -718,6 +729,11 @@ class DialogueTypewriter {
     this.typewriter.setSound(null);
     this.typewriter.clear();
     this.face.hide();
+  }
+
+  async showAsync(text) {
+    this.show({ text });
+    await InputHandler.waitForInput();
   }
 }
 
@@ -1433,6 +1449,16 @@ class Typewriter {
     this.p.css("visibility", "hidden");
     this.targetText = "";
   }
+
+  async showAsync(text) {
+    this.show(text);
+    await InputHandler.waitForInput();
+  }
+
+  async appendAsync(text) {
+    this.append(text);
+    await InputHandler.waitForInput();
+  }
 }
 
 class Menu {
@@ -1516,6 +1542,7 @@ class Menu {
     if (this.parent != null) {
       this.setDisplay(false);
       this.parent.child = null;
+      this.parent.subMenued = false;
       await this.parent.onMenuTreeComplete();
     }
   }
@@ -1591,16 +1618,18 @@ class Menu {
         });
       });
     }
+    if (this.subMenued) this.child.setDisplay(show);
     this.cursor.setDisplay(show);
   }
 
   /** @arg {Menu} value */
   set subMenu(value) {
     this.child = value;
-    sub.parent = this;
-    sub.updateClickListeners();
+    value.parent = this;
+    value.hideOnInput = this.hideOnInput;
+    value.updateClickListeners();
     this.setDisplay(false);
-    sub.setDisplay(true);
+    value.setDisplay(true);
     this.subMenued = true;
   }
 }
@@ -1791,6 +1820,14 @@ class Player {
     ];
   }
 
+  static unlockEverything() {
+    file.setFlag("unlocked-stun");
+    file.setFlag("unlocked-run");
+    file.setFlag("unlocked-charge");
+    file.setFlag("unlocked-inspect");
+    file.setFlag("unlocked-moving-block");
+  }
+
   static get idleBattleAnim() {
     return [
       { x: 1, y: 1 },
@@ -1816,7 +1853,7 @@ class Player {
     return wounded;
   }
 
-  charge() {
+  async charge() {
     var onFlash;
     var onFinish;
     switch (this.chargeAmount) {
@@ -1851,10 +1888,16 @@ class Player {
         }
         break;
     }
-    console.log(this.chargeAmount);
-    sound.playFX("charge" + (this.chargeAmount + 1));
-    cover.flash("white", onFlash, onFinish, 250);
     this.chargeAmount++;
+    sound.playFX("charge" + this.chargeAmount);
+
+    cover.color = "white";
+    await cover.fadeTo(1, 125);
+    onFlash();
+    await cover.fadeTo(0, 125);
+    onFinish();
+    await InputHandler.waitForInput();
+
     this.lastCalled = this.charge;
   }
 
@@ -1921,17 +1964,20 @@ class Player {
     await InputHandler.waitForInput();
   }
 
+  async handleMonsterActionResult(actionResult) {
+    if (typeof actionResult == "string") {
+      await topWriter.showAsync(actionResult);
+    } else if (Array.isArray(actionResult))
+      await new Writer(topWriter, actionResult).writeAllAsync();
+    else await actionResult;
+  }
+
   async talk(monster) {
     this.lastCalled = this.talk;
-    topWriter.show("You attempt to communicate with " + monster.myName + ".");
-    await InputHandler.waitForInput();
-    var response = monster.talk();
-    if (typeof response == "string") {
-      topWriter.show(response);
-      await InputHandler.waitForInput();
-    } else if (Array.isArray(response))
-      await new Writer(topWriter, response).writeAllAsync();
-    else await response;
+    await topWriter.showAsync(
+      `You attempt to communicate with ${monster.myName}.`
+    );
+    await this.handleMonsterActionResult(monster.talk());
   }
 
   async inspect(monster) {
@@ -1939,15 +1985,12 @@ class Player {
     var unlockedInspect = file.getFlag("unlocked-inspect");
     var inspectIntro = file.getFlag("inspect-intro-displayed");
 
-    if (unlockedInspect) {
-      if (!inspectIntro) {
-        await new Writer(bottomWriter, text.other.aboutInspect).writeAllAsync();
-        file.setFlag("inspect-intro-displayed");
-      }
+    if (unlockedInspect && !inspectIntro) {
+      await new Writer(bottomWriter, text.other.aboutInspect).writeAllAsync();
+      file.setFlag("inspect-intro-displayed");
     }
 
-    var message = await monster.inspect(unlockedInspect);
-    if (message) await new Writer(bottomWriter, message).writeAllAsync();
+    this.handleMonsterActionResult(monster.inspect(unlockedInspect));
   }
 
   async heal() {
@@ -1981,10 +2024,13 @@ class Player {
     await InputHandler.waitForInput();
   }
 
-  stun(monster) {
+  async stun(monster) {
     this.lastCalled = this.stun;
+    cover.color = "white";
     sound.playFX("magic");
-    topWriter.show(monster.magic());
+    await cover.fadeTo(1, 250);
+    await cover.fadeTo(0, 250);
+    await this.handleMonsterActionResult(monster.magic());
   }
 
   defend() {
@@ -2004,15 +2050,13 @@ class Player {
     Player.sprites.setSprite(this.$jobj, 4, 2);
   }
 
-  die() {
+  async die() {
     sound.stop(false);
     Player.sprites.setSprite(player.$jobj, 3, 2);
     sound.playFX("die");
-    var _this = this;
-    setTimeout(function () {
-      sound.playFX("deathFX");
-      _this.$jobj.fadeOut(500);
-    }, 600);
+    await Helper.delayMillis(600);
+    sound.playFX("deathFX");
+    this.$jobj.fadeOut(500);
   }
 }
 

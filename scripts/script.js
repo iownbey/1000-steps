@@ -27,9 +27,9 @@ fx.footstep = sound.loadPersistant("footstep");
 var contentManager;
 
 // To be defined later:
-/** @type {Typewriter} */
+/** @type {DialogueTypewriter} */
 var topWriter;
-/** @type {Typewriter} */
+/** @type {DialogueTypewriter} */
 var bottomWriter;
 
 var sparkHandler;
@@ -191,7 +191,7 @@ function getGameMenu(callbacks, names, cursor) {
       element.forEach(function (element, i) {
         var y = i;
 
-        var $button = buttons[x][y].jobj();
+        var $button = buttons[x][y].jobj;
         $button.text(names[x][y]);
       });
     });
@@ -251,9 +251,13 @@ async function shiftKeys(event) {
       {
         file.setFlag("IntroComplete");
         MainMenu.removeEventListeners();
-        StartMainGame();
-        await loadScript("monsters/darkness.js");
-        Battle.start("darkness-fight", new Darkness(), false);
+        mode = ModeEnum.walking;
+        area = await Area.load("Area_Meadow");
+        area.onStart();
+        Player.unlockEverything();
+        setCurrentScope($("#main"));
+        //await loadScript("monsters/darkness.js");
+        //Battle.start("darkness-fight", new Darkness(), false);
       }
       break;
   }
