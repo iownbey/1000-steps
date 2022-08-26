@@ -214,10 +214,7 @@ div {
 
 .box {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
+  inset: 0 0 0 0;
 }
 
 .cursor {
@@ -377,4 +374,71 @@ div {
 
   box-sizing: border-box;
   padding: 1cm;
+}
+
+.perspective {
+  perspective: 800px;
+  perspective-origin: center 20%;
+}
+
+.area-ground {
+  position: absolute;
+
+  top: 20%;
+  width: 100%;
+  height: 300%;
+
+  transform-origin: top;
+  transform-style: preserve-3d;
+  transform: translateZ(-1350px) rotateX(89deg);
+}
+
+.area-path {
+  margin: auto;
+
+  top: 0;
+  width: 10%;
+  height: 100%;
+
+  background-size: 100%;
+  transition: background-position-y 0.5s;
+
+  image-rendering: auto;
+}
+
+.battle-background {
+  background-image: radial-gradient(circle, #e08989, #89e0e0);
+  background-size: 10% 10%;
+  animation: hue-rotation-frames 47s linear infinite,
+    background-slide-frames 67s linear infinite;
+}
+
+@keyframes hue-rotation-frames {
+  from {
+    filter: hue-rotate(0turn);
+  }
+
+  to {
+    filter: hue-rotate(1turn);
+  }
+}
+
+@keyframes background-slide-frames {
+  from {
+    background-position: bottom 0% right 0%;
+  }
+
+  to {
+    background-position: bottom 100% right 100%;
+  }
+}
+
+.ground-prop {
+  position: absolute;
+  transition: top 1s, left 1s;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotateX(90deg);
 }

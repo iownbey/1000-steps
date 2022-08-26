@@ -42,6 +42,12 @@ class Area_Aorta extends Area {
     changeBackground("back");
     topWriter.show('Press "Space" to walk forward.');
     sound.playMusic(this.music);
+    ground.setDisplay("images/floors/aorta.png", "#0b0b0b");
+    ground.resetWalk();
+  }
+
+  onWalk() {
+    ground.walk();
   }
 
   // Events

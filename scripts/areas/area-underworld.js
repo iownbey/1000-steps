@@ -47,9 +47,15 @@ class Area_Underworld extends Area {
 
   onStart() {
     changeBackground("back2");
-    changeForeground("deadTrees");
     sound.playMusic(this.music);
     topWriter.show("You have entered the underworld...");
+    ground.setDisplay("images/floors/underworld.png", "#0b0b0b");
+    ground.resetWalk();
+  }
+
+  onWalk() {
+    ground.walk();
+    ground.addPropOnHorizon();
   }
 
   // Events

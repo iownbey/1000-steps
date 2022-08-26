@@ -52,6 +52,7 @@ var notifier;
 var hcursor;
 var vcursor;
 var contentCanvas;
+var ground;
 
 var stepsLeft = 1000;
 
@@ -130,6 +131,17 @@ function changeForeground(newImage) {
   } else {
     $("#fore").css("display", "none").removeAttr("src");
   }
+}
+
+function triggerDefaultBackground() {
+  $("#back").css("visibility", "visible");
+  $("#fore").css("visibility", "visible");
+  $("#battle-back").css("display", "none");
+}
+function triggerBattleBackground() {
+  $("#back").css("visibility", "hidden");
+  $("#fore").css("visibility", "hidden");
+  $("#battle-back").css("display", "block");
 }
 
 function playBackgroundMusic() {
@@ -252,7 +264,7 @@ async function shiftKeys(event) {
         file.setFlag("IntroComplete");
         MainMenu.removeEventListeners();
         mode = ModeEnum.walking;
-        area = await Area.load("Area_Meadow");
+        area = await Area.load("Area_Underworld");
         area.onStart();
         Player.unlockEverything();
         setCurrentScope($("#main"));
@@ -443,6 +455,7 @@ function init$() {
     new SpriteSheet("images/faces.png", 16, 16)
   );
 
+  ground = new Ground("#env-wrapper");
   contentManager = new ContentManager($("#content"));
   player = new Player($("#character"), 50, 5);
   Player.sprites.setSprite(player.$jobj, 4, 1);

@@ -1,5 +1,6 @@
 @keyframes approaching {
   from {
+    opacity: 0;
     left: 33%;
     right: 33%;
     height: 10%;
@@ -11,23 +12,30 @@
     right: 0%;
     height: 30%;
     bottom: 44%;
+    opacity: 1;
   }
 }
 
-@keyframes receding {
-  from {
-    left: 0%;
-    right: 0%;
-    height: 30%;
-    bottom: 44%;
-  }
+.approaching {
+  animation: approaching 1 forwards ease-in-out 0.5s;
+}
 
-  to {
-    left: 33%;
-    right: 33%;
-    height: 10%;
-    bottom: 73.7%;
-  }
+.receding {
+  animation: approaching 1 reverse forwards ease-in-out 0.5s;
+}
+
+.here {
+  left: 0%;
+  right: 0%;
+  height: 30%;
+  bottom: 44%;
+}
+
+.there {
+  left: 33%;
+  right: 33%;
+  height: 10%;
+  bottom: 73.7%;
 }
 
 @keyframes fromLeft {
@@ -50,28 +58,6 @@
 
 .left {
   transform: translateX(-150%);
-}
-
-.approaching {
-  animation: approaching 1 forwards ease-out 1s;
-}
-
-.receding {
-  animation: receding 1 forwards ease-out 1s;
-}
-
-.here {
-  left: 0%;
-  right: 0%;
-  height: 30%;
-  bottom: 44%;
-}
-
-.there {
-  left: 33%;
-  right: 33%;
-  height: 10%;
-  bottom: 73.7%;
 }
 
 @keyframes fallOver {

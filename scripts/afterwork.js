@@ -78,63 +78,6 @@ class ControllerInput {
     await Promise.all(promises);
   }
 }
-var backgroundCanvas = new Granim({
-  element: "#back-canvas",
-  direction: "custom",
-  customDirection: {
-    x0: "0%",
-    x1: "100%",
-    y0: "100%",
-    y1: "0%",
-  },
-  isPausedWhenNotInView: true,
-  stateTransitionSpeed: 500,
-  states: {
-    "default-state": {
-      gradients: [
-        ["#000000", "#1F1F1F"],
-        ["#1F1F1F", "#000000"],
-      ],
-    },
-    "battle-state": {
-      gradients: [
-        ["#50cc7f", "#f5d100"],
-        ["#007adf", "#00ecbc"],
-        ["#20e2d7", "#f9fea5"],
-        ["#00dbde", "#fc00ff"],
-        ["#f9d423", "#ff4e50"],
-        ["#cc208e", "#6713d2"],
-        ["#4facfe", "#00f2fe"],
-      ],
-      transitionSpeed: 2000,
-    },
-  },
-});
-
-function spinGradient(timestamp) {
-  const radiansPerMilliecond = 0.00005;
-  let yOff = Math.sin(timestamp * radiansPerMilliecond);
-  let xOff = Math.cos(timestamp * radiansPerMilliecond);
-  var dir = {};
-  dir.x0 = 50 + xOff * 50 + "%";
-  dir.x1 = 50 - xOff * 50 + "%";
-  dir.y0 = 50 + yOff * 50 + "%";
-  dir.y1 = 50 - yOff * 50 + "%";
-  backgroundCanvas.customDirection = dir;
-  requestAnimationFrame(spinGradient);
-}
-requestAnimationFrame(spinGradient);
-
-backgroundCanvas.triggerDefault = () => {
-  $("#back").css("visibility", "visible");
-  $("#fore").css("visibility", "visible");
-  backgroundCanvas.changeState("default-state");
-};
-backgroundCanvas.triggerBattle = () => {
-  $("#back").css("visibility", "hidden");
-  $("#fore").css("visibility", "hidden");
-  backgroundCanvas.changeState("battle-state");
-};
 
 // register the service worker
 // Handles manual caching and allows for PWA

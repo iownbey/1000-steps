@@ -65,6 +65,9 @@ class Battle {
   /** @type {Battle} */
   static #current;
 
+  /** @type {Ground} */
+  static #ground;
+
   constructor(music, monsters, dynamicIntro = true) {
     DialogueTypewriter.clearAll();
     SaveData.blockSaving = true;
@@ -72,6 +75,12 @@ class Battle {
     if (!(monsters instanceof Array)) monsters = [monsters];
     this.monsters = monsters;
     this.currentMonster = null;
+    if (!Battle.#ground) {
+      Battle.#ground = new Ground("#env-wrapper");
+      Battle.#ground.setDisplay("images/floors/battle.png", "#0000");
+      Battle.#ground.hide();
+    }
+
     this.#battleStart(music, dynamicIntro);
   }
 
@@ -226,6 +235,8 @@ class Battle {
     cover.color = "white";
     await cover.fadeTo(1, 600);
 
+    Battle.#ground.show();
+    ground.hide();
     contentManager.clear();
     this.monsters.forEach(function (element) {
       var box = $('<div class="monster"></div>');
@@ -234,7 +245,7 @@ class Battle {
     });
     contentManager.approach(dynamicIntro);
     sound.playMusic(music, false);
-    backgroundCanvas.triggerBattle();
+    triggerBattleBackground();
 
     await cover.fadeTo(0, 600);
 
@@ -406,10 +417,12 @@ class Battle {
     this.charAnim.end();
     this.#ended = true;
     mode = ModeEnum.walking;
+    Battle.#ground.hide();
+    ground.show();
     Battle.#current = null;
     player.defending = false;
     playBackgroundMusic();
-    backgroundCanvas.triggerDefault();
+    triggerDefaultBackground();
   }
 
   then(res) {
@@ -821,6 +834,70 @@ class GrabBag {
   }
 }
 
+class Ground {
+  static advancePercent = 3;
+
+  constructor(anchor) {
+    this.ground = $("<div class='area-ground'></div>");
+
+    this.path = $("<div class='area-path'></div>");
+
+    this.path.appendTo(this.ground);
+    this.ground.appendTo(anchor);
+    this.pathOffset = 0;
+
+    this.props = [];
+  }
+
+  resetWalk() {
+    this.path.css("background-position-y", "0%");
+  }
+
+  walk() {
+    this.pathOffset += Ground.advancePercent;
+    this.path.css("background-position-y", this.pathOffset + "%");
+    for (let p in this.props) {
+      p.y += this.pathOffset;
+    }
+  }
+
+  dispose() {
+    this.path.remove();
+  }
+
+  setDisplay(imageUrl, backColor) {
+    this.ground.css("background-color", backColor);
+    this.path.css("background-image", `url('${imageUrl}')`);
+  }
+
+  hide() {
+    this.ground.css("display", "none");
+  }
+
+  show() {
+    this.ground.css("display", "");
+  }
+
+  addPropOnHorizon(imageUrl) {
+    let x = Math.random();
+    let isRight = x > 0.5;
+    x *= 70;
+    if (isRight) x += 30;
+    this.addProp(imageUrl, x, 0);
+  }
+
+  addProp(imageUrl, x, y) {
+    this.ground.add(new Prop(this.path, imageUrl, x, y));
+  }
+
+  emptyProps() {
+    for (let p in this.props) {
+      p.jobj.remove();
+    }
+    this.props = [];
+  }
+}
+
 class HealthDisplay {
   constructor(popin) {
     this.popin = popin;
@@ -989,6 +1066,30 @@ class Notifier {
         _this.jobj.animate({ opacity: 0 }, 250, "linear");
       }, duration);
     });
+  }
+}
+
+class Prop {
+  #y;
+
+  constructor($parent, imageUrl, x, y, width) {
+    this.jobj = $(
+      `<div class="ground-prop" style="background-image: url(${imageUrl});left: ${x}%;top: ${y}"></div>`
+    );
+    this.jobj.css("width", width + "%");
+    this.jobj.appendTo($parent);
+
+    this.#y = y;
+  }
+
+  /** @param value {Number} */
+  set y(value) {
+    this.#y = value;
+    this.jobj.css("top", value + "%");
+  }
+
+  get y() {
+    return this.#y;
   }
 }
 
