@@ -221,9 +221,9 @@ class Battle {
       });
       var m = new Menu(buttons, vcursor);
       menu.subMenu = m;
-      m.onPosChanged(function (pos) {
+      m.onPosChanged = function (pos) {
         topWriter.show(names[pos.x]);
-      });
+      };
       m.hideButtons = false;
       console.log(m);
     } else {
@@ -278,27 +278,6 @@ class Battle {
 
   async #finishPlayerTurn() {
     console.log("BATTLE: Finishing player's turn.");
-
-    if (player.lastCalled != player.charge) {
-      if (player.chargeAmount > 0) {
-        player.chargeAmount = 0;
-        cover.flash("white", null, null, 250);
-      }
-    }
-    switch (player.chargeAmount) {
-      case 0:
-        sparkHandler.hideAll();
-        break;
-      case 1:
-        sparkHandler.showSpark();
-        break;
-      case 2:
-        sparkHandler.showFlame();
-        break;
-      case 3:
-        sparkHandler.showAura();
-        break;
-    }
 
     if (this.#checkWin()) {
       this.#end();
@@ -856,7 +835,7 @@ class Ground {
   walk() {
     this.pathOffset += Ground.advancePercent;
     this.path.css("background-position-y", this.pathOffset + "%");
-    for (let p in this.props) {
+    for (const p of this.props) {
       p.y += this.pathOffset;
     }
   }
@@ -878,16 +857,16 @@ class Ground {
     this.ground.css("display", "");
   }
 
-  addPropOnHorizon(imageUrl) {
+  addPropOnHorizon(imageUrl, width, height) {
     let x = Math.random();
     let isRight = x > 0.5;
     x *= 70;
     if (isRight) x += 30;
-    this.addProp(imageUrl, x, 0);
+    this.addProp(imageUrl, x, 0, width, height);
   }
 
-  addProp(imageUrl, x, y) {
-    this.ground.add(new Prop(this.path, imageUrl, x, y));
+  addProp(imageUrl, x, y, width, height) {
+    this.props.push(new Prop(this.ground, imageUrl, x, y, width, height));
   }
 
   emptyProps() {
@@ -1072,11 +1051,10 @@ class Notifier {
 class Prop {
   #y;
 
-  constructor($parent, imageUrl, x, y, width) {
+  constructor($parent, imageUrl, x, y, width, height) {
     this.jobj = $(
-      `<div class="ground-prop" style="background-image: url(${imageUrl});left: ${x}%;top: ${y}"></div>`
+      `<div class="ground-prop" style="background-image: url(${imageUrl});left: ${x}%;top: ${y}%;width: ${width}%;height: ${height}%;"></div>`
     );
-    this.jobj.css("width", width + "%");
     this.jobj.appendTo($parent);
 
     this.#y = y;
@@ -2002,6 +1980,29 @@ class Player {
     this.lastCalled = this.charge;
   }
 
+  async costCharge(cost = 3) {
+    if (this.chargeAmount > 0) {
+      this.chargeAmount -= cost;
+      if (this.chargeAmount < 0) this.chargeAmount = 0;
+      await cover.fadeTo(1, 25);
+      switch (this.chargeAmount) {
+        case 0:
+          sparkHandler.hideAll();
+          break;
+        case 1:
+          sparkHandler.showSpark();
+          break;
+        case 2:
+          sparkHandler.showFlame();
+          break;
+        case 3:
+          sparkHandler.showAura();
+          break;
+      }
+      await cover.fadeTo(0, 125);
+    }
+  }
+
   async attack(monster) {
     this.lastCalled = this.attack;
 
@@ -2018,6 +2019,8 @@ class Player {
     } else {
       sound.playFX("attack");
     }
+
+    this.costCharge();
 
     CSSAnimationController.trigger(monster.jobj, "shake");
     await Helper.delayMillis(500);
@@ -2108,7 +2111,8 @@ class Player {
         Math.randomInt(0, Player.healRandomDrift)) *
       (this.chargeAmount + 1);
     if (amount < 0) amount = 0;
-    this.changeHealth(amount);
+
+    await this.costCharge();
 
     if (amount == 0) {
       topWriter.show(
@@ -2118,6 +2122,7 @@ class Player {
       cover.color = "green";
       Player.sprites.animate(this.$jobj, Player.attackAnim, 100);
       await cover.fadeTo(1, 500);
+      this.changeHealth(amount);
       await cover.fadeTo(0, 500);
       topWriter.show(`You healed for ${amount} health.`);
     }
@@ -2134,14 +2139,13 @@ class Player {
     await this.handleMonsterActionResult(monster.magic());
   }
 
-  defend() {
+  async defend() {
     if (this.lastCalled == this.defend) {
-      topWriter.show("You could not defend again.");
+      topWriter.show("You could not brace again.");
       return;
     }
     this.lastCalled = this.chargeAmount ? this.charge : this.defend;
     if (this.chargeAmount > 0) {
-      this.chargeAmount--;
       topWriter.show("You brace for the next attack.|You can brace again!");
     } else {
       topWriter.show("You brace for the next attack.");
@@ -2149,6 +2153,8 @@ class Player {
 
     this.defending = true;
     Player.sprites.setSprite(this.$jobj, 4, 2);
+
+    await this.costCharge(1);
   }
 
   async die() {

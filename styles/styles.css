@@ -435,10 +435,10 @@ div {
 
 .ground-prop {
   position: absolute;
-  transition: top 1s, left 1s;
+  transition: top 0.5s, left 0.5s;
   background-position: bottom center;
   background-repeat: no-repeat;
   background-size: contain;
   transform-origin: bottom center;
-  transform: translateX(-50%) rotateX(90deg);
+  transform: translateX(-50%) rotateX(-90deg);
 }

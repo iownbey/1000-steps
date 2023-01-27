@@ -5,6 +5,7 @@ class Area_Underworld extends Area {
 
   getEvents() {
     var events = [].concat(
+      Area.getEmptySteps(30),
       Area_Underworld.talkEmery1,
       Area.flavorEvent,
       Area.flavorEvent,
@@ -55,7 +56,9 @@ class Area_Underworld extends Area {
 
   onWalk() {
     ground.walk();
-    ground.addPropOnHorizon();
+    for (let i = 0; i < 5; i++) {
+      ground.addPropOnHorizon("images/props/dead-tree.png", 30, 30);
+    }
   }
 
   // Events
