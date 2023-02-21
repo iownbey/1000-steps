@@ -409,6 +409,7 @@ div {
 .battle-background {
   background-image: radial-gradient(circle, #e08989, #89e0e0);
   background-size: 10% 10%;
+  will-change: background-image;
   animation: hue-rotation-frames 47s linear infinite,
     background-slide-frames 67s linear infinite;
 }
