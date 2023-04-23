@@ -288,6 +288,7 @@ class Battle {
         await player.die();
         topWriter.show("You were banished to an alternate world...");
         await InputHandler.waitForInput();
+        triggerDefaultBackground();
         mode = ModeEnum.dead;
         file.forceSet("unlocked-run", true);
         sound.playMusic("gameover");
@@ -304,7 +305,7 @@ class Battle {
     while (i < this.monsters.length) {
       var monstersBefore = this.monsters;
       var thisMonster = this.monsters[i];
-      thisMonster.currentMonster = thisMonster;
+      this.currentMonster = thisMonster;
 
       await this.monsterTurn(thisMonster);
 

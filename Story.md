@@ -31,6 +31,9 @@ This document should contain all the events of the story in order as they appear
 3. Ocean.
    Here the player is introduced to sharks and the dolphins. The dolphins present themselves as an oppressed faction of sea animals and ask you to help them overthrow the sharks. Importantly, the sharks and dolphins are both shown to be groups of good and bad people. The shark king is evil, but mortimer the dolphin is also evil and intends to wipe out the sharks just like Alcore wanted to destroy the dolphins.
 
+Interlude:
+In the caves between the layers, you come across virgil who has slain a monster known as Regret. He is seen with a barbaric look standing over it's corpse triumphantly but scarily.
+
 4. Crystal Forest
    Here the Gang is encountered by Chain, an assassin who uses flashy moves because he is such a good assassin that he does not have to be stealthy. He was tasked to beat the player, but accidentally inflicts a mortal wound. He freaks out beause the darkness needs him alive and carries him through the crystal forest. The player plays Chain for this segment.
 
@@ -50,13 +53,20 @@ This document should contain all the events of the story in order as they appear
 6. The Great City
    Here, the player comes across a sprawling city full of creatures from the whole world. Sometimes creatures will try to mug you and innocent bystanders will not care. There is a crime boss running the city, and you tell the people to rise up, but they will not. It's only once you start fighting that they start to join you. The police are also corrupt, and near the end, they both fight you together. A guy running a shop let's you purchase a single item of choice that permanently affects the game.
 
-Here you can
+Here you can choose to skip to the roots using a state of the art subterrean.
 
 7. The Ravine
-   A dark pit. Here you can enter the ruins if you know the code
+   A dark pit. Here you can enter the ruins if you know the code. When fighting in here, you have to use light moves to see the monsters.
 
 8. Inferno
-   This is the outside of the hollow earth. It is full of lava and earth creatures. More primitive trolls live here, and
+   This is the outside of the hollow earth. It is full of lava and earth creatures. More primitive trolls live here, and fire beings.
 
 9. The Lab (The Roots)
    Here, the player runs into Dr. Malpraxis, who wants to study you and subjects you to a bunch of tests, via battles. He keeps bragging about how his creation will change the world. Ultimately, it turns on him and kills him before turning to kill you as well. Red trolls come from here, and oscar finds out he doesn't have parents, but was instead created and left for dead after they discovered the physical deformity of his deuterochromity.
+
+10. The Surface
+    Here, the player has to fight possessed humans that deal darkness attacks. DARK attacks reduce max hp a little. They have to fight aragore, the tenth general who is a dragon. Aragore talks about how humanity did this to themselves, and reveals how they split morality in an attempt to hide from their dark nature, unintentionally creating the darkness. You were created as the balance act, due to the conservation of morality. Aragore says that the earth is better off with humanity dead.
+
+The Darkness:
+
+As you crest a final mountain top, you come across a shadowy version of yourself. They reveal themselves to be the darkness. He states that he really didn't expect you to make it this far, given that the world was an evil place before he even got there. A big fight ensues. After a while of fighting, he tells you that this is enough and fatally wounds you. He then reveals his final plan, which was to trap you in an alternate dimension. Since good and evil must both exist, and since good always wins in the end, he wants to make the true final fight never happen. Your fates are tied due to the conservation of morality. He traps you within the alternate dimension. A cinematic animation where he dramatically fights and wounds your friends starts playing, but just when he is about to win, he starts dying. It clips to a scene of you talking for the first time in the game and talking about how your friends are worth the sacrifice, and then you stab yourself and bleed out in the void. The Darkness realizes what is happening and desperately sends himself to the void in an attempt to heal the player. This triggers a final battle scene where the player must kill themseves so that the darkness dies. This is supposed to contrast with virgil, and show the difference between sacrifice and suicide.
