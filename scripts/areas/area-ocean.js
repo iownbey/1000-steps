@@ -73,6 +73,8 @@ Area_Ocean.firstStep = async function () {
     ["It's full of dolphins!!!"],
     ["and sharks", expr.emery.annoyed],
     ["and they don't like eachother"],
+    ["The shark king Alcore has been fighting for the exile of all dolphins"],
+    ["Maybe there's something we can do to help them?"],
     "You push onward.",
   ]).writeAllAsync();
   DialogueTypewriter.clearAll();
@@ -107,5 +109,7 @@ Area_Ocean.meetMortimer = async function () {
     ["The SHARKS!!!"],
   ]).writeAllAsync();
 
-  Battle.start("ocean-fight", [new Shark(), new Shark(), new Shark()], true);
+  await Battle.start("ocean-fight", [new Shark(), new Shark(), new Shark()], true);
+
+  
 };
