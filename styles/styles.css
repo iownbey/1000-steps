@@ -124,16 +124,6 @@ div {
   pointer-events: none;
 }
 
-#cover {
-  z-index: 9999;
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  pointer-events: none;
-}
-
 #battlebuttons {
   position: absolute;
   top: 0px;
@@ -273,75 +263,6 @@ div {
   padding: 1em;
 }
 
-#main-menu {
-  font-variant: none;
-  font-family: "Source Sans Pro", sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#main-menu h1 {
-  font-weight: 300;
-}
-
-.main-menu-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  transition: transform 1s;
-  transform: scale(1);
-  white-space: nowrap;
-}
-
-.main-menu-button:hover,
-.main-menu-button:focus {
-  transform: scale(1.1);
-  outline: none;
-}
-
-.main-menu-button::before,
-.main-menu-button::after {
-  content: "";
-  display: inline-block;
-  transition: height 1s, border-left 1s, margin-left 0.5s, margin-right 0.5s;
-  height: 0%;
-  width: 0%;
-  border-left: 0px solid #fff0;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.main-menu-button:hover::before,
-.main-menu-button:hover::after,
-.main-menu-button:focus::before,
-.main-menu-button:focus::after {
-  height: 150%;
-  border-left: 0.5px solid #ffff;
-}
-
-.main-menu-button.activated::before,
-.main-menu-button.activated::after {
-  margin-left: 50vw;
-  margin-right: 50vw;
-  height: 200%;
-}
-
-.main-menu-button.activated {
-  animation: 0.1s ease-in-out 6 alternate text-blink;
-}
-
-@keyframes text-blink {
-  from {
-    color: #ffff;
-  }
-
-  to {
-    color: #fff8;
-  }
-}
-
 .infoWindowBox {
   position: absolute;
   top: 2cm;
@@ -401,7 +322,7 @@ div {
   height: 100%;
   transform: scaleX(0.1);
 
-  background-size: 100% 10%;
+  background-size: 100% 5%;
   transition: background-position-y 0.5s;
 }
 

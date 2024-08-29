@@ -264,12 +264,12 @@ async function shiftKeys(event) {
         file.setFlag("IntroComplete");
         MainMenu.removeEventListeners();
         mode = ModeEnum.walking;
-        area = await Area.load("Area_Underworld");
+        area = await Area.load("Area_Aorta");
         area.onStart();
         Player.unlockEverything();
         setCurrentScope($("#main"));
-        //await loadScript("monsters/darkness.js");
-        //Battle.start("darkness-fight", new Darkness(), false);
+        // await loadScript("monsters/darkness.js");
+        // Battle.start("darkness-fight", new Darkness(), false);
       }
       break;
   }

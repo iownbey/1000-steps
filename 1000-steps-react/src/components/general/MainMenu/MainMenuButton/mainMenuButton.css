@@ -1,0 +1,55 @@
+.main-menu-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: transform 1s;
+  transform: scale(1);
+  white-space: nowrap;
+
+  &:hover,
+  &:focus {
+    transform: scale(1.1);
+    outline: none;
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    display: inline-block;
+    transition: height 1s, border-left 1s, margin-left 0.5s, margin-right 0.5s;
+    height: 0%;
+    width: 0%;
+    border-left: 0px solid #fff0;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  &:hover::before,
+  &:hover::after,
+  &:focus::before,
+  &:focus::after {
+    height: 150%;
+    border-left: 0.5px solid #ffff;
+  }
+
+  &.activated {
+    animation: 0.1s ease-in-out 6 alternate text-blink;
+
+    &::before,
+    &::after {
+      margin-left: 50vw;
+      margin-right: 50vw;
+      height: 200%;
+    }
+  }
+}
+
+@keyframes text-blink {
+  from {
+    color: #ffff;
+  }
+
+  to {
+    color: #fff8;
+  }
+}

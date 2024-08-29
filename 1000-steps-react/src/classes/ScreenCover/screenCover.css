@@ -1,0 +1,11 @@
+.screen-cover {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  pointer-events: none;
+  transition-timing-function: ease-in-out;
+  transition-duration: 0ms;
+  transition-property: all;
+}
