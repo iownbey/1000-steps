@@ -23,53 +23,6 @@ MainMenu.settings = function () {
 
 MainMenu.$objects = $(document);
 
-MainMenu.setUpButton = function ($button, $up = null, $down = null) {
-  MainMenu.$objects.add($button);
-
-  $button.attr("tabindex", 0);
-
-  var onkey = (e) => {
-    switch (e.key) {
-      case " ":
-      case "Enter":
-        {
-          $button.click();
-        }
-        break;
-      case "w":
-      case "ArrowUp":
-        {
-          if ($up != null) $up.focus();
-        }
-        break;
-      case "s":
-      case "ArrowDown":
-        {
-          if ($down != null) $down.focus();
-        }
-        break;
-    }
-  };
-
-  $doc = $(document);
-
-  $button.on("click.mainmenu", () => {
-    $button.addClass("activated");
-    $doc.off("keydown.mainmenu");
-    MainMenu.selected = 0;
-  });
-
-  $button.focus(() => {
-    MainMenu.selected++;
-    $doc.on("keydown.mainmenu", onkey);
-  });
-
-  $button.focusout(() => {
-    MainMenu.selected--;
-    $doc.off("keydown.mainmenu");
-  });
-};
-
 MainMenu.removeEventListeners = () => {
   MainMenu.$objects.off(".mainmenu");
 };

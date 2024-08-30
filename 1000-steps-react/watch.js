@@ -9,6 +9,8 @@ let ctx = await esbuild.context({
   },
 });
 
+await ctx.watch();
+
 let { host, port } = await ctx.serve({
   servedir: "./public",
   host: "localhost",

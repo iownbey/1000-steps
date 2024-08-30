@@ -1,22 +1,24 @@
 import { useRef } from "react";
 import { MainMenuButton } from "./MainMenuButton/MainMenuButton";
-import { screenCover } from "../../../classes/ScreenCover/ScreenCover";
+import { screenCover } from "../ScreenCover/ScreenCover";
+import { sound } from "../../../classes/SoundManager";
+import { VersionInfo } from "./VersionInfo/VersionInfo";
 
 async function startNewGame() {
   console.log("starting game.");
-  cover.color = "black";
+  screenCover.setColor("black");
   sound.playFX("game-start-effect");
   await screenCover.fadeTo(1, 6000);
-  startIntro();
+  //startIntro();
   await screenCover.fadeTo(0, 1000);
 }
 
 async function continueGame() {
   console.log("loading game.");
-  cover.color = "black";
-  await cover.fadeTo(1, 2000);
-  await loadGame();
-  await cover.fadeTo(0, 2000);
+  screenCover.setColor("black");
+  await screenCover.fadeTo(1, 2000);
+  //await loadGame();
+  await screenCover.fadeTo(0, 2000);
 }
 
 export const selected = { value: 0 };
@@ -27,10 +29,7 @@ export const MainMenu = () => {
   const settingsRef = useRef(null);
 
   return (
-    <div
-      className="main-menu box flexcenterer"
-      style={{ visibility: "hidden" }}
-    >
+    <div className="main-menu box flexcenterer">
       <h1 id="main-heading">1000 STEPS</h1>
       <MainMenuButton
         ref={continueGameRef}
@@ -51,7 +50,7 @@ export const MainMenu = () => {
         SETTINGS
       </MainMenuButton>
 
-      <p id="information" style={{ whiteSpace: "pre-wrap" }}></p>
+      <VersionInfo />
     </div>
   );
 };

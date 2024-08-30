@@ -1,22 +1,32 @@
+import { observer } from "@fobx/react";
+
 class ScreenCover {
   element?: HTMLElement;
+  duration: number;
+  backgroundColor: string;
 
-  setElementRef(ref: HTMLElement | null) {
+  setRef = (ref: HTMLElement) => {
     this.element = ref;
+  };
+
+  setColor(color: string) {
+    this.backgroundColor = color;
   }
 
-  setColor(value: string) {
-    if (this.element) {
-      this.element.style.backgroundColor = value;
-    }
+  get style() {
+    return {
+      backgroundColor: this.backgroundColor,
+      transitionDuration: `${this.duration}ms`,
+    };
   }
 
-  setDuration(ms: number) {
-    this.element.style.transitionDuration = `${ms}ms`;
-  }
-
-  async flash(color, flashcallback = null, finishcallback = null, time = 500) {
-    this.setColor(color);
+  async flash(
+    color: string,
+    flashcallback = null,
+    finishcallback = null,
+    time = 500
+  ) {
+    this.backgroundColor = color;
     await this.fadeTo(1, time / 2);
     flashcallback?.();
     await this.fadeTo(0, time / 2);
@@ -28,7 +38,7 @@ class ScreenCover {
       if (!this.element) {
         reject();
       } else {
-        this.setDuration(time);
+        this.duration = time;
         this.element.style.opacity = `${opacity}`;
         const listener = () => {
           this.element.removeEventListener("transitionend", listener);
@@ -39,5 +49,15 @@ class ScreenCover {
     });
   }
 }
+
+export const ScreenCoverComponent = observer(() => {
+  return (
+    <div
+      className="screen-cover"
+      style={screenCover.style}
+      ref={screenCover.setRef}
+    />
+  );
+});
 
 export const screenCover = new ScreenCover();

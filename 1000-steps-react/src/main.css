@@ -1,0 +1,68 @@
+* {
+  touch-action: manipulation;
+}
+
+html {
+  --cos: cubic-bezier(0.3642, 0, 0.6358, 1);
+  height: 100%;
+  width: 100%;
+
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
+  font-variant: small-caps;
+
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0 0;
+  overflow: hidden;
+  background-color: black;
+  color: white;
+  font-family: "Press Start 2P", cursive;
+
+  touch-action: none;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+img {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+div {
+  position: relative;
+}
+
+.box {
+  position: absolute;
+  inset: 0 0 0 0;
+}
+
+.flexcenterer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#gamewindow {
+  margin: 0 auto;
+  height: 100vh;
+  width: calc(100vh * 1.5);
+  overflow: hidden;
+}

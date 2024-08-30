@@ -1,24 +1,20 @@
-import logo from "./logo.svg";
-import "./app.css";
+import { useEffect } from "react";
+import { Initialize, Particles } from "../ScreenParticles/ScreenParticles";
+import { ScreenCoverComponent } from "../ScreenCover/ScreenCover";
+import { screenRouter } from "../ScreenRouter/ScreenRouter";
 
 function App() {
+  useEffect(() => {
+    Initialize();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div id="gamewindow">{screenRouter.activeScreenNode}</div>
+      <canvas id="content-canvas"></canvas>
+      <ScreenCoverComponent />
+      <Particles />
+    </>
   );
 }
 
