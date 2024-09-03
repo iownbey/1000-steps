@@ -3,6 +3,7 @@ import { MainMenuButton } from "./MainMenuButton/MainMenuButton";
 import { screenCover } from "../ScreenCover/ScreenCover";
 import { sound } from "../../../classes/SoundManager";
 import { VersionInfo } from "./VersionInfo/VersionInfo";
+import "./mainMenu.css";
 
 async function startNewGame() {
   console.log("starting game.");
@@ -30,7 +31,7 @@ export const MainMenu = () => {
 
   return (
     <div className="main-menu box flexcenterer">
-      <h1 id="main-heading">1000 STEPS</h1>
+      <h1 className="main-heading">1000 STEPS</h1>
       <MainMenuButton
         ref={continueGameRef}
         lowerRef={newGameRef}

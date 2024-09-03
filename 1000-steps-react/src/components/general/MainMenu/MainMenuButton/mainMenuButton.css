@@ -1,4 +1,6 @@
 .main-menu-button {
+  all: unset;
+  margin: 1em;
   position: relative;
   display: flex;
   align-items: center;
