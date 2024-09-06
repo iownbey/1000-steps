@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { MainMenuButton } from "./MainMenuButton/MainMenuButton";
-import { screenCover } from "../ScreenCover/ScreenCover";
-import { sound } from "../../../classes/SoundManager";
+import { screenCover } from "../../ScreenCover/ScreenCover";
+import { sound } from "../../../../classes/SoundManager";
 import { VersionInfo } from "./VersionInfo/VersionInfo";
 import "./mainMenu.css";
 

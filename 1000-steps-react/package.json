@@ -6,6 +6,7 @@
   "dependencies": {
     "@fobx/core": "0.6.4",
     "@fobx/react": "0.6.2",
+    "@mojs/core": "^1.7.1",
     "@tsparticles/engine": "^3.5.0",
     "@tsparticles/preset-snow": "^3.1.0",
     "@tsparticles/react": "^3.0.0",

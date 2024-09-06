@@ -1,0 +1,93 @@
+#character {
+  background-image: url("../images/character.png");
+  background-size: 400%;
+  background-position: bottom left;
+  z-index: 5;
+  position: absolute;
+  bottom: 0px;
+  height: 40vh;
+  width: 80vh;
+  left: calc(50% - 40vh);
+}
+
+@keyframes glow {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(0.95);
+  }
+}
+
+.charge {
+  &[chargelevel="1"] {
+    position: absolute;
+    left: 70%;
+    bottom: 50%;
+    width: 10%;
+    height: 20%;
+  }
+
+  &[chargelevel="2"] {
+    position: absolute;
+    left: 65%;
+    bottom: 50%;
+    width: 20%;
+    height: 40%;
+    background-image: radial-gradient(
+      circle closest-side,
+      #ffffff88,
+      transparent
+    );
+    animation: glow 5s var(--cos) infinite;
+  }
+
+  &[chargelevel="3"] {
+    position: absolute;
+    left: -50%;
+    right: -50%;
+    top: -50%;
+    bottom: -50%;
+    background-image: radial-gradient(
+      circle closest-side,
+      #ffffff88,
+      transparent
+    );
+    animation: glow 10s var(--cos) infinite;
+  }
+}
+
+@keyframes walk {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.walk {
+  animation: walk 0.2s ease-in-out;
+}
+
+@keyframes battlePose {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.battlePose {
+  animation: battlePose 4s ease-in-out;
+}

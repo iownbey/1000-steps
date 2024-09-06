@@ -61,8 +61,22 @@ div {
 }
 
 #gamewindow {
-  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   height: 100vh;
-  width: calc(100vh * 1.5);
   overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+
+.bordered {
+  all: unset;
+  background-color: black;
+  color: white;
+  border-style: ridge;
+  padding: 4px;
+  border-radius: 2px;
+  border-width: 4px;
+  border-color: white;
+  text-align: center;
 }

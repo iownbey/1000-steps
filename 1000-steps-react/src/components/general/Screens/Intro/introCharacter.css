@@ -1,0 +1,42 @@
+@keyframes intro_playerWalkingDown_sprite {
+  from {
+    background-position: 0%;
+  }
+
+  to {
+    background-position: 300%;
+  }
+}
+
+@keyframes intro_playerWalkingDown_spriteflip {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(-1);
+  }
+}
+
+@keyframes intro_playerWalkingDown_position {
+  from {
+    top: 12%;
+  }
+
+  to {
+    top: 100%;
+  }
+}
+
+.intro_playerWalkingDown {
+  background-size: 200%;
+  background-image: url(../images/Cutscenes/Intro/playerwalkingdown.png);
+  animation: intro_playerWalkingDown_sprite steps(2, jump-both) 1s infinite,
+    intro_playerWalkingDown_spriteflip steps(2, jump-both) 2s infinite,
+    intro_playerWalkingDown_position ease-in 4s 1;
+  width: 196px;
+  height: 392px;
+  left: 38.6%;
+  top: 12%;
+  display: none;
+}

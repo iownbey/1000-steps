@@ -1,6 +1,7 @@
 import { observable } from "@fobx/core";
 import { ReactNode } from "react";
-import { MainMenu } from "../MainMenu/MainMenu";
+import { MainMenu } from "../Screens/MainMenu/MainMenu";
+import { MainGame } from "../Screens/MainGame/MainGame";
 
 class ScreenRouter<T extends Record<string, ReactNode>> {
   screens: T;
@@ -24,6 +25,7 @@ class ScreenRouter<T extends Record<string, ReactNode>> {
 export const screenRouter = new ScreenRouter(
   {
     "main menu": <MainMenu />,
+    main: <MainGame />,
   },
   "main menu"
 );

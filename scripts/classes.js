@@ -26,6 +26,119 @@ class Animator {
   }
 }
 
+class DialogueTypewriter {
+  static instances = [];
+
+  constructor(typewriter, $root, face, speechSound = null, normalSound = null) {
+    this.typewriter = typewriter;
+    this.$root = $root;
+    this.face = face;
+    this.lastExpr;
+    this.speechSound = speechSound;
+    this.normalSound = normalSound;
+
+    face.hide();
+    DialogueTypewriter.instances.push(this);
+  }
+
+  show(text, expression) {
+    //console.log("Showing: " + text);
+    DialogueTypewriter.clearAll();
+    this.$root.css("display", "flex");
+    var t;
+    if (typeof text == "string") {
+      this.typewriter.setSound(this.normalSound);
+      t = text;
+      if (arguments.length > 1) {
+        //console.log("static expression");
+        this.typewriter.letterCallback = function () {};
+        this.face.showExpression(expression);
+      } else {
+        //console.log("no expression");
+      }
+    } else if (Array.isArray(text)) {
+      //console.log("animated expression");
+      var _this = this;
+      var expr = text[1];
+      this.typewriter.letterCallback = function () {
+        _this.face.showAnimatedExpression(_this.lastExpr);
+      };
+
+      t = text[0];
+
+      if (text.length == 1) this.typewriter.setSound(this.speechSound);
+
+      if (text.length > 1) {
+        this.lastExpr = expr;
+      }
+
+      if (text.length == 2) {
+        this.typewriter.letterCallback = function () {
+          _this.face.showAnimatedExpression(_this.lastExpr);
+        };
+        this.typewriter.setSound(this.speechSound);
+      }
+
+      if (text.length > 2) {
+        if (text[2] === true) {
+          this.typewriter.letterCallback = function () {
+            _this.face.showAnimatedExpression(_this.lastExpr);
+          };
+          this.typewriter.setSound(this.speechSound);
+        } else {
+          expr = null;
+          this.typewriter.letterCallback = function () {};
+          this.face.showExpression(text[1]);
+        }
+      }
+    } else {
+      var _this = this;
+
+      t = text.text;
+
+      if (text.sExpr) {
+        _this.lastExpr = text.sExpr;
+        this.face.showExpression(text.sExpr);
+      } else {
+        if (text.aExpr || text.aExpr === 0) {
+          this.typewriter.setSound(this.speechSound);
+          this.typewriter.letterCallback = function () {
+            _this.face.showAnimatedExpression(_this.lastExpr);
+          };
+          if (text.aExpr !== true) {
+            _this.lastExpr = text.aExpr;
+          }
+        }
+      }
+
+      if (text.sFX) {
+        sound.playFX(text.sFX);
+        this.typewriter.setSound(null);
+      }
+    }
+    this.typewriter.show(t);
+  }
+
+  static clearAll() {
+    DialogueTypewriter.instances.forEach(function (element) {
+      element.clear();
+    });
+  }
+
+  clear() {
+    this.$root.css("display", "none");
+    this.typewriter.letterCallback = function () {};
+    this.typewriter.setSound(null);
+    this.typewriter.clear();
+    this.face.hide();
+  }
+
+  async showAsync(text) {
+    this.show({ text });
+    await InputHandler.waitForInput();
+  }
+}
+
 class Queue {
   constructor() {
     this.events = [];
@@ -617,119 +730,6 @@ class Cursor {
   }
 }
 
-class DialogueTypewriter {
-  static instances = [];
-
-  constructor(typewriter, $root, face, speechSound = null, normalSound = null) {
-    this.typewriter = typewriter;
-    this.$root = $root;
-    this.face = face;
-    this.lastExpr;
-    this.speechSound = speechSound;
-    this.normalSound = normalSound;
-
-    face.hide();
-    DialogueTypewriter.instances.push(this);
-  }
-
-  show(text, expression) {
-    //console.log("Showing: " + text);
-    DialogueTypewriter.clearAll();
-    this.$root.css("display", "flex");
-    var t;
-    if (typeof text == "string") {
-      this.typewriter.setSound(this.normalSound);
-      t = text;
-      if (arguments.length > 1) {
-        //console.log("static expression");
-        this.typewriter.letterCallback = function () {};
-        this.face.showExpression(expression);
-      } else {
-        //console.log("no expression");
-      }
-    } else if (Array.isArray(text)) {
-      //console.log("animated expression");
-      var _this = this;
-      var expr = text[1];
-      this.typewriter.letterCallback = function () {
-        _this.face.showAnimatedExpression(_this.lastExpr);
-      };
-
-      t = text[0];
-
-      if (text.length == 1) this.typewriter.setSound(this.speechSound);
-
-      if (text.length > 1) {
-        this.lastExpr = expr;
-      }
-
-      if (text.length == 2) {
-        this.typewriter.letterCallback = function () {
-          _this.face.showAnimatedExpression(_this.lastExpr);
-        };
-        this.typewriter.setSound(this.speechSound);
-      }
-
-      if (text.length > 2) {
-        if (text[2] === true) {
-          this.typewriter.letterCallback = function () {
-            _this.face.showAnimatedExpression(_this.lastExpr);
-          };
-          this.typewriter.setSound(this.speechSound);
-        } else {
-          expr = null;
-          this.typewriter.letterCallback = function () {};
-          this.face.showExpression(text[1]);
-        }
-      }
-    } else {
-      var _this = this;
-
-      t = text.text;
-
-      if (text.sExpr) {
-        _this.lastExpr = text.sExpr;
-        this.face.showExpression(text.sExpr);
-      } else {
-        if (text.aExpr || text.aExpr === 0) {
-          this.typewriter.setSound(this.speechSound);
-          this.typewriter.letterCallback = function () {
-            _this.face.showAnimatedExpression(_this.lastExpr);
-          };
-          if (text.aExpr !== true) {
-            _this.lastExpr = text.aExpr;
-          }
-        }
-      }
-
-      if (text.sFX) {
-        sound.playFX(text.sFX);
-        this.typewriter.setSound(null);
-      }
-    }
-    this.typewriter.show(t);
-  }
-
-  static clearAll() {
-    DialogueTypewriter.instances.forEach(function (element) {
-      element.clear();
-    });
-  }
-
-  clear() {
-    this.$root.css("display", "none");
-    this.typewriter.letterCallback = function () {};
-    this.typewriter.setSound(null);
-    this.typewriter.clear();
-    this.face.hide();
-  }
-
-  async showAsync(text) {
-    this.show({ text });
-    await InputHandler.waitForInput();
-  }
-}
-
 class FaceHandler {
   constructor() {
     this.expressions = [];
@@ -1197,83 +1197,6 @@ class SequenceGetter {
       this.i = (this.i + 1) % this.array.length;
     } else if (this.i !== this.array.length - 1) this.i++;
     return r;
-  }
-}
-
-class SpriteSheet {
-  constructor(image, wn, hn) {
-    this.image = image;
-    this.wn = wn;
-    this.hn = hn;
-  }
-
-  getPercentage(numerator, dividend) {
-    return ((numerator - 1) / (dividend - 1) || 0) * 100;
-  }
-
-  setSprite(jobj, x, y) {
-    jobj.css("background-image", "url(" + this.image + ")");
-    jobj.css("background-size", this.wn * 100 + "%");
-    jobj.css(
-      "background-position",
-      "bottom " +
-        Math.getPercentage(y, this.hn) +
-        "% left " +
-        Math.getPercentage(x, this.wn) +
-        "%"
-    );
-  }
-
-  setRandomSprite(jobj, positions) {
-    if (positions) {
-      var pos = getRandom(positions);
-      this.setSprite(jobj, pos.x, pos.y);
-    } else {
-      this.setSprite(
-        jobj,
-        Math.randomInt(1, this.wn + 1),
-        Math.randomInt(1, this.hn + 1)
-      );
-    }
-  }
-
-  animate(jobj, frames, defaultTime, loopAnim = false) {
-    var _this = this;
-    jobj.css("background-image", "url(" + this.image + ")");
-    jobj.css("background-size", this.wn * 100 + "%");
-    var loop = function (i) {
-      var frame = frames[i];
-      jobj.css(
-        "background-position",
-        "bottom " +
-          Math.getPercentage(frame.y, _this.hn) +
-          "% left " +
-          Math.getPercentage(frame.x, _this.wn) +
-          "%"
-      );
-      var time = defaultTime;
-      if (frame.time != undefined) time = frame.time;
-      i++;
-      if (i != frames.length) {
-        setTimeout(loop, time, i);
-      } else if (loopAnim) {
-        setTimeout(loop, time, 0);
-      }
-    };
-    loop(0);
-  }
-
-  static setSprite(jobj, image, wn = 1, hn = 1, x = 1, y = 1) {
-    jobj.css("background-image", "url(" + image + ")");
-    jobj.css("background-size", wn * 100 + "%");
-    jobj.css(
-      "background-position",
-      "bottom " +
-        Math.getPercentage(y, hn) +
-        "% left " +
-        Math.getPercentage(x, wn) +
-        "%"
-    );
   }
 }
 
