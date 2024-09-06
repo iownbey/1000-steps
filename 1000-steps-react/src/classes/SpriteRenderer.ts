@@ -10,12 +10,13 @@ export type SpriteAnimationFrame = SpritePos & {
   time?: number;
 };
 
-class SpriteRenderer {
+export class SpriteRenderer {
   imageDimensions = { width: 0, height: 0 };
   image: string;
   cellWidth: number;
   cellHeight: number;
   currentSprite: SpritePos = { x: 0, y: 0 };
+  animationTimeoutHandle: ReturnType<typeof setTimeout>;
 
   constructor(image: string, cellWidth: number, cellHeight: number) {
     this.image = image;
@@ -63,6 +64,10 @@ class SpriteRenderer {
     }
   }
 
+  stopAnimation() {
+    clearTimeout(this.animationTimeoutHandle);
+  }
+
   animate({
     frames,
     defaultTime,
@@ -72,7 +77,8 @@ class SpriteRenderer {
     defaultTime?: number;
     loop?: boolean;
   }) {
-    const animationLoop = (i) => {
+    this.stopAnimation();
+    const animationLoop = (i: number) => {
       var frame = frames[i];
       this.currentSprite = { x: frame.x, y: frame.y };
 
@@ -80,7 +86,7 @@ class SpriteRenderer {
       if (i != frames.length || loop) {
         i %= frames.length;
         const timeoutMs = frame.time ?? defaultTime ?? 16.7;
-        setTimeout(() => {
+        this.animationTimeoutHandle = setTimeout(() => {
           animationLoop(i);
         }, timeoutMs);
       }
