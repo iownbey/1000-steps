@@ -66,7 +66,12 @@ class Area_Aorta extends Area {
     contentManager.add($wrapper);
 
     var animHandle;
-    var renderer = new SpriteRenderer($oscar[0], "./images/oscar.png", 32, 32);
+    var renderer = new CanvasSpriteRenderer(
+      $oscar[0],
+      "./images/oscar.png",
+      32,
+      32
+    );
     await new Promise((resolve) => {
       renderer.onload = () => {
         var fs = new SequenceGetter(

@@ -365,7 +365,7 @@ class Chain extends Monster {
     this.canvas = $content[0];
     $content.appendTo(root);
 
-    this.renderer = new SpriteRenderer(
+    this.renderer = new CanvasSpriteRenderer(
       $content[0],
       "./images/chain.png",
       64,
@@ -666,7 +666,7 @@ class MasterSponge extends Monster {
     this.canvas = $virgil[0];
     $virgil.appendTo(root);
 
-    this.renderer = new SpriteRenderer(
+    this.renderer = new CanvasSpriteRenderer(
       $virgil[0],
       "./images/master-sponge.png",
       1024,
@@ -1284,7 +1284,7 @@ class Virgil extends Monster {
     this.canvas = $virgil[0];
     $virgil.appendTo(root);
 
-    this.renderer = new SpriteRenderer(
+    this.renderer = new CanvasSpriteRenderer(
       $virgil[0],
       "./images/virgil.png",
       64,

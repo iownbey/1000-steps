@@ -231,7 +231,7 @@ class Darkness extends Monster {
     this.canvas = $content[0];
     $content.appendTo(root);
 
-    this.renderer = new SpriteRenderer(
+    this.renderer = new CanvasSpriteRenderer(
       $content[0],
       "./images/darkness.png",
       64,

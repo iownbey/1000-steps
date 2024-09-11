@@ -96,7 +96,7 @@ Area.attachImageToContent = function (
   $innerWrapper.appendTo($wrapper);
   contentManager.add($wrapper);
 
-  var renderer = new SpriteRenderer(
+  var renderer = new CanvasSpriteRenderer(
     $innerWrapper[0],
     "./images/" + imageUrl,
     width,
@@ -134,7 +134,7 @@ Area.getUnlockEvent = function (imageX, name, description, saveKey) {
     var hover = new CSSAnimationController($item, "slowHover");
     hover.start();
     $item.insertAfter($column);
-    var items = new SpriteRenderer(
+    var items = new CanvasSpriteRenderer(
       $item[0],
       "images/props/item-column-items.png",
       32,
@@ -240,7 +240,12 @@ Area.fightChain = async function () {
   $virgil.appendTo($wrapper);
   contentManager.add($wrapper);
 
-  var renderer = new SpriteRenderer($virgil[0], "./images/chain.png", 64, 64);
+  var renderer = new CanvasSpriteRenderer(
+    $virgil[0],
+    "./images/chain.png",
+    64,
+    64
+  );
   renderer.onload = () => {
     renderer.setSprite(0, 0);
   };

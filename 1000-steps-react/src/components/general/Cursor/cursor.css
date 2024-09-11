@@ -1,0 +1,7 @@
+.cursor {
+  position: absolute;
+  transition: top 0.5s ease-in-out, left 0.5s ease-in-out;
+  height: 32px;
+  width: 32px;
+  background-image: url("./images/cursor.png");
+}

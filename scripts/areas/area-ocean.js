@@ -90,7 +90,7 @@ Area_Ocean.meetMortimer = async function () {
     '<canvas style="height:150%;width:150%;left:-25%;" id="marty"></canvas>'
   );
   $marty.appendTo($a);
-  var renderer = new SpriteRenderer(
+  var renderer = new CanvasSpriteRenderer(
     $marty[0],
     "./images/Ocean/dolphin.png",
     64,
@@ -109,7 +109,9 @@ Area_Ocean.meetMortimer = async function () {
     ["The SHARKS!!!"],
   ]).writeAllAsync();
 
-  await Battle.start("ocean-fight", [new Shark(), new Shark(), new Shark()], true);
-
-  
+  await Battle.start(
+    "ocean-fight",
+    [new Shark(), new Shark(), new Shark()],
+    true
+  );
 };

@@ -64,23 +64,6 @@ var area;
 const nl = "|";
 
 var fullscreen = false;
-function toggleFullscreen() {
-  if (fullscreen) {
-    fullscreen = false;
-    document.exitFullscreen();
-  } else {
-    $("html")[0]
-      .requestFullscreen()
-      .then(function () {
-        fullscreen = true;
-      })
-      .catch(function (err) {
-        console.error(
-          `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
-        );
-      });
-  }
-}
 
 /** Loads a script into the dom
  * @param {string} script - the script to load
@@ -98,16 +81,6 @@ async function loadScript(script) {
   return promise;
 }
 loadScript.allLoaded = [];
-
-Math.randomInt = function (min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
-};
-
-Math.getPercentage = function (numerator, dividend) {
-  return ((numerator - 1) / (dividend - 1) || 0) * 100;
-};
 
 Object.defineProperty(Array.prototype, "remove", {
   value: function remove(element) {
@@ -146,10 +119,6 @@ function triggerBattleBackground() {
 
 function playBackgroundMusic() {
   sound.playMusic(area.music);
-}
-
-function getRandom(array) {
-  return array[Math.floor(Math.random() * array.length)];
 }
 
 async function walk() {

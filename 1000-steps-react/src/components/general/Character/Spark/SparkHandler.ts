@@ -1,16 +1,16 @@
 import sparkImage from "./sparks.png";
 import baseSparkImage from "./sparkBase.png";
 import flameImage from "./flames.png";
-import { SpriteRenderer } from "../../../../classes/SpriteRenderer";
+import { CssSpriteRenderer } from "../../../../classes/sprites/CssSpriteRenderer";
 import { observable } from "@fobx/core";
-import { randomInt } from "../../../../classes/Utils";
+import { randomInt } from "../../../../Utils";
 
 export type ChargeLevel = 0 | 1 | 2 | 3;
 
 export class SparkHandler {
-  baseSparkRenderer = new SpriteRenderer(baseSparkImage, 16, 16);
-  sparkRenderer = new SpriteRenderer(sparkImage, 16, 16);
-  flameRenderer = new SpriteRenderer(flameImage, 32, 32);
+  baseSparkRenderer = new CssSpriteRenderer(baseSparkImage, 16, 16);
+  sparkRenderer = new CssSpriteRenderer(sparkImage, 16, 16);
+  flameRenderer = new CssSpriteRenderer(flameImage, 32, 32);
   currentSparkRenderer = this.baseSparkRenderer;
   chargeLevel: ChargeLevel = 0;
   sparkTimeoutHandle: ReturnType<typeof setTimeout>;

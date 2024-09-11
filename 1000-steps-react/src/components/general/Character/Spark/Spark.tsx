@@ -1,4 +1,4 @@
-import { SpriteRenderer } from "../../../../classes/SpriteRenderer";
+import { CssSpriteRenderer } from "../../../../classes/sprites/CssSpriteRenderer";
 import { observer } from "@fobx/react";
 import { SparkHandler } from "./SparkHandler";
 
