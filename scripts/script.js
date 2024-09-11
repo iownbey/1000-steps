@@ -82,30 +82,6 @@ async function loadScript(script) {
 }
 loadScript.allLoaded = [];
 
-Object.defineProperty(Array.prototype, "remove", {
-  value: function remove(element) {
-    return this.filter(function (el) {
-      return !(el == this);
-    }, element);
-  },
-  writable: true,
-  configurable: true,
-});
-
-function changeBackground(newImage) {
-  $("#back").attr("src", Helper.imageURL("backgrounds/" + newImage));
-}
-
-function changeForeground(newImage) {
-  if (newImage) {
-    $("#fore")
-      .css("display", "block")
-      .attr("src", Helper.imageURL("backgrounds/" + newImage));
-  } else {
-    $("#fore").css("display", "none").removeAttr("src");
-  }
-}
-
 function triggerDefaultBackground() {
   $("#back").css("visibility", "visible");
   $("#fore").css("visibility", "visible");

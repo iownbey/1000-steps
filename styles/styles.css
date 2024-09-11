@@ -133,17 +133,6 @@
   width: calc(8px * 4);
 }
 
-.dialogueBox {
-  display: flex;
-  z-index: 10;
-  position: fixed;
-  width: calc((100vh * 1.5) - 16px);
-}
-
-.dialogueBox > #output {
-  text-align: left;
-}
-
 .inline-block {
   display: inline-block;
 }

@@ -4,6 +4,10 @@ export const randomInt = function (min: number, max: number) {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 };
 
+export function removeFrom<T>(array: T[], toRemove: T) {
+  return array.filter((el) => el !== toRemove);
+}
+
 export const getPercentage = function (numerator: number, dividend: number) {
   return ((numerator - 1) / (dividend - 1) || 0) * 100;
 };
