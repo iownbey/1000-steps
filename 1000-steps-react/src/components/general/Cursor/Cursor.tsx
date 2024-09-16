@@ -24,18 +24,21 @@ export const Cursor = ({
   const myRef = useRef<HTMLDivElement>();
 
   const updatePosition = () => {
-    const newPos = { x: 0, y: 0 };
-    const targetRect = target.current.getBoundingClientRect();
-    const myRect = myRef.current.getBoundingClientRect();
-    newPos.x =
-      targetRect.x +
-      targetRect.width * targetAnchorX -
-      myRect.width * (1 - myAnchorX);
-    newPos.y =
-      targetRect.y +
-      targetRect.height * targetAnchorY -
-      myRect.height * (1 - myAnchorY);
-    setPos(newPos);
+    if (show) {
+      const newPos = { x: 0, y: 0 };
+      const targetRect = target.current.getBoundingClientRect();
+      const myRect = myRef.current.getBoundingClientRect();
+      newPos.x =
+        targetRect.x +
+        targetRect.width * targetAnchorX -
+        myRect.width * (1 - myAnchorX);
+      newPos.y =
+        targetRect.y +
+        targetRect.height * targetAnchorY -
+        myRect.height * (1 - myAnchorY);
+
+      setPos(newPos);
+    }
   };
 
   useEffect(() => {

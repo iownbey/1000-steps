@@ -1,5 +1,5 @@
 .character {
-  background-image: url("../images/character.png");
+  background-image: url("./character.png");
   background-size: 400%;
   background-position: bottom left;
   z-index: 5;

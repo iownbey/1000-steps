@@ -8,17 +8,12 @@ class SoundManager {
     this.persistants = [];
   }
 
-  getFileName(song: string) {
-    return "sounds/" + song;
-  }
-
   playMusic(song: string, crossFade = true) {
     console.log("SOUND: Playing " + song);
-    song = this.getFileName(song);
 
     var startSong = () => {
       this.job = new Howl({
-        src: [song + ".wav", song + ".mp3"],
+        src: [song],
         loop: true,
         volume: 0,
       });
@@ -43,10 +38,7 @@ class SoundManager {
   }
 
   loadPersistant(song: string) {
-    song = this.getFileName(song);
-    var i =
-      this.persistants.push(new Howl({ src: [song + ".wav", song + ".mp3"] })) -
-      1;
+    var i = this.persistants.push(new Howl({ src: [song] })) - 1;
     return i;
   }
 
@@ -81,9 +73,8 @@ class SoundManager {
   }
 
   playFX(effect: string) {
-    effect = this.getFileName(effect);
     new Howl({
-      src: [effect + ".wav", effect + ".mp3"],
+      src: [effect],
     }).play();
   }
 }

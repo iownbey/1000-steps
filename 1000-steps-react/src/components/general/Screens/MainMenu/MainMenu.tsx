@@ -4,11 +4,12 @@ import { screenCover } from "../../ScreenCover/ScreenCover";
 import { sound } from "../../../../classes/SoundManager";
 import { VersionInfo } from "./VersionInfo/VersionInfo";
 import "./mainMenu.css";
+import gameStartFX from "./game-start-effect.mp3";
 
 async function startNewGame() {
   console.log("starting game.");
+  sound.playFX(gameStartFX);
   screenCover.setColor("black");
-  sound.playFX("game-start-effect");
   await screenCover.fadeTo(1, 6000);
   //startIntro();
   await screenCover.fadeTo(0, 1000);

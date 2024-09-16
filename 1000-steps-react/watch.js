@@ -3,9 +3,12 @@ import esbuild from "esbuild";
 let ctx = await esbuild.context({
   entryPoints: ["./src/main.tsx"],
   bundle: true,
+  publicPath: "/build",
   outdir: "./public/build",
   loader: {
     ".svg": "file",
+    ".png": "file",
+    ".mp3": "file",
   },
 });
 

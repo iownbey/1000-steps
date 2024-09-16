@@ -24,9 +24,9 @@ function App() {
     <>
       <div id="gamewindow">{screenRouter.activeScreenNode}</div>
       <canvas id="content-canvas"></canvas>
-      <ScreenCoverComponent />
       <Particles />
       <Cursor {...globalControl.cursor} />
+      <ScreenCoverComponent />
     </>
   );
 }

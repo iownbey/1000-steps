@@ -1,9 +1,15 @@
+import { observable } from "@fobx/core";
 import { observer } from "@fobx/react";
+import "./screenCover.css";
 
 class ScreenCover {
   element?: HTMLElement;
   duration: number;
   backgroundColor: string;
+
+  constructor() {
+    observable(this);
+  }
 
   setRef = (ref: HTMLElement) => {
     this.element = ref;

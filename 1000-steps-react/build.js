@@ -6,5 +6,6 @@ esbuild.build({
   outdir: "build",
   loader: {
     ".svg": "file",
+    ".png": "file",
   },
 });
