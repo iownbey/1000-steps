@@ -4,6 +4,15 @@
   border-radius: 2px;
   border: white 8px ridge;
   padding: 16px;
+  position: relative;
+
+  > .decoration {
+    background-image: url("./message-box-decoration.png");
+    background-size: cover;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .divider {
