@@ -5,12 +5,14 @@ import { sound } from "../../../../classes/SoundManager";
 import { VersionInfo } from "./VersionInfo/VersionInfo";
 import "./mainMenu.css";
 import gameStartFX from "./game-start-effect.mp3";
+import { screenRouter } from "../../ScreenRouter/ScreenRouter";
 
 async function startNewGame() {
   console.log("starting game.");
   sound.playFX(gameStartFX);
   screenCover.setColor("black");
-  await screenCover.fadeTo(1, 6000);
+  await screenCover.fadeTo(1, 2000);
+  screenRouter.switch("character select");
   //startIntro();
   await screenCover.fadeTo(0, 1000);
 }

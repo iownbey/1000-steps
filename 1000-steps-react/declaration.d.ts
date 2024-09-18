@@ -1,14 +1,7 @@
-declare module "*.svg" {
-  const content: string;
-  export default content;
-}
+import "react";
 
-declare module "*.png" {
-  const content: string;
-  export default content;
-}
-
-declare module "*.mp3" {
-  const content: string;
-  export default content;
+declare module "react" {
+  interface CSSProperties {
+    [key: `--${string}`]: string | number;
+  }
 }

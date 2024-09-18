@@ -1,4 +1,4 @@
-import { observable } from "@fobx/core";
+import { isObservable, observable, runInAction } from "@fobx/core";
 import { SpritePos } from "./SpriteController";
 
 export class SpriteRenderer {
@@ -17,10 +17,12 @@ export class SpriteRenderer {
 
     this.img = new Image();
     this.img.onload = () => {
-      this.imageDimensions = {
-        width: this.img.width,
-        height: this.img.height,
-      };
+      runInAction(() => {
+        this.imageDimensions = {
+          width: this.img.width,
+          height: this.img.height,
+        };
+      });
     };
     this.img.src = image;
   }

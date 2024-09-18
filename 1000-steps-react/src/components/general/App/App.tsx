@@ -4,6 +4,7 @@ import { ScreenCoverComponent } from "../ScreenCover/ScreenCover";
 import { screenRouter } from "../ScreenRouter/ScreenRouter";
 import { observable } from "@fobx/core";
 import { Cursor, CursorProps } from "../Cursor/Cursor";
+import { observer } from "@fobx/react";
 
 export type GlobalData = {
   cursor: CursorProps;
@@ -15,7 +16,7 @@ export const globalControl = observable({
   } as any as CursorProps,
 } as GlobalData);
 
-function App() {
+const App = observer(() => {
   useEffect(() => {
     Initialize();
   }, []);
@@ -29,6 +30,6 @@ function App() {
       <ScreenCoverComponent />
     </>
   );
-}
+});
 
 export default App;

@@ -1,0 +1,28 @@
+@property --manual-left {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --manual-top {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --blend {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.parralax-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  left: calc(var(--manual-left) * var(--blend) * 1px);
+  top: calc(var(--manual-top) * var(--blend) * 1px);
+
+  transition: --blend 1s ease-in-out;
+}

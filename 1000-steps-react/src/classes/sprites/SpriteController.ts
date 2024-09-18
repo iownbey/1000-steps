@@ -1,3 +1,4 @@
+import { isObservable, observable, runInAction } from "@fobx/core";
 import { getRandom, randomInt } from "../../Utils";
 import { SpriteRenderer } from "./SpriteRenderer";
 
@@ -10,12 +11,19 @@ export type SpriteAnimationFrame = SpritePos & {
   time?: number;
 };
 
+export type SpriteAnimation = {
+  frames: SpriteAnimationFrame[];
+  defaultTime?: number;
+  loop?: boolean;
+};
+
 export class SpriteController<T extends SpriteRenderer> {
   renderer: T;
   animationTimeoutHandle: ReturnType<typeof setTimeout>;
 
   constructor(renderer: T) {
     this.renderer = renderer;
+    observable(this);
   }
 
   randomize(positions?: SpritePos[]) {
@@ -33,19 +41,13 @@ export class SpriteController<T extends SpriteRenderer> {
     clearTimeout(this.animationTimeoutHandle);
   }
 
-  animate({
-    frames,
-    defaultTime,
-    loop,
-  }: {
-    frames: SpriteAnimationFrame[];
-    defaultTime?: number;
-    loop?: boolean;
-  }) {
+  animate({ frames, defaultTime, loop }: SpriteAnimation) {
     this.stopAnimation();
     const animationLoop = (i: number) => {
       var frame = frames[i];
-      this.renderer.currentSprite = { x: frame.x, y: frame.y };
+      runInAction(() => {
+        this.renderer.currentSprite = { x: frame.x, y: frame.y };
+      });
 
       i++;
       if (i != frames.length || loop) {

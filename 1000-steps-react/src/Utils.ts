@@ -9,7 +9,7 @@ export function removeFrom<T>(array: T[], toRemove: T) {
 }
 
 export const getPercentage = function (numerator: number, dividend: number) {
-  return ((numerator - 1) / (dividend - 1) || 0) * 100;
+  return (numerator / dividend) * 100;
 };
 
 export function getRandom<T>(array: T[]) {

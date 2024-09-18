@@ -31,7 +31,12 @@ export function loadAsepriteSpritesheet(
   metadata: AsepriteMetadata
 ) {
   return {
-    spritesheet: new CssSpriteRenderer(imgFile, metadata.frames.length, 1),
+    getRenderer: () =>
+      new CssSpriteRenderer(
+        imgFile,
+        metadata.meta.size.w / metadata.frames.length,
+        metadata.meta.size.h
+      ),
     animations: Object.fromEntries(
       metadata.meta.frameTags.map((ft) => [
         ft.name,
@@ -42,12 +47,12 @@ export function loadAsepriteSpritesheet(
 }
 
 function loadAsepriteAnimation(tag: AsepriteTag, allFrames: AsepriteFrame[]) {
-  const frames = [];
+  const frames = [] as SpriteAnimationFrame[];
   for (let i = tag.from; i <= tag.to; i++) {
     frames.push(<SpriteAnimationFrame>{
       x: i,
       y: 0,
-      duration: allFrames[i].duration,
+      time: allFrames[i].duration,
     });
   }
   return frames;

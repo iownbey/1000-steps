@@ -2,12 +2,13 @@ import { observable } from "@fobx/core";
 import { ReactNode } from "react";
 import { MainMenu } from "../Screens/MainMenu/MainMenu";
 import { MainGame } from "../Screens/MainGame/MainGame";
+import { CharacterSelect } from "../Screens/CharacterSelect/CharacterSelect";
 
 class ScreenRouter<T extends Record<string, ReactNode>> {
   screens: T;
   activeScreen: keyof T;
 
-  Switch(activeScreen: keyof T) {
+  switch(activeScreen: keyof T) {
     this.activeScreen = activeScreen;
   }
 
@@ -26,6 +27,7 @@ export const screenRouter = new ScreenRouter(
   {
     "main menu": <MainMenu />,
     main: <MainGame />,
+    "character select": <CharacterSelect />,
   },
   "main menu"
 );
