@@ -15,6 +15,7 @@ export type SpriteAnimation = {
   frames: SpriteAnimationFrame[];
   defaultTime?: number;
   loop?: boolean;
+  onEnd?: () => void;
 };
 
 export class SpriteController<T extends SpriteRenderer> {
@@ -41,7 +42,7 @@ export class SpriteController<T extends SpriteRenderer> {
     clearTimeout(this.animationTimeoutHandle);
   }
 
-  animate({ frames, defaultTime, loop }: SpriteAnimation) {
+  animate({ frames, defaultTime, loop, onEnd }: SpriteAnimation) {
     this.stopAnimation();
     const animationLoop = (i: number) => {
       var frame = frames[i];
@@ -56,6 +57,8 @@ export class SpriteController<T extends SpriteRenderer> {
         this.animationTimeoutHandle = setTimeout(() => {
           animationLoop(i);
         }, timeoutMs);
+      } else {
+        onEnd?.();
       }
     };
     animationLoop(0);

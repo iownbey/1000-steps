@@ -9,7 +9,7 @@ export class InputHandler {
     this.handler = handler;
 
     document.addEventListener("keydown", this.onkeydown);
-    document.removeEventListener("mouseup", this.onmouse);
+    document.addEventListener("mouseup", this.onmouse);
   }
 
   onmouse = (e: MouseEvent) => {

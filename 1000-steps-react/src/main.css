@@ -2,6 +2,10 @@
   touch-action: manipulation;
 }
 
+:root {
+  --c-black: #10121c;
+}
+
 html {
   --cos: cubic-bezier(0.3642, 0, 0.6358, 1);
   height: 100%;
@@ -43,6 +47,8 @@ img {
   image-rendering: -webkit-crisp-edges;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+
+  pointer-events: none;
 }
 
 div {

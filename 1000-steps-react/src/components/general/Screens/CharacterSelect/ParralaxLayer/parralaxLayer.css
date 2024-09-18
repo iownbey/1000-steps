@@ -16,6 +16,12 @@
   initial-value: 0;
 }
 
+@property --zoom {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
 .parralax-layer {
   position: absolute;
   width: 100%;
@@ -24,5 +30,7 @@
   left: calc(var(--manual-left) * var(--blend) * 1px);
   top: calc(var(--manual-top) * var(--blend) * 1px);
 
-  transition: --blend 1s ease-in-out;
+  transition: --blend 1s ease-in-out, --zoom 2s ease-in-out;
+
+  transform: scale(var(--zoom));
 }

@@ -52,7 +52,7 @@ export const ParralaxLayer = observer(
           "--manual-left": mousePos.x * maxMouseShift,
           "--manual-top": mousePos.y * maxMouseShift,
           "--blend": blend ? 1 : 0,
-          transform: `scale(${zoomOffset + zoom * zoomMultiplier})`,
+          "--zoom": zoomOffset + zoom * zoomMultiplier,
         }}
       >
         {children}

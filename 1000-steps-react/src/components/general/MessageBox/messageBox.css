@@ -1,0 +1,13 @@
+.message-box {
+  background-color: var(--c-black);
+  color: white;
+  border-radius: 2px;
+  border: white 8px ridge;
+  padding: 16px;
+}
+
+.divider {
+  background-color: white;
+  height: 2px;
+  width: 100%;
+}
