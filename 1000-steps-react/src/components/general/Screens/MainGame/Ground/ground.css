@@ -1,0 +1,48 @@
+.perspective {
+  perspective: 800px;
+  perspective-origin: center 20%;
+
+  .floor-plane {
+    position: absolute;
+    bottom: 0%;
+    height: 100%;
+    width: 100%;
+    transform: rotateX(90deg);
+    transform-style: preserve-3d;
+    transform-origin: bottom;
+
+    .ground {
+      position: absolute;
+      bottom: 0%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      transform: translateX(-50%) scale(100);
+    }
+
+    .path {
+      position: absolute;
+      bottom: 0%;
+      left: 50%;
+      width: 100%;
+      height: 16000px;
+      transform-style: preserve-3d;
+      transform: translateX(-50%) scaleY(10);
+      background-size: 100% 10%;
+    }
+
+    .content-layer {
+      transform-origin: bottom;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      position: absolute;
+      bottom: 0%;
+      left: 50%;
+      width: 100%;
+      transform-style: preserve-3d;
+      transform: translateX(-50%) rotateX(-90deg) translateZ(-1600px);
+      background-size: 100% 10%;
+    }
+  }
+}

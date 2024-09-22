@@ -4,9 +4,9 @@ export type MenuButtonProps = {
   onFocus?: () => void;
 };
 
-export const MenuButton = ({ label, onActivate, onFocus }: MenuButtonProps) => {
+export const MenuButton = ({ label, onActivate }: MenuButtonProps) => {
   return (
-    <button className="shrink-border" onClick={onActivate} onFocus={onFocus}>
+    <button className="shrink-border" onClick={onActivate}>
       {label}
     </button>
   );

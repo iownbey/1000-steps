@@ -73,6 +73,7 @@ div {
   height: 100vh;
   overflow: hidden;
   aspect-ratio: 16 / 11;
+  container-type: size;
 }
 
 .bordered {

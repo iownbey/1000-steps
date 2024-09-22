@@ -8,12 +8,20 @@ export type MenuButtonSpec = {
 };
 
 export type MenuProps = {
-  buttons: MenuButtonSpec[][];
+  buttons?: MenuButtonSpec[][];
   selected: string;
   onNewButtonSelected: (label: string) => void;
+  onDescriptionChanged: (description: string) => void;
 };
 
-export const Menu = ({ buttons, selected }: MenuProps) => {
+export const Menu = ({
+  buttons,
+  selected,
+  onDescriptionChanged,
+}: MenuProps) => {
+  if (!buttons) {
+    return null;
+  }
   return (
     <div>
       {buttons.map((c, i) => {

@@ -23,7 +23,7 @@ export const ParralaxLayer = observer(
     children,
   }: React.PropsWithChildren<ParralaxLayerProps>) => {
     const [blend, setBlend] = useState(0);
-    const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const handleMouse = useCallback((e: MouseEvent) => {
       setBlend(1);
       setMousePos({

@@ -11,6 +11,7 @@ import { loadAsepriteSpritesheet } from "../../../../classes/sprites/loadAseprit
 import { InputHandler } from "../../../../classes/InputHandler";
 import { MessageBox } from "../../MessageBox/MessageBox";
 import { screenCover } from "../../ScreenCover/ScreenCover";
+import { screenRouter } from "../../ScreenRouter/ScreenRouter";
 
 const { getRenderer, animations } = loadAsepriteSpritesheet(
   character,
@@ -19,20 +20,26 @@ const { getRenderer, animations } = loadAsepriteSpritesheet(
 
 export const CharacterSelect = observer(() => {
   const [zoom, setZoom] = useState(1);
+  const [startedGame, setStartedGame] = useState(false);
   const controller = useRef(new SpriteController(getRenderer()));
   useEffect(() => {
     controller.current.animate({ frames: animations["Idle"], loop: true });
 
     const input = new InputHandler((e) => {
       console.log(e);
-      if (e.key === "lmb") {
+      if (e.key === "lmb" && !startedGame) {
+        setStartedGame(true);
         controller.current.animate({
           frames: animations["Pull"],
           loop: false,
           onEnd: () => {
             setZoom(10);
-            screenCover.setColor("black");
-            screenCover.fadeTo(1, 2000);
+            (async () => {
+              screenCover.setColor("black");
+              await screenCover.fadeTo(1, 2000);
+              screenRouter.activeScreen = "main";
+              screenCover.fadeTo(0, 50);
+            })();
           },
         });
       }

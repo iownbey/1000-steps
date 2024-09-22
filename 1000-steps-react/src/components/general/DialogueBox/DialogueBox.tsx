@@ -1,5 +1,18 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react";
 import { sound } from "../../../classes/SoundManager";
+import { MessageBox } from "../MessageBox/MessageBox";
+import {
+  SpriteController,
+  SpritePos,
+} from "../../../classes/sprites/SpriteController";
+import { CssSpriteRenderer } from "../../../classes/sprites/CssSpriteRenderer";
+import { observer } from "@fobx/react";
+
+export type Face = {
+  spriteController: SpriteController<CssSpriteRenderer>;
+  frame: SpritePos;
+  speechFrame?: SpritePos;
+};
 
 export type DialogueBoxProps = {
   targetText: string;
@@ -8,6 +21,9 @@ export type DialogueBoxProps = {
   autoHideAfterMs?: number;
   letterSound?: number;
   textClass?: string;
+  face?: Face;
+
+  boxStyles?: CSSProperties;
 };
 
 const nl = "|";
@@ -45,71 +61,79 @@ function parseInlineClasses(
   return { nextText, parsedText };
 }
 
-export const DialogueBox = ({
-  targetText,
-  letterSound,
-  charDelay,
-  slowCharDelay,
-  autoHideAfterMs,
-}: DialogueBoxProps) => {
-  const [printState, setPrintState] = useState(getDefaultPrintState());
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+export const DialogueBox = observer(
+  ({
+    targetText,
+    letterSound,
+    charDelay,
+    slowCharDelay,
+    autoHideAfterMs,
+    boxStyles,
+    face,
+  }: DialogueBoxProps) => {
+    const [printState, setPrintState] = useState(getDefaultPrintState());
+    const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    clearTimeout(timeout.current);
+    useEffect(() => {
+      clearTimeout(timeout.current);
 
-    let { parsedText, displayItems, currentClasses } = printState;
+      let { parsedText, displayItems, currentClasses } = printState;
 
-    if (parsedText !== targetText) {
-      if (!targetText.startsWith(parsedText)) {
-        // reset state
-        setPrintState(getDefaultPrintState());
-      } else {
-        let nextText = targetText.substring(parsedText.length);
+      if (!targetText && !parsedText) {
+        return;
+      }
 
-        ({ nextText, parsedText } = parseInlineClasses(
-          nextText,
-          parsedText,
-          currentClasses
-        ));
-
-        if (nextText) {
-          const nextChar = nextText[0];
-          if (nextChar === nl) {
-            displayItems.push(<br />);
-          } else {
-            displayItems.push(<span>{nextChar}</span>);
-          }
-
-          if (letterSound && nextChar.match(/[a-z]/i)) {
-            sound.playPersistant(letterSound);
-          }
-          parsedText += nextChar;
-
-          const timeoutMs = nextChar === "." ? charDelay : slowCharDelay;
-
-          timeout.current = setTimeout(() => {
-            setPrintState({
-              parsedText,
-              displayItems,
-              currentClasses,
-            });
-          }, timeoutMs);
+      if (parsedText !== targetText) {
+        if (!targetText.startsWith(parsedText)) {
+          // reset state
+          setPrintState(getDefaultPrintState());
         } else {
-          if (autoHideAfterMs) {
+          let nextText = targetText.substring(parsedText.length);
+
+          ({ nextText, parsedText } = parseInlineClasses(
+            nextText,
+            parsedText,
+            currentClasses
+          ));
+
+          if (nextText) {
+            const nextChar = nextText[0];
+            if (nextChar === nl) {
+              displayItems.push(<br />);
+            } else {
+              displayItems.push(<span>{nextChar}</span>);
+            }
+
+            if (letterSound && nextChar.match(/[a-z]/i)) {
+              sound.playPersistant(letterSound);
+            }
+            parsedText += nextChar;
+
+            const timeoutMs = nextChar === "." ? charDelay : slowCharDelay;
+
             timeout.current = setTimeout(() => {
-              setPrintState(getDefaultPrintState());
-            }, autoHideAfterMs);
+              setPrintState({
+                parsedText,
+                displayItems,
+                currentClasses,
+              });
+            }, timeoutMs);
+          } else {
+            if (autoHideAfterMs) {
+              timeout.current = setTimeout(() => {
+                setPrintState(getDefaultPrintState());
+              }, autoHideAfterMs);
+            }
           }
         }
       }
-    }
-  }, [targetText, printState]);
+    }, [targetText, printState]);
 
-  return targetText ? (
-    <div class="dialogueBox bordered" style="bottom: 0px">
-      <div style="height: 36vh; width: 36vh"></div>
-      <p>{printState.displayItems}</p>
-    </div>
-  ) : null;
-};
+    return targetText ? (
+      <MessageBox style={boxStyles}>
+        {face && <div style={face.spriteController.renderer.style}></div>}
+        <p>{printState.displayItems}</p>
+      </MessageBox>
+    ) : null;
+  }
+);

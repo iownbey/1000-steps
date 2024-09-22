@@ -1,7 +1,4 @@
 .character {
-  background-image: url("./character.png");
-  background-size: 400%;
-  background-position: bottom left;
   z-index: 5;
   position: absolute;
   bottom: 0px;
