@@ -29,6 +29,7 @@
       transform-style: preserve-3d;
       transform: translateX(-50%) scaleY(10);
       background-size: 100% 10%;
+      transition: background-position 0.5s ease-out;
     }
 
     .content-layer {

@@ -1,10 +1,12 @@
 .character {
-  z-index: 5;
+  transform-origin: bottom;
+  width: 500px;
+  height: 500px;
   position: absolute;
-  bottom: 0px;
-  height: 40vh;
-  width: 80vh;
-  left: calc(50% - 40vh);
+  bottom: 0%;
+  left: 50%;
+  transform-style: preserve-3d;
+  transform: translateX(-50%) rotateX(-90deg) translateZ(-10px);
 }
 
 @keyframes walk {

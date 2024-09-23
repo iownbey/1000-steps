@@ -2,7 +2,7 @@ import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import "./ground.css";
 import { observer } from "@fobx/react";
 
-const stepsPerTile = 10;
+const stepsPerTile = 20;
 
 function normalize(value: number, max: number) {
   return (value / max) * -2 + 1;
@@ -19,10 +19,6 @@ export const Ground = observer(
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const handleMouse = useCallback((e: MouseEvent) => {
       setBlend(1);
-      console.log({
-        x: normalize(e.screenX, window.innerWidth),
-        y: normalize(e.screenY, window.innerHeight),
-      });
       setMousePos({
         x: normalize(e.screenX, window.innerWidth),
         y: normalize(e.screenY, window.innerHeight),
@@ -62,12 +58,9 @@ export const Ground = observer(
             className="path"
             style={{
               backgroundImage: `url(${image})`,
-              backgroundPositionY: `${
-                ((steps % stepsPerTile) / stepsPerTile) * 100
-              }%`,
+              backgroundPositionY: `${(steps / stepsPerTile) * 100}%`,
             }}
           />
-          <div className="content-layer"></div>
           {children}
         </div>
       </div>
