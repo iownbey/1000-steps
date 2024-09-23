@@ -4,6 +4,8 @@ import { observer } from "@fobx/react";
 
 const stepsPerTile = 20;
 
+export const pixelsPerStep = 8000;
+
 function normalize(value: number, max: number) {
   return (value / max) * -2 + 1;
 }
@@ -43,6 +45,7 @@ export const Ground = observer(
         <div
           className="floor-plane"
           style={{
+            "--player-z": `${steps * pixelsPerStep}px`,
             transform: `rotateX(90deg) rotateZ(${mousePos.x * 3}deg) rotateX(${
               mousePos.y * 3
             }deg)`,

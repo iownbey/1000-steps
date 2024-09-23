@@ -14,6 +14,7 @@ import { Ground } from "./Ground/Ground";
 
 import back from "../../../../../images/backgrounds/back.png";
 import floor from "../../../../../images/floors/aorta.png";
+import { ContentLayer } from "./ContentLayer/ContentLayer";
 
 export type AreaEvent = {
   setDistance: (distance: number) => void;
@@ -65,6 +66,7 @@ export const MainGame = observer(() => {
       console.log(e);
       if (e.key === "lmb") {
         mainGameData.totalSteps++;
+        clearTimeout(animTimeout.current);
         characterSprite.animate({ frames: characterAnim["Run"], loop: true });
         animTimeout.current = setTimeout(() => {
           characterSprite.animate({
@@ -116,6 +118,7 @@ export const MainGame = observer(() => {
         color={mainGameData.groundColor}
       >
         <Character />
+        <ContentLayer stepPos={10} />
         {mainGameData.events.map((e) => e.render())}
       </Ground>
 

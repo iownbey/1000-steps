@@ -6,14 +6,14 @@
 
 .content-layer {
   transform-origin: bottom;
-  width: 100%;
-  height: 100%;
+  height: 120%;
   background-color: white;
   position: absolute;
   bottom: 0%;
   left: 50%;
-  width: 100%;
+  width: 200%;
   transform-style: preserve-3d;
-  transform: translateX(-50%) rotateX(-90deg) translateZ(var(--content-z));
+  transform: translateX(-50%) rotateX(-90deg)
+    translateZ(calc(var(--player-z) - var(--content-z)));
   background-size: 100% 10%;
 }

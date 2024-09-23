@@ -1,3 +1,9 @@
+@property --player-z {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 .perspective {
   perspective: 800px;
   perspective-origin: center 20%;
@@ -10,6 +16,8 @@
     transform: rotateX(90deg);
     transform-style: preserve-3d;
     transform-origin: bottom;
+
+    transition: --player-z 0.5s ease-out;
 
     .ground {
       position: absolute;
@@ -30,20 +38,6 @@
       transform: translateX(-50%) scaleY(10);
       background-size: 100% 10%;
       transition: background-position 0.5s ease-out;
-    }
-
-    .content-layer {
-      transform-origin: bottom;
-      width: 100%;
-      height: 100%;
-      background-color: white;
-      position: absolute;
-      bottom: 0%;
-      left: 50%;
-      width: 100%;
-      transform-style: preserve-3d;
-      transform: translateX(-50%) rotateX(-90deg) translateZ(-1600px);
-      background-size: 100% 10%;
     }
   }
 }
