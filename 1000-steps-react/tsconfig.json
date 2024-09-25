@@ -4,6 +4,7 @@
     "target": "ESNext",
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "allowJs": true
   }
 }
