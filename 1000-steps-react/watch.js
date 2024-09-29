@@ -17,6 +17,8 @@ await ctx.watch();
 let { host, port } = await ctx.serve({
   servedir: "./public",
   host: "localhost",
+  keyfile: "./devHTTPS/dev.key",
+  certfile: "./devHTTPS/dev.cert",
 });
 
-console.log(`Hosting on http://${host}:${port}`);
+console.log(`Hosting on https://${host}:${port}`);

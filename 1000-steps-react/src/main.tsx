@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./components/general/App/App";
 import "./main.css";
+import { setUpController } from "./functions/setUpController";
 
 new EventSource("/esbuild").addEventListener("change", (e) => {
   const { added, removed, updated } = JSON.parse(e.data);
@@ -21,6 +22,8 @@ new EventSource("/esbuild").addEventListener("change", (e) => {
 
   location.reload();
 });
+
+setUpController();
 
 const root = createRoot(document.getElementById("root"));
 root.render(<App />);

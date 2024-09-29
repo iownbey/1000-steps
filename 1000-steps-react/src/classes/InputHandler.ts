@@ -1,3 +1,5 @@
+import { runInAction } from "@fobx/core";
+
 export type GameInput = {
   key: KeyboardEvent["key"] | "lmb" | "mmb" | "rmb";
 };
@@ -6,7 +8,11 @@ export class InputHandler {
   handler: (e: GameInput) => void;
 
   constructor(handler: (e: GameInput) => void) {
-    this.handler = handler;
+    this.handler = (e: GameInput) => {
+      runInAction(() => {
+        handler(e);
+      });
+    };
 
     document.addEventListener("keydown", this.onkeydown);
     document.addEventListener("mouseup", this.onmouse);

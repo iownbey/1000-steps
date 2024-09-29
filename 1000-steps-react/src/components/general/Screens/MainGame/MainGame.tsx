@@ -15,6 +15,7 @@ import { Ground } from "./Ground/Ground";
 import back from "../../../../../images/backgrounds/back.png";
 import floor from "../../../../../images/floors/aorta.png";
 import { ContentLayer } from "./ContentLayer/ContentLayer";
+import { pulse } from "../../../../functions/setUpController";
 
 export type AreaEvent = {
   setDistance: (distance: number) => void;
@@ -64,7 +65,8 @@ export const MainGame = observer(() => {
   useEffect(() => {
     const input = new InputHandler((e) => {
       console.log(e);
-      if (e.key === "lmb") {
+      if (e.key === "lmb" || e.key === "Backspace") {
+        pulse({ weak: 1, duration: 50 });
         mainGameData.totalSteps++;
         clearTimeout(animTimeout.current);
         characterSprite.animate({ frames: characterAnim["Run"], loop: true });
