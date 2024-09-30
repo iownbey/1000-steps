@@ -1,9 +1,15 @@
-import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { sound } from "../../../classes/SoundManager";
 import { MessageBox } from "../MessageBox/MessageBox";
 import {
   SpriteController,
-  SpritePos,
+  type SpritePos,
 } from "../../../classes/sprites/SpriteController";
 import { CssSpriteRenderer } from "../../../classes/sprites/CssSpriteRenderer";
 import { observer } from "@fobx/react";
@@ -15,7 +21,7 @@ export type Face = {
 };
 
 export type DialogueBoxProps = {
-  targetText: string;
+  targetText?: string;
   charDelay: number;
   slowCharDelay: number;
   autoHideAfterMs?: number;
@@ -72,14 +78,17 @@ export const DialogueBox = observer(
     face,
   }: DialogueBoxProps) => {
     const [printState, setPrintState] = useState(getDefaultPrintState());
-    const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const timeout = useRef<Timer | undefined>(undefined);
 
     useEffect(() => {
       clearTimeout(timeout.current);
 
       let { parsedText, displayItems, currentClasses } = printState;
 
-      if (!targetText && !parsedText) {
+      if (!targetText) {
+        if (parsedText) {
+          setPrintState(getDefaultPrintState());
+        }
         return;
       }
 

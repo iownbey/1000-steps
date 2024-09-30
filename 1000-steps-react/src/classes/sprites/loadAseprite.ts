@@ -1,5 +1,5 @@
 import { CssSpriteRenderer } from "./CssSpriteRenderer";
-import { SpriteAnimationFrame } from "./SpriteController";
+import type { SpriteAnimationFrame } from "./SpriteController";
 
 export type AsepriteFrame = {
   frame: {
@@ -10,25 +10,28 @@ export type AsepriteFrame = {
 };
 
 export type AsepriteTag = {
-  name: string;
   from: number;
   to: number;
 };
 
-export interface AsepriteMetadata {
+export interface AsepriteMetadata<T extends Record<string, AsepriteTag>> {
   frames: AsepriteFrame[];
   meta: {
     size: {
       w: number;
       h: number;
     };
-    frameTags: AsepriteTag[];
+    frameTags: T;
   };
 }
 
-export function loadAsepriteSpritesheet(
+export type AsepriteAnimations<M extends AsepriteMetadata<any>> = {
+  [m in keyof M["meta"]["frameTags"]]: SpriteAnimationFrame[];
+};
+
+export function loadAsepriteSpritesheet<T extends Record<string, AsepriteTag>>(
   imgFile: string,
-  metadata: AsepriteMetadata
+  metadata: AsepriteMetadata<T>
 ) {
   return {
     getRenderer: () =>
@@ -38,11 +41,13 @@ export function loadAsepriteSpritesheet(
         metadata.meta.size.h
       ),
     animations: Object.fromEntries(
-      metadata.meta.frameTags.map((ft) => [
-        ft.name,
+      Object.entries(metadata.meta.frameTags).map(([name, ft]) => [
+        name,
         loadAsepriteAnimation(ft, metadata.frames),
       ])
-    ),
+    ) as {
+      [t in keyof T]: SpriteAnimationFrame[];
+    },
   };
 }
 

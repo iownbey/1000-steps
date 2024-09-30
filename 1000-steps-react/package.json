@@ -19,12 +19,15 @@
     "@testing-library/jest-dom": "5.17.0",
     "@testing-library/react": "13.4.0",
     "@testing-library/user-event": "13.5.0",
+    "@types/bun": "^1.1.10",
     "@types/howler": "2.2.11",
-    "esbuild": "0.23.1"
+    "esbuild": "0.23.1",
+    "fast-glob": "^3.3.2"
   },
   "scripts": {
-    "watch": "node ./watch.js",
-    "build": "node ./build.js"
+    "watch": "bun ./watch.ts",
+    "build": "bun ./build.ts",
+    "processAnim": "bun ./processAsepriteJson.ts"
   },
   "eslintConfig": {
     "extends": [

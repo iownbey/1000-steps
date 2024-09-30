@@ -1,21 +1,21 @@
 import { observable } from "@fobx/core";
-import {
-  Character,
-  characterAnim,
-  characterData,
-  characterSprite,
-} from "../../Character/Character";
-import { Menu, MenuProps } from "../../Menu/Menu";
+import { Menu, type MenuProps } from "../../general/Menu/Menu";
 import { observer } from "@fobx/react";
-import { DialogueBox, Face } from "../../DialogueBox/DialogueBox";
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { GameInput, InputHandler } from "../../../../classes/InputHandler";
+import { DialogueBox, type Face } from "../../general/DialogueBox/DialogueBox";
+import { type ReactNode, useEffect, useRef } from "react";
+import { InputHandler } from "../../../classes/InputHandler";
 import { Ground } from "./Ground/Ground";
 
-import back from "../../../../../images/backgrounds/back.png";
-import floor from "../../../../../images/floors/aorta.png";
-import { ContentLayer } from "./ContentLayer/ContentLayer";
-import { pulse } from "../../../../functions/setUpController";
+import back from "../../../../images/backgrounds/back.png";
+import floor from "../../../../images/floors/aorta.png";
+import { pulse } from "../../../functions/setUpController";
+import {
+  Character,
+  type ICharacter,
+} from "../../../classes/characters/Main/Character";
+import type { SpriteAnimationFrame } from "../../../classes/sprites/SpriteController";
+import type { Area } from "../../../classes/areas/Area";
+import { Aorta } from "../../../classes/areas/Aorta/Aorta";
 
 export type AreaEvent = {
   setDistance: (distance: number) => void;
@@ -26,15 +26,18 @@ export type AreaEvent = {
 export type MainGameData = {
   backgroundImage: string;
   foregroundImage?: string;
-  groundImage?: string;
-  groundColor?: string;
+  groundImage: string;
+  groundColor: string;
   menuStack: MenuProps[];
   upperText?: string;
   lowerText?: string;
   face?: Face;
-  backgroundMode: "normal" | "battle";
-  events: AreaEvent[];
   totalSteps: number;
+  currentArea: Area;
+  character: ICharacter<{
+    Run: SpriteAnimationFrame[];
+    Idle: SpriteAnimationFrame[];
+  }>;
 };
 
 export const mainGameData = observable({
@@ -44,13 +47,12 @@ export const mainGameData = observable({
   groundColor: "#0B0B0B",
   totalSteps: 0,
   menuStack: [],
-  events: [],
+  character: new Character(),
+  currentArea: new Aorta(),
 } as MainGameData);
 
 const charDelay = 0.02;
 const slowCharDelay = 0.05;
-
-const handleInput = (e: GameInput) => {};
 
 function withBack(img: string) {
   return {
@@ -59,20 +61,30 @@ function withBack(img: string) {
 }
 
 export const MainGame = observer(() => {
-  const runningEvent = useState;
   const animTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const busy = useRef(false);
 
   useEffect(() => {
     const input = new InputHandler((e) => {
       console.log(e);
-      if (e.key === "lmb" || e.key === "Backspace") {
+      if ((!busy.current && e.key === "lmb") || e.key === "Backspace") {
+        busy.current = true;
         pulse({ weak: 1, duration: 50 });
         mainGameData.totalSteps++;
+        mainGameData.currentArea
+          .startEvent((mainGameData.totalSteps - 1) % 100)
+          .then(() => {
+            busy.current = false;
+          });
+
         clearTimeout(animTimeout.current);
-        characterSprite.animate({ frames: characterAnim["Run"], loop: true });
+        mainGameData.character.spriteController.animate({
+          frames: mainGameData.character.animations.Run,
+          loop: true,
+        });
         animTimeout.current = setTimeout(() => {
-          characterSprite.animate({
-            frames: characterAnim["Idle"],
+          mainGameData.character.spriteController.animate({
+            frames: mainGameData.character.animations.Idle,
             loop: true,
           });
         }, 500);
@@ -86,19 +98,9 @@ export const MainGame = observer(() => {
 
   return (
     <div className="box">
-      {mainGameData.backgroundMode === "normal" && (
-        <>
-          <div className="box" style={withBack(mainGameData.backgroundImage)} />
-          {mainGameData.foregroundImage && (
-            <div
-              className="box"
-              style={withBack(mainGameData.foregroundImage)}
-            />
-          )}
-        </>
-      )}
-      {mainGameData.backgroundMode === "battle" && (
-        <div className="box battle-background" />
+      <div className="box" style={withBack(mainGameData.backgroundImage)} />
+      {mainGameData.foregroundImage && (
+        <div className="box" style={withBack(mainGameData.foregroundImage)} />
       )}
 
       <DialogueBox
@@ -119,9 +121,8 @@ export const MainGame = observer(() => {
         steps={mainGameData.totalSteps}
         color={mainGameData.groundColor}
       >
-        <Character />
-        <ContentLayer stepPos={10} />
-        {mainGameData.events.map((e) => e.render())}
+        <mainGameData.character.Component />
+        <mainGameData.currentArea.Component />
       </Ground>
 
       <Menu {...mainGameData.menuStack.slice(-1)[0]} />

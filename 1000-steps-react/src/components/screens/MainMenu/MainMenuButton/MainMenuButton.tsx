@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState } from "react";
-import { useAndForwardRef } from "../../../../../hooks/useAndForwardRef";
+import { useAndForwardRef } from "../../../../hooks/useAndForwardRef";
 import { selected } from "../MainMenu";
 import clsx from "clsx";
 import "./mainMenuButton.css";
@@ -38,19 +38,19 @@ export const MainMenuButton = forwardRef<
         case " ":
         case "Enter":
           {
-            innerRef.current.click();
+            innerRef.current?.click();
           }
           break;
         case "w":
         case "ArrowUp":
           {
-            upperRef.current.focus();
+            upperRef?.current?.focus();
           }
           break;
         case "s":
         case "ArrowDown":
           {
-            lowerRef.current.focus();
+            lowerRef?.current?.focus();
           }
           break;
       }

@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { MainMenuButton } from "./MainMenuButton/MainMenuButton";
-import { screenCover } from "../../ScreenCover/ScreenCover";
-import { sound } from "../../../../classes/SoundManager";
+import { screenCover } from "../../general/ScreenCover/ScreenCover";
+import { sound } from "../../../classes/SoundManager";
 import { VersionInfo } from "./VersionInfo/VersionInfo";
 import "./mainMenu.css";
 import gameStartFX from "./game-start-effect.mp3";
-import { screenRouter } from "../../ScreenRouter/ScreenRouter";
+import { screenRouter } from "../ScreenRouter/ScreenRouter";
 
 async function startNewGame() {
   console.log("starting game.");

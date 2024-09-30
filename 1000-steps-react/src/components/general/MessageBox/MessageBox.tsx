@@ -1,5 +1,5 @@
 import "./messageBox.css";
-import { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 
 export type MessageBoxType = {
   style?: CSSProperties;

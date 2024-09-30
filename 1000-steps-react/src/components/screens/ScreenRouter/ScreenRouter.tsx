@@ -1,8 +1,8 @@
 import { observable } from "@fobx/core";
-import { ReactNode } from "react";
-import { MainMenu } from "../Screens/MainMenu/MainMenu";
-import { MainGame } from "../Screens/MainGame/MainGame";
-import { CharacterSelect } from "../Screens/CharacterSelect/CharacterSelect";
+import { type ReactNode } from "react";
+import { MainMenu } from "../MainMenu/MainMenu";
+import { MainGame } from "../MainGame/MainGame";
+import { CharacterSelect } from "../CharacterSelect/CharacterSelect";
 
 class ScreenRouter<T extends Record<string, ReactNode>> {
   screens: T;

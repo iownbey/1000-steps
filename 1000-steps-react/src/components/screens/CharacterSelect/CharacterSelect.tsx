@@ -3,15 +3,15 @@ import farBack from "./images/far-back.png";
 import back from "./images/back.png";
 import foreground from "./images/foreground.png";
 import character from "./images/intro.png";
-import characterMeta from "./images/intro.json";
-import { useEffect, useMemo, useRef, useState } from "react";
+import characterMeta from "./images/intro.processed.json";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "@fobx/react";
-import { SpriteController } from "../../../../classes/sprites/SpriteController";
-import { loadAsepriteSpritesheet } from "../../../../classes/sprites/loadAseprite";
-import { InputHandler } from "../../../../classes/InputHandler";
-import { MessageBox } from "../../MessageBox/MessageBox";
-import { screenCover } from "../../ScreenCover/ScreenCover";
-import { screenRouter } from "../../ScreenRouter/ScreenRouter";
+import { loadAsepriteSpritesheet } from "../../../classes/sprites/loadAseprite";
+import { SpriteController } from "../../../classes/sprites/SpriteController";
+import { InputHandler } from "../../../classes/InputHandler";
+import { screenCover } from "../../general/ScreenCover/ScreenCover";
+import { screenRouter } from "../ScreenRouter/ScreenRouter";
+import { MessageBox } from "../../general/MessageBox/MessageBox";
 
 const { getRenderer, animations } = loadAsepriteSpritesheet(
   character,

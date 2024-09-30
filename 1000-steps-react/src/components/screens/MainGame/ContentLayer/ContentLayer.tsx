@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { pixelsPerStep } from "../Ground/Ground";
 import "./contentLayer.css";
 
@@ -9,7 +9,7 @@ export const ContentLayer = ({
   return (
     <div
       className="content-layer"
-      style={{ "--content-z": `${stepPos * pixelsPerStep + 1000}px` }}
+      style={{ "--content-z": `${(stepPos + 1) * pixelsPerStep + 1000}px` }}
     >
       {children}
     </div>

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Initialize, Particles } from "../ScreenParticles/ScreenParticles";
 import { ScreenCoverComponent } from "../ScreenCover/ScreenCover";
-import { screenRouter } from "../ScreenRouter/ScreenRouter";
+import { screenRouter } from "../../screens/ScreenRouter/ScreenRouter";
 import { observable } from "@fobx/core";
-import { Cursor, CursorProps } from "../Cursor/Cursor";
+import { Cursor, type CursorProps } from "../Cursor/Cursor";
 import { observer } from "@fobx/react";
 
 export type GlobalData = {
