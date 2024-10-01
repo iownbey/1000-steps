@@ -10,7 +10,7 @@ export interface IEvent {
 }
 
 export abstract class Area {
-  events: IEvent[];
+  events: (IEvent | null)[];
   eventPos = 0;
 
   constructor() {
@@ -18,7 +18,7 @@ export abstract class Area {
     observable(this);
   }
 
-  abstract generateEvents(): IEvent[];
+  abstract generateEvents(): (IEvent | null)[];
   abstract get music(): string;
 
   get remainingEvents() {
@@ -26,18 +26,24 @@ export abstract class Area {
   }
 
   async startEvent(index: number) {
-    await this.events[index].happen();
+    const next = this.events[index];
+    if (next) {
+      await next.happen();
+    }
     sound.playMusic(this.music);
   }
 
   Component = observer(() => {
     return (
       <>
-        {this.remainingEvents.map((e, i) => (
-          <ContentLayer key={i} stepPos={this.eventPos + i}>
-            <e.Component />
-          </ContentLayer>
-        ))}
+        {this.remainingEvents.map(
+          (e, i) =>
+            e && (
+              <ContentLayer key={i} stepPos={this.eventPos + i}>
+                <e.Component />
+              </ContentLayer>
+            )
+        )}
       </>
     );
   });

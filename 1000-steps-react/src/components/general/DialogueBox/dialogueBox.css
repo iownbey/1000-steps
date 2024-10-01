@@ -1,10 +1,12 @@
-.dialogueBox {
+.dialogue-box {
   display: flex;
   z-index: 10;
   position: fixed;
-  width: calc((100vh * 1.5) - 16px);
-}
+  margin: 16px;
+  height: 200px;
+  width: calc(100% - 32px);
 
-.dialogueBox > .output {
-  text-align: left;
+  > .output {
+    text-align: left;
+  }
 }

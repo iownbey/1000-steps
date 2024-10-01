@@ -13,6 +13,7 @@ import {
 } from "../../../classes/sprites/SpriteController";
 import { CssSpriteRenderer } from "../../../classes/sprites/CssSpriteRenderer";
 import { observer } from "@fobx/react";
+import "./dialogueBox.css";
 
 export type Face = {
   spriteController: SpriteController<CssSpriteRenderer>;
@@ -29,7 +30,7 @@ export type DialogueBoxProps = {
   textClass?: string;
   face?: Face;
 
-  boxStyles?: CSSProperties;
+  style?: CSSProperties;
 };
 
 const nl = "|";
@@ -74,7 +75,7 @@ export const DialogueBox = observer(
     charDelay,
     slowCharDelay,
     autoHideAfterMs,
-    boxStyles,
+    style,
     face,
   }: DialogueBoxProps) => {
     const [printState, setPrintState] = useState(getDefaultPrintState());
@@ -118,7 +119,8 @@ export const DialogueBox = observer(
             }
             parsedText += nextChar;
 
-            const timeoutMs = nextChar === "." ? charDelay : slowCharDelay;
+            const timeoutMs =
+              (nextChar === "." ? charDelay : slowCharDelay) * 1000;
 
             timeout.current = setTimeout(() => {
               setPrintState({
@@ -139,7 +141,7 @@ export const DialogueBox = observer(
     }, [targetText, printState]);
 
     return targetText ? (
-      <MessageBox style={boxStyles}>
+      <MessageBox classNames="dialogue-box" style={style}>
         {face && <div style={face.spriteController.renderer.style}></div>}
         <p>{printState.displayItems}</p>
       </MessageBox>

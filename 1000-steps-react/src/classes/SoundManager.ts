@@ -2,7 +2,7 @@ import { Howl } from "howler";
 
 class SoundManager {
   persistants: Howl[];
-  job: Howl;
+  currentMusic: Howl | null = null;
 
   constructor() {
     this.persistants = [];
@@ -11,30 +11,26 @@ class SoundManager {
   playMusic(song: string, crossFade = true) {
     console.log("SOUND: Playing " + song);
 
-    var startSong = () => {
-      this.job = new Howl({
-        src: [song],
-        loop: true,
-        volume: 0,
-      });
-      this.job.play();
-      if (crossFade) this.job.fade(0, 1, 500);
-      else this.job.volume(1);
-    };
-
-    if (this.job) {
+    if (this.currentMusic) {
       if (crossFade) {
-        this.job.fade(1, 0, 500);
-        const oldJob = this.job;
-        this.job.once("fade", () => {
+        this.currentMusic.fade(1, 0, 500);
+        const oldJob = this.currentMusic;
+        this.currentMusic.once("fade", () => {
           oldJob.stop();
         });
-        startSong();
       } else {
-        this.job.stop();
-        startSong();
+        this.currentMusic.stop();
       }
-    } else startSong();
+    }
+
+    this.currentMusic = new Howl({
+      src: [song],
+      loop: true,
+      volume: 0,
+    });
+    this.currentMusic.play();
+    if (crossFade) this.currentMusic.fade(0, 1, 500);
+    else this.currentMusic.volume(1);
   }
 
   loadPersistant(song: string) {
@@ -48,27 +44,27 @@ class SoundManager {
   }
 
   stop(fade = true) {
-    if (this.job) {
+    if (this.currentMusic) {
       if (fade) {
-        var j = this.job;
+        var j = this.currentMusic;
         j.fade(1, 0, 500);
         j.once("fade", () => {
           j.stop();
         });
-      } else this.job.stop();
-      this.job = null;
+      } else this.currentMusic.stop();
+      this.currentMusic = null;
     }
   }
 
   pause() {
-    if (this.job) this.job.pause();
+    if (this.currentMusic) this.currentMusic.pause();
   }
 
   unpause() {
-    if (this.job && !this.job.playing()) {
-      let sk = this.job.seek();
-      this.job.play();
-      this.job.seek(sk);
+    if (this.currentMusic && !this.currentMusic.playing()) {
+      let sk = this.currentMusic.seek();
+      this.currentMusic.play();
+      this.currentMusic.seek(sk);
     }
   }
 

@@ -1,4 +1,4 @@
-import { observable } from "@fobx/core";
+import { isObservable, observable } from "@fobx/core";
 import { Menu, type MenuProps } from "../../general/Menu/Menu";
 import { observer } from "@fobx/react";
 import { DialogueBox, type Face } from "../../general/DialogueBox/DialogueBox";
@@ -41,6 +41,8 @@ export type MainGameData = {
 };
 
 export const mainGameData = observable({
+  upperText: "",
+  lowerText: "",
   backgroundImage: back,
   backgroundMode: "normal",
   groundImage: floor,
@@ -54,12 +56,6 @@ export const mainGameData = observable({
 const charDelay = 0.02;
 const slowCharDelay = 0.05;
 
-function withBack(img: string) {
-  return {
-    backgroundImage: `url(${img})`,
-  };
-}
-
 export const MainGame = observer(() => {
   const animTimeout = useRef<ReturnType<typeof setTimeout>>();
   const busy = useRef(false);
@@ -67,13 +63,15 @@ export const MainGame = observer(() => {
   useEffect(() => {
     const input = new InputHandler((e) => {
       console.log(e);
-      if ((!busy.current && e.key === "lmb") || e.key === "Backspace") {
+      if (!busy.current && (e.key === "lmb" || e.key === "Backspace")) {
+        console.log("advancing");
         busy.current = true;
         pulse({ weak: 1, duration: 50 });
         mainGameData.totalSteps++;
         mainGameData.currentArea
           .startEvent((mainGameData.totalSteps - 1) % 100)
           .then(() => {
+            console.log("done");
             busy.current = false;
           });
 
@@ -98,24 +96,6 @@ export const MainGame = observer(() => {
 
   return (
     <div className="box">
-      <div className="box" style={withBack(mainGameData.backgroundImage)} />
-      {mainGameData.foregroundImage && (
-        <div className="box" style={withBack(mainGameData.foregroundImage)} />
-      )}
-
-      <DialogueBox
-        face={mainGameData.face}
-        targetText={mainGameData.upperText}
-        charDelay={charDelay}
-        slowCharDelay={slowCharDelay}
-      ></DialogueBox>
-      <DialogueBox
-        face={mainGameData.face}
-        targetText={mainGameData.upperText}
-        charDelay={charDelay}
-        slowCharDelay={slowCharDelay}
-      ></DialogueBox>
-
       <Ground
         image={mainGameData.groundImage}
         steps={mainGameData.totalSteps}
@@ -124,7 +104,20 @@ export const MainGame = observer(() => {
         <mainGameData.character.Component />
         <mainGameData.currentArea.Component />
       </Ground>
-
+      <DialogueBox
+        face={mainGameData.face}
+        targetText={mainGameData.upperText}
+        charDelay={charDelay}
+        slowCharDelay={slowCharDelay}
+        style={{ top: "0%" }}
+      ></DialogueBox>
+      <DialogueBox
+        face={mainGameData.face}
+        targetText={mainGameData.lowerText}
+        charDelay={charDelay}
+        slowCharDelay={slowCharDelay}
+        style={{ bottom: "0%" }}
+      ></DialogueBox>
       <Menu {...mainGameData.menuStack.slice(-1)[0]} />
     </div>
   );

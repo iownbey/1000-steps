@@ -5,6 +5,7 @@
   border: white 8px ridge;
   padding: 16px;
   position: relative;
+  box-sizing: border-box;
 
   > .decoration {
     background-image: url("./message-box-decoration.png");

@@ -1,16 +1,19 @@
+import clsx from "clsx";
 import "./messageBox.css";
 import type { CSSProperties } from "react";
 
 export type MessageBoxType = {
   style?: CSSProperties;
+  classNames?: string;
 };
 
 export const MessageBox = ({
   children,
   style,
+  classNames,
 }: React.PropsWithChildren<MessageBoxType>) => {
   return (
-    <div className="message-box" style={style}>
+    <div className={clsx("message-box", classNames)} style={style}>
       <div
         className="decoration"
         style={{
