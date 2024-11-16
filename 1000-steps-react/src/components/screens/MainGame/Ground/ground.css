@@ -17,7 +17,10 @@
     transform-style: preserve-3d;
     transform-origin: bottom;
 
-    transition: --player-z 0.5s ease-out;
+    transition: --player-z 0.5s ease-out, --blend 0.3s ease-in-out;
+
+    transform: rotateX(90deg) rotateZ(calc(var(--rot-y) * var(--blend)))
+      rotateX(calc(var(--rot-x) * var(--blend)));
 
     .ground {
       position: absolute;

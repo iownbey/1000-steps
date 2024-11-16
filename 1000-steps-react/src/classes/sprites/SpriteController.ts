@@ -47,32 +47,40 @@ export class SpriteController<T extends SpriteRenderer> {
     onEnd?.();
   }
 
-  animate(anim: SpriteAnimation) {
-    if (!anim.restart && anim.frames === this.runningAnimation?.frames) {
-      this.runningAnimation = anim;
-      return;
-    }
-
-    this.stopAnimation();
-    this.runningAnimation = anim;
-    const animationLoop = (i: number) => {
-      const anim = this.runningAnimation;
-      var frame = anim.frames[i];
-      runInAction(() => {
-        this.renderer.currentSprite = { x: frame.x, y: frame.y };
-      });
-
-      i++;
-      if (i != anim.frames.length || anim.loop) {
-        i %= anim.frames.length;
-        const timeoutMs = frame.time ?? anim.defaultTime ?? 16.7;
-        this.animationTimeoutHandle = setTimeout(() => {
-          animationLoop(i);
-        }, timeoutMs);
-      } else {
-        this.stopAnimation();
+  async animate(anim: SpriteAnimation) {
+    return new Promise<void>((res) => {
+      if (!anim.restart && anim.frames === this.runningAnimation?.frames) {
+        this.runningAnimation = anim;
+        return;
       }
-    };
-    animationLoop(0);
+
+      const onEnd = anim.onEnd;
+      anim.onEnd = () => {
+        onEnd?.();
+        res();
+      };
+
+      this.stopAnimation();
+      this.runningAnimation = anim;
+      const animationLoop = (i: number) => {
+        const anim = this.runningAnimation!;
+        var frame = anim.frames[i];
+        runInAction(() => {
+          this.renderer.currentSprite = { x: frame.x, y: frame.y };
+        });
+
+        i++;
+        if (i != anim.frames.length || anim.loop) {
+          i %= anim.frames.length;
+          const timeoutMs = frame.time ?? anim.defaultTime ?? 16.7;
+          this.animationTimeoutHandle = setTimeout(() => {
+            animationLoop(i);
+          }, timeoutMs);
+        } else {
+          this.stopAnimation();
+        }
+      };
+      animationLoop(0);
+    });
   }
 }

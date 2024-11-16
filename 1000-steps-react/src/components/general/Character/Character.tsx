@@ -1,11 +1,9 @@
-import { CSSAnimationController } from "../../../classes/CSSAnimator";
-import { CssSpriteRenderer } from "../../../classes/sprites/CssSpriteRenderer";
 import { SpriteController } from "../../../classes/sprites/SpriteController";
 import "./character.css";
 import characterSpritesheet from "./character.png";
-import characterSpriteMeta from "./character.json";
+import characterSpriteMeta from "./character.processed.json";
 import { Spark } from "./Spark/Spark";
-import { ChargeLevel, SparkHandler } from "./Spark/SparkHandler";
+import { type ChargeLevel, SparkHandler } from "./Spark/SparkHandler";
 import { loadAsepriteSpritesheet } from "../../../classes/sprites/loadAseprite";
 import { observer } from "@fobx/react";
 
@@ -24,7 +22,7 @@ const { getRenderer, animations } = loadAsepriteSpritesheet(
 
 export const characterSprite = new SpriteController(getRenderer());
 export const characterAnim = animations;
-characterSprite.animate({ frames: animations["Idle"], loop: true });
+characterSprite.animate({ frames: animations.Idle, loop: true });
 
 export const Character = observer(() => {
   return (

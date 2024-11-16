@@ -1,4 +1,9 @@
-import { PropsWithChildren, useCallback, useEffect, useState } from "react";
+import {
+  type PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import "./ground.css";
 import { observer } from "@fobx/react";
 
@@ -22,14 +27,14 @@ export const Ground = observer(
     const handleMouse = useCallback((e: MouseEvent) => {
       setBlend(1);
       setMousePos({
-        x: normalize(e.screenX, window.innerWidth),
-        y: normalize(e.screenY, window.innerHeight),
+        x: normalize(e.clientX, window.innerWidth),
+        y: normalize(e.clientY, window.innerHeight),
       });
     }, []);
 
-    const handleMouseOut = useCallback((e: MouseEvent) => {
+    const handleMouseOut = useCallback(() => {
       setBlend(0);
-    }, []);
+    }, [setBlend]);
 
     useEffect(() => {
       window.addEventListener("mouseout", handleMouseOut);
@@ -45,10 +50,10 @@ export const Ground = observer(
         <div
           className="floor-plane"
           style={{
+            "--blend": blend,
             "--player-z": `${steps * pixelsPerStep}px`,
-            transform: `rotateX(90deg) rotateZ(${mousePos.x * 3}deg) rotateX(${
-              mousePos.y * 3
-            }deg)`,
+            "--rot-y": `${mousePos.x * 3}deg`,
+            "--rot-x": `${mousePos.y * 3}deg`,
           }}
         >
           <div

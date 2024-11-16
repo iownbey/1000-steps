@@ -1,4 +1,4 @@
-import { isObservable, observable } from "@fobx/core";
+import { observable } from "@fobx/core";
 import { Menu, type MenuProps } from "../../general/Menu/Menu";
 import { observer } from "@fobx/react";
 import { DialogueBox, type Face } from "../../general/DialogueBox/DialogueBox";

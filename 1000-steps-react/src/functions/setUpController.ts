@@ -1,4 +1,3 @@
-import { KeyboardEvent } from "react";
 import { Controller } from "../libraries/Controller";
 import { toggleFullscreen } from "../Utils";
 
@@ -9,13 +8,13 @@ export function setUpController() {
     },
   });
 
-  window.addEventListener("gc.controller.found", (q) => {
+  window.addEventListener("gc.controller.found", () => {
     //notifier.show("Controller Connected");
     pulses(
       { strong: 0.7, weak: 0, duration: 200 },
       { strong: 1, weak: 0.1, duration: 50 }
     );
-    function forwardEvent(button, eventType) {
+    function forwardEvent(button: any, eventType: string) {
       var event = { cancelable: true } as KeyboardEventInit;
       switch (button.name) {
         case "DPAD_UP":
@@ -73,7 +72,7 @@ export async function pulse(pulse: Pulse) {
     let c = (Controller as any).controllers[id];
     if (c) {
       let gp = window.navigator.getGamepads()[c.index];
-      if (gp.vibrationActuator) {
+      if (gp?.vibrationActuator) {
         promises.push(
           gp.vibrationActuator.playEffect("dual-rumble", {
             duration: pulse.duration,

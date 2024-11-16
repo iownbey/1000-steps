@@ -7,12 +7,17 @@ export interface IBattleEntity {
   Component: () => ReactNode;
 }
 
+export interface IMonster extends IBattleEntity {
+  name: string;
+  talk(): Promise<void>;
+}
+
 export class Battle {
   static playerTeam: IBattleEntity[];
-  monsters: IBattleEntity[];
+  monsters: IMonster[];
   music: string;
 
-  constructor(music: string, monsters: IBattleEntity[]) {
+  constructor(music: string, monsters: IMonster[]) {
     this.music = music;
     this.monsters = monsters;
   }

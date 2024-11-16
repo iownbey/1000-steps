@@ -57,7 +57,6 @@ ex.abigail = {
 };
 
 const expr = Object.freeze(ex);
-delete ex;
 
 //Text
 const tex = {};
