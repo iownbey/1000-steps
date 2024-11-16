@@ -9,7 +9,6 @@ export interface IBattleEntity {
 
 export interface IMonster extends IBattleEntity {
   name: string;
-  talk(): Promise<void>;
 }
 
 export class Battle {
