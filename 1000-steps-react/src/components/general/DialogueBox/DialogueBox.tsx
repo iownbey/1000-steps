@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { sound } from "../../../classes/SoundManager";
+import { sound } from "../../../classes/sound/SoundManager";
 import { MessageBox } from "../MessageBox/MessageBox";
 import {
   SpriteController,

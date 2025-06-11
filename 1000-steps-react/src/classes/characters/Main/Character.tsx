@@ -12,11 +12,13 @@ import {
 import characterSpriteJson from "./character.processed.json";
 import characterSprite from "./character.png";
 import "./character.css";
-import type { Battle, IBattleEntity } from "../../battle/Battle";
-import { InputHandler } from "../../InputHandler";
+import { Battle, type IBattleEntity } from "../../battle/Battle";
+import { strike } from "./Abilities";
 
 export interface ICharacter<T> {
   Component(): ReactNode;
+  UIComponent(): ReactNode;
+  isDefending: boolean;
   spriteController: SpriteController<CssSpriteRenderer>;
   animations: T;
 }
@@ -24,7 +26,7 @@ export interface ICharacter<T> {
 export type Ability = {
   name: string;
   description: string;
-  happen(): Promise<void>;
+  happen(battle: Battle): Promise<void>;
 };
 
 export class Character
@@ -35,6 +37,10 @@ export class Character
   spark = new SparkHandler();
   spriteController: SpriteController<CssSpriteRenderer>;
   animations;
+  isDefending = false;
+  endTurn?: () => void;
+  currentBattle?: Battle;
+  abilities: Ability[] = [strike];
 
   constructor() {
     const { getRenderer, animations } = loadAsepriteSpritesheet(
@@ -44,17 +50,18 @@ export class Character
     this.spriteController = new SpriteController(getRenderer());
     this.animations = animations;
     this.spriteController.animate({ frames: animations.Idle, loop: true });
+    Battle.playerTeam = [this];
   }
 
-  turn(battle: Battle): Promise<void> {
-    return new Promise((res) => {
-      console.log("Player turn Started");
+  async turn(battle: Battle): Promise<void> {
+    this.currentBattle = battle;
+    await new Promise<void>((res) => {
+      this.endTurn = res;
     });
-    const input = new InputHandler((e) => {});
   }
 
   get isDead(): boolean {
-    throw new Error("Method not implemented.");
+    return false;
   }
 
   Component = observer(() => {
@@ -63,5 +70,9 @@ export class Character
         <Spark sparkHandler={this.spark} />
       </div>
     );
+  });
+
+  UIComponent = observer(() => {
+    return <div></div>;
   });
 }

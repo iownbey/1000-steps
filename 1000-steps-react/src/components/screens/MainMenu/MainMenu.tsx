@@ -1,7 +1,7 @@
 import { useRef } from "react";
-import { MainMenuButton } from "./MainMenuButton/MainMenuButton";
+import { MenuButton } from "../../general/ui/MenuButton/MenuButton";
 import { screenCover } from "../../general/ScreenCover/ScreenCover";
-import { sound } from "../../../classes/SoundManager";
+import { sound } from "../../../classes/sound/SoundManager";
 import { VersionInfo } from "./VersionInfo/VersionInfo";
 import "./mainMenu.css";
 import gameStartFX from "./game-start-effect.mp3";
@@ -13,7 +13,6 @@ async function startNewGame() {
   screenCover.setColor("black");
   await screenCover.fadeTo(1, 2000);
   screenRouter.switch("character select");
-  //startIntro();
   await screenCover.fadeTo(0, 1000);
 }
 
@@ -25,8 +24,6 @@ async function continueGame() {
   await screenCover.fadeTo(0, 2000);
 }
 
-export const selected = { value: 0 };
-
 export const MainMenu = () => {
   const newGameRef = useRef(null);
   const continueGameRef = useRef(null);
@@ -35,24 +32,30 @@ export const MainMenu = () => {
   return (
     <div className="main-menu box flexcenterer">
       <h1 className="main-heading">1000 STEPS</h1>
-      <MainMenuButton
+      <MenuButton
+        className="main-menu-button"
         ref={continueGameRef}
         lowerRef={newGameRef}
         onClick={() => continueGame()}
       >
         CONTINUE
-      </MainMenuButton>
-      <MainMenuButton
+      </MenuButton>
+      <MenuButton
+        className="main-menu-button"
         ref={newGameRef}
         upperRef={continueGameRef}
         lowerRef={newGameRef}
         onClick={() => startNewGame()}
       >
         START ANEW
-      </MainMenuButton>
-      <MainMenuButton ref={settingsRef} upperRef={newGameRef}>
+      </MenuButton>
+      <MenuButton
+        className="main-menu-button"
+        ref={settingsRef}
+        upperRef={newGameRef}
+      >
         SETTINGS
-      </MainMenuButton>
+      </MenuButton>
 
       <VersionInfo />
     </div>

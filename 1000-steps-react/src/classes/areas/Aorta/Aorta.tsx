@@ -4,11 +4,31 @@ import { InputHandler } from "../../InputHandler";
 import { Area, type IEvent } from "../Area";
 
 import onceMore from "../../../../sounds/Once More.mp3";
+import fight from "../../../../sounds/fight.mp3";
+import { Troll } from "./enemies/Troll/troll";
+import { Battle } from "../../battle/Battle";
+
+function createMeetTrollEvent() {
+  const troll = new Troll();
+  const battle = new Battle(fight, [troll]);
+  return {
+    Component: () => {
+      return <battle.Component />;
+    },
+    happen: async () => {
+      mainGameData.upperText =
+        "You idiot. What were you doing in a restricted zone?";
+      await InputHandler.waitForInput();
+      await battle.start();
+    },
+  };
+}
 
 export class Aorta extends Area {
   generateEvents(): (IEvent | null)[] {
     return [
       null,
+      createMeetTrollEvent(),
       {
         Component: () => {
           return (
@@ -29,7 +49,7 @@ export class Aorta extends Area {
           mainGameData.upperText = "And one more message";
           mainGameData.lowerText = "This is neat";
 
-          await new Promise(() => {});
+          await InputHandler.waitForInput();
         },
       },
     ];

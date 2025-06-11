@@ -1,4 +1,4 @@
-declare module "mo-js" {
+declare module "@mojs/core" {
   export = mojs;
 }
 

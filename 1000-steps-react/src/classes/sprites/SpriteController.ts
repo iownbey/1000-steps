@@ -1,4 +1,4 @@
-import { isObservable, observable, runInAction } from "@fobx/core";
+import { observable, runInAction } from "@fobx/core";
 import { getRandom, randomInt } from "../../Utils";
 import { SpriteRenderer } from "./SpriteRenderer";
 
@@ -21,7 +21,7 @@ export type SpriteAnimation = {
 
 export class SpriteController<T extends SpriteRenderer> {
   renderer: T;
-  animationTimeoutHandle: ReturnType<typeof setTimeout>;
+  animationTimeoutHandle?: ReturnType<typeof setTimeout>;
   runningAnimation: SpriteAnimation | null = null;
 
   constructor(renderer: T) {

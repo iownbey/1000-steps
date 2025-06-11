@@ -1,6 +1,5 @@
 import { upperWrite } from "../../../../../components/screens/MainGame/mainGameHelpers";
-import type { IMonster } from "../../../../battle/Battle";
-import { NonrepeatingGetter } from "../../../../NonrepeatingGetter";
+import type { Battle, IMonster } from "../../../../battle/Battle";
 
 import trollSprite from "./troll.png";
 import trollSpriteMeta from "./troll.processed.json";
@@ -9,6 +8,7 @@ import { SpriteController } from "../../../../sprites/SpriteController";
 import { TimingIndicator } from "../../../../battle/blockSystem/TimingIndicator";
 import { EaseInOutPoint } from "../../../../battle/blockSystem/timingPoints/EaseInOutPoint";
 import { Vector2D } from "../../../../Vector2D";
+import { observer } from "@fobx/react";
 
 const { getRenderer, animations } = loadAsepriteSpritesheet(
   trollSprite,
@@ -18,7 +18,19 @@ const { getRenderer, animations } = loadAsepriteSpritesheet(
 export class Troll implements IMonster {
   name = "Troll";
   spriteController = new SpriteController(getRenderer());
+  animations = animations;
   charge = 0;
+
+  onBattleStart(): void {
+    this.spriteController.animate({
+      frames: animations.Idle,
+      loop: true,
+    });
+  }
+
+  constructor() {
+    this.spriteController.renderer.currentSprite = { x: 0, y: 0 };
+  }
 
   get isDead() {
     return false;
@@ -71,15 +83,25 @@ export class Troll implements IMonster {
           }
           this.spriteController.animate({
             frames: animations.Idle,
+            loop: true,
           });
         }
         break;
     }
   }
 
-  Component() {
+  Component = observer(() => {
     return (
-      <div className="troll" style={this.spriteController.renderer.style}></div>
+      <div
+        className="troll"
+        style={{
+          width: "200px",
+          height: "200px",
+          transformOrigin: "bottom center",
+          transform: "scale(10) translateY(10px)",
+          ...this.spriteController.renderer.style,
+        }}
+      ></div>
     );
-  }
+  });
 }

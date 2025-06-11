@@ -1,15 +1,17 @@
-import type { KeyboardEvent } from "react";
 import { Vector2D } from "../../Vector2D";
 import type { TimingPoint } from "./timingPoints/TimingPoint";
 import { SequenceGetter } from "../../SequenceGetter";
-import { sound } from "../../SoundManager";
+import { sound } from "../../sound/SoundManager";
+import { Burst } from "@mojs/core";
+import { mainGameData } from "../../../components/screens/MainGame/MainGame";
+import { fx } from "../../sound/FX";
 
 const burstPool = new SequenceGetter(
   (() => {
     let burstPool = [];
     for (let i = 0; i < 5; i++) {
       burstPool.push(
-        new mojs.Burst({
+        new Burst({
           left: 0,
           top: 0,
           radius: { 0: 100 },
@@ -286,7 +288,7 @@ export class TimingIndicator {
       if (
         renderer.timeAlive > renderer.delayTime &&
         renderer.state === 0 &&
-        (!renderer.isStrong || player.defending)
+        (!renderer.isStrong || mainGameData.character.isDefending)
       ) {
         var distSqr =
           (renderer.x - center.x) ** 2 + (renderer.y - center.y) ** 2;

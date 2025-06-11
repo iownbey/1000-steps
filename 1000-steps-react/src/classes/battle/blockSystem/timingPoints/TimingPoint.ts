@@ -1,4 +1,5 @@
-import { sound } from "../../../SoundManager";
+import { fx } from "../../../sound/FX";
+import { sound } from "../../../sound/SoundManager";
 import { semicircle } from "../TimingFunctionsHelpers";
 
 export abstract class TimingPoint {
@@ -34,7 +35,7 @@ export abstract class TimingPoint {
   standardDraw(context: CanvasRenderingContext2D, blend: number) {
     context.globalAlpha = 1 - semicircle(blend);
 
-    if (this.isStrong && !player.defending) context.fillStyle = "yellow";
+    if (this.isStrong) context.fillStyle = "yellow";
     else
       switch (this.state) {
         case -1:

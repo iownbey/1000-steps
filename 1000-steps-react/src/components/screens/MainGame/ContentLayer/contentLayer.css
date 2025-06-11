@@ -7,7 +7,6 @@
 .content-layer {
   transform-origin: bottom;
   height: 120%;
-  background-color: white;
   position: absolute;
   bottom: 0%;
   left: 50%;

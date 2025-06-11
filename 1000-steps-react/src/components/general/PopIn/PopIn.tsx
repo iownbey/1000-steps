@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import "./popIn.css";
 
 export type TransitionedProperty = {
@@ -54,7 +54,7 @@ export const PopIn = ({
   }, [text]);
 
   const style = {} as CSSProperties;
-  const transitions = [];
+  const transitions: string[] = [];
   transitionedProperties.forEach((a) => {
     style[a.property as any] = `${show && !forceHide ? a.active : a.inactive}%`;
     transitions.push(

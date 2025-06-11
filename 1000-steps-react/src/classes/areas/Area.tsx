@@ -1,7 +1,7 @@
 import { observable } from "@fobx/core";
 import { observer } from "@fobx/react";
 import { ContentLayer } from "../../components/screens/MainGame/ContentLayer/ContentLayer";
-import { sound } from "../SoundManager";
+import { sound } from "../sound/SoundManager";
 import type { ReactNode } from "react";
 
 export interface IEvent {

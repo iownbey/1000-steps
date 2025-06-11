@@ -1,5 +1,5 @@
 import { observable } from "@fobx/core";
-import { Menu, type MenuProps } from "../../general/Menu/Menu";
+import { Menu, type MenuProps } from "../../general/ui/Menu/Menu";
 import { observer } from "@fobx/react";
 import { DialogueBox, type Face } from "../../general/DialogueBox/DialogueBox";
 import { type ReactNode, useEffect, useRef } from "react";
@@ -16,6 +16,7 @@ import {
 import type { SpriteAnimationFrame } from "../../../classes/sprites/SpriteController";
 import type { Area } from "../../../classes/areas/Area";
 import { Aorta } from "../../../classes/areas/Aorta/Aorta";
+import "./mainGame.css";
 
 export type AreaEvent = {
   setDistance: (distance: number) => void;
