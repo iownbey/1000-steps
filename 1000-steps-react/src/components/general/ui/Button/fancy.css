@@ -1,4 +1,4 @@
-.button {
+.button.fancy {
   --offset: 10px;
   --border-size: 2px;
   display: block;

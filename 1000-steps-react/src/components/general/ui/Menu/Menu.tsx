@@ -1,5 +1,4 @@
-import { MenuButton } from "../MenuButton/MenuButton";
-
+import { Button } from "../Button/Button";
 export type MenuButtonSpec = {
   selectionKey: string;
   label: React.ReactNode;
@@ -9,14 +8,12 @@ export type MenuButtonSpec = {
 
 export type MenuProps = {
   buttons?: MenuButtonSpec[][];
-  selected: string;
   onNewButtonSelected: (selectionKey: string) => void;
   onDescriptionChanged: (description: string | undefined) => void;
 };
 
 export const Menu = ({
   buttons,
-  selected,
   onNewButtonSelected,
   onDescriptionChanged,
 }: MenuProps) => {
@@ -31,17 +28,16 @@ export const Menu = ({
             {c.map((b) => {
               const { description, label, onActivate, selectionKey } = b;
               return (
-                <MenuButton
+                <Button
                   key={selectionKey}
                   onFocus={() => onDescriptionChanged(description)}
-                  selected={selected === selectionKey}
-                  onActivate={() => {
+                  onTrigger={() => {
                     onActivate();
                     onNewButtonSelected(selectionKey);
                   }}
                 >
                   {label}
-                </MenuButton>
+                </Button>
               );
             })}
           </div>

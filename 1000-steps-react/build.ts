@@ -7,5 +7,7 @@ esbuild.build({
   loader: {
     ".svg": "file",
     ".png": "file",
+    ".mp3": "file",
+    ".wav": "file",
   },
 });

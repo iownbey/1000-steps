@@ -1,11 +1,10 @@
-import { useRef } from "react";
-import { MenuButton } from "../../general/ui/MenuButton/MenuButton";
 import { screenCover } from "../../general/ScreenCover/ScreenCover";
 import { sound } from "../../../classes/sound/SoundManager";
 import { VersionInfo } from "./VersionInfo/VersionInfo";
 import "./mainMenu.css";
 import gameStartFX from "./game-start-effect.mp3";
 import { screenRouter } from "../ScreenRouter/ScreenRouter";
+import { Button } from "../../general/ui/Button/Button";
 
 async function startNewGame() {
   console.log("starting game.");
@@ -25,37 +24,20 @@ async function continueGame() {
 }
 
 export const MainMenu = () => {
-  const newGameRef = useRef(null);
-  const continueGameRef = useRef(null);
-  const settingsRef = useRef(null);
-
   return (
     <div className="main-menu box flexcenterer">
       <h1 className="main-heading">1000 STEPS</h1>
-      <MenuButton
+      <Button
+        autoFocus
         className="main-menu-button"
-        ref={continueGameRef}
-        lowerRef={newGameRef}
-        onClick={() => continueGame()}
+        onTrigger={() => continueGame()}
       >
         CONTINUE
-      </MenuButton>
-      <MenuButton
-        className="main-menu-button"
-        ref={newGameRef}
-        upperRef={continueGameRef}
-        lowerRef={newGameRef}
-        onClick={() => startNewGame()}
-      >
+      </Button>
+      <Button className="main-menu-button" onTrigger={() => startNewGame()}>
         START ANEW
-      </MenuButton>
-      <MenuButton
-        className="main-menu-button"
-        ref={settingsRef}
-        upperRef={newGameRef}
-      >
-        SETTINGS
-      </MenuButton>
+      </Button>
+      <Button className="main-menu-button">SETTINGS</Button>
 
       <VersionInfo />
     </div>

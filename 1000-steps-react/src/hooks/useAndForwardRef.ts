@@ -1,6 +1,6 @@
 import { useImperativeHandle, useRef } from "react";
 
-export function useAndForwardRef<T>(ref: React.Ref<T>) {
+export function useAndForwardRef<T>(ref: React.Ref<T> | undefined) {
   const innerRef = useRef<T>(null);
   useImperativeHandle(ref, () => innerRef.current!, []);
   return innerRef;

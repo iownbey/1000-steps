@@ -20,10 +20,11 @@ new EventSource("/esbuild").addEventListener("change", (e) => {
     }
   }
 
+  console.log("Reloading");
   location.reload();
 });
 
-setUpController();
+//setUpController();
 
-const root = createRoot(document.getElementById("root")!);
-root.render(<App />);
+// const root = createRoot(document.getElementById("root")!);
+// root.render(<App />);

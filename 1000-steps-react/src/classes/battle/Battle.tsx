@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
 import { sound } from "../sound/SoundManager";
-import { Menu } from "../../components/general/ui/Menu/Menu";
-import { MenuButton } from "../../components/general/ui/MenuButton/MenuButton";
-import React, { useEffect } from "react";
+import { Button } from "../../components/general/ui/Button/Button";
 
 export interface IBattleEntity {
   onBattleStart?(battle: Battle): void;
@@ -61,26 +59,20 @@ export class Battle {
   }
 
   Component = () => {
-    const firstOptionRef = React.useRef<HTMLDivElement>(null);
     console.log(this);
     let monsters = this.monsters.map((m, i) => <m.Component key={i} />);
     if (this.onPickedMonster) {
       monsters = monsters.map((m, i) => (
-        <MenuButton
-          ref={i === 0 ? firstOptionRef : undefined}
-          onActivate={() => {
+        <Button
+          autoFocus={i === 0}
+          onTrigger={() => {
             this.onPickedMonster?.(this.monsters[i]);
           }}
-        ></MenuButton>
+        >
+          {m}
+        </Button>
       ));
     }
-
-    useEffect(() => {
-      if (this.onPickedMonster && !document.activeElement) {
-        // If we have a monster to pick, focus the first option
-        firstOptionRef.current?.focus();
-      }
-    }, [this.onPickedMonster]);
 
     return (
       <div

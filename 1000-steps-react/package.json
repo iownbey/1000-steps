@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@fobx/core": "0.9.1",
-    "@fobx/react": "0.8.0",
+    "@fobx/core": "0.10.0",
+    "@fobx/react": "0.9.1",
     "@mojs/core": "1.7.1",
     "@tsparticles/engine": "3.8.1",
     "@tsparticles/preset-snow": "3.2.0",
@@ -21,6 +21,8 @@
     "@testing-library/user-event": "14.6.1",
     "@types/bun": "1.2.15",
     "@types/howler": "2.2.12",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
     "esbuild": "0.25.5",
     "fast-glob": "3.3.3"
   },
