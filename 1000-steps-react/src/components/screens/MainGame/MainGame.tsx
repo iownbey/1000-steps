@@ -40,19 +40,22 @@ export type MainGameData = {
   }>;
 };
 
-export const mainGameData = observable({
-  upperText: "",
-  lowerText: "",
-  backgroundImage: back,
-  backgroundMode: "normal",
-  groundImage: floor,
-  groundColor: "#0B0B0B",
-  totalSteps: 0,
-  menuStack: [],
-  character: new Character(),
-  currentArea: new Aorta(),
-  ui: null,
-} as MainGameData);
+export const mainGameData = observable(
+  {
+    upperText: "",
+    lowerText: "",
+    backgroundImage: back,
+    backgroundMode: "normal",
+    groundImage: floor,
+    groundColor: "#0B0B0B",
+    totalSteps: 0,
+    menuStack: [],
+    character: new Character(),
+    currentArea: new Aorta(),
+    ui: null,
+  } as MainGameData,
+  { ui: "observable.ref" }
+);
 
 const charDelay = 0.02;
 const slowCharDelay = 0.05;
@@ -96,30 +99,32 @@ export const MainGame = observer(() => {
   }, []);
 
   return (
-    <div className="box">
-      <Ground
-        image={mainGameData.groundImage}
-        steps={mainGameData.totalSteps}
-        color={mainGameData.groundColor}
-      >
-        <mainGameData.character.Component />
-        <mainGameData.currentArea.Component />
-      </Ground>
-      <DialogueBox
-        face={mainGameData.face}
-        targetText={mainGameData.upperText}
-        charDelay={charDelay}
-        slowCharDelay={slowCharDelay}
-        style={{ top: "0%" }}
-      ></DialogueBox>
-      <DialogueBox
-        face={mainGameData.face}
-        targetText={mainGameData.lowerText}
-        charDelay={charDelay}
-        slowCharDelay={slowCharDelay}
-        style={{ bottom: "0%" }}
-      ></DialogueBox>
+    <>
+      <div className="box">
+        <Ground
+          image={mainGameData.groundImage}
+          steps={mainGameData.totalSteps}
+          color={mainGameData.groundColor}
+        >
+          <mainGameData.character.Component />
+          <mainGameData.currentArea.Component />
+        </Ground>
+        <DialogueBox
+          face={mainGameData.face}
+          targetText={mainGameData.upperText}
+          charDelay={charDelay}
+          slowCharDelay={slowCharDelay}
+          style={{ top: "0%" }}
+        ></DialogueBox>
+        <DialogueBox
+          face={mainGameData.face}
+          targetText={mainGameData.lowerText}
+          charDelay={charDelay}
+          slowCharDelay={slowCharDelay}
+          style={{ bottom: "0%" }}
+        ></DialogueBox>
+      </div>
       {mainGameData.ui}
-    </div>
+    </>
   );
 });

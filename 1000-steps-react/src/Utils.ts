@@ -21,7 +21,7 @@ export function imageURL(name: string) {
 }
 
 export async function delaySeconds(seconds: number) {
-  await this.delayMillis(seconds * 1000.0);
+  await delayMillis(seconds * 1000.0);
 }
 
 export async function delayMillis(millis: number) {

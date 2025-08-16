@@ -29,5 +29,5 @@ export const screenRouter = new ScreenRouter(
     "character select": <CharacterSelect />,
     main: <MainGame />,
   },
-  "main menu"
+  "main"
 );

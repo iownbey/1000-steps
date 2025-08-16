@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { sound } from "../sound/SoundManager";
 import { Button } from "../../components/general/Button/Button";
 import { observable } from "@fobx/core";
+import { mainGameData } from "../../components/screens/MainGame/MainGame";
+import { InputHandler } from "../InputHandler";
 
 export interface IBattleEntity {
   onBattleStart?(battle: Battle): void;
@@ -35,8 +37,13 @@ export class Battle {
     [...Battle.playerTeam, ...this.monsters].forEach((entity) =>
       entity.onBattleStart?.(this)
     );
+    mainGameData.upperText = "A battle has started!";
+    mainGameData.lowerText = "";
+    await InputHandler.waitForInput();
     while (!this.isBattleDone) {
       for (const e of [...Battle.playerTeam, ...this.monsters]) {
+        mainGameData.upperText = "";
+        mainGameData.lowerText = "";
         if (!e.isDead) {
           await e.turn(this);
         }

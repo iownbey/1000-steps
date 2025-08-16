@@ -16,6 +16,7 @@ import { Battle, type IBattleEntity } from "../../battle/Battle";
 import { strike } from "./Abilities";
 import { observable } from "@fobx/core";
 import { Button } from "../../../components/general/Button/Button";
+import { mainGameData } from "../../../components/screens/MainGame/MainGame";
 
 export interface ICharacter<T> {
   Component(): ReactNode;
@@ -62,9 +63,12 @@ export class Character
 
   async turn(battle: Battle): Promise<void> {
     this.currentBattle = battle;
+    console.log("turn started");
+    mainGameData.ui = <this.UIComponent />;
     await new Promise<void>((res) => {
       this.endTurn = res;
     });
+    mainGameData.ui = null;
   }
 
   get isDead(): boolean {
@@ -80,22 +84,34 @@ export class Character
   });
 
   UIComponent = observer(() => {
+    console.log(this.abilities);
     return (
-      <>
-        {this.abilities.forEach((a) => {
-          return (
-            <Button
-              key={a.name}
-              title={a.name}
-              onClick={() => {
-                this.currentBattle?.start();
-                a.happen(this.currentBattle!);
-                this.endTurn?.();
-              }}
-            />
-          );
-        })}
-      </>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column-reverse",
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: "200px",
+          top: 0,
+          padding: "32px",
+          gap: "16px",
+        }}
+      >
+        {this.abilities.map((a) => (
+          <Button
+            key={a.name}
+            onClick={() => {
+              a.happen(this.currentBattle!);
+              this.endTurn?.();
+            }}
+            variant="fancy"
+          >
+            {a.name}
+          </Button>
+        ))}
+      </div>
     );
   });
 }
