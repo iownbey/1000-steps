@@ -1,5 +1,4 @@
 import { observable } from "@fobx/core";
-import { Menu, type MenuProps } from "../../general/ui/Menu/Menu";
 import { observer } from "@fobx/react";
 import { DialogueBox, type Face } from "../../general/DialogueBox/DialogueBox";
 import { type ReactNode, useEffect, useRef } from "react";
@@ -29,12 +28,12 @@ export type MainGameData = {
   foregroundImage?: string;
   groundImage: string;
   groundColor: string;
-  menuStack: MenuProps[];
   upperText?: string;
   lowerText?: string;
   face?: Face;
   totalSteps: number;
   currentArea: Area;
+  ui: ReactNode;
   character: ICharacter<{
     Run: SpriteAnimationFrame[];
     Idle: SpriteAnimationFrame[];
@@ -52,13 +51,14 @@ export const mainGameData = observable({
   menuStack: [],
   character: new Character(),
   currentArea: new Aorta(),
+  ui: null,
 } as MainGameData);
 
 const charDelay = 0.02;
 const slowCharDelay = 0.05;
 
 export const MainGame = observer(() => {
-  const animTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const animTimeout = useRef<ReturnType<typeof setTimeout>>(null);
   const busy = useRef(false);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export const MainGame = observer(() => {
             busy.current = false;
           });
 
-        clearTimeout(animTimeout.current);
+        animTimeout.current && clearTimeout(animTimeout.current);
         mainGameData.character.spriteController.animate({
           frames: mainGameData.character.animations.Run,
           loop: true,
@@ -119,7 +119,7 @@ export const MainGame = observer(() => {
         slowCharDelay={slowCharDelay}
         style={{ bottom: "0%" }}
       ></DialogueBox>
-      <Menu {...mainGameData.menuStack.slice(-1)[0]} />
+      {mainGameData.ui}
     </div>
   );
 });

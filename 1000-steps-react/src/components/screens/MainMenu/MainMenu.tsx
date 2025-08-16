@@ -4,7 +4,7 @@ import { VersionInfo } from "./VersionInfo/VersionInfo";
 import "./mainMenu.css";
 import gameStartFX from "./game-start-effect.mp3";
 import { screenRouter } from "../ScreenRouter/ScreenRouter";
-import { Button } from "../../general/ui/Button/Button";
+import { Button } from "../../general/Button/Button";
 
 async function startNewGame() {
   console.log("starting game.");
@@ -27,17 +27,13 @@ export const MainMenu = () => {
   return (
     <div className="main-menu box flexcenterer">
       <h1 className="main-heading">1000 STEPS</h1>
-      <Button
-        autoFocus
-        className="main-menu-button"
-        onTrigger={() => continueGame()}
-      >
+      <Button autoFocus onTrigger={() => continueGame()} variant="main-menu">
         CONTINUE
       </Button>
-      <Button className="main-menu-button" onTrigger={() => startNewGame()}>
+      <Button onTrigger={() => startNewGame()} variant="main-menu">
         START ANEW
       </Button>
-      <Button className="main-menu-button">SETTINGS</Button>
+      <Button variant="main-menu">SETTINGS</Button>
 
       <VersionInfo />
     </div>

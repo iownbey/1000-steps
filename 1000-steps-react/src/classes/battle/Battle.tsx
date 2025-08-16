@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { sound } from "../sound/SoundManager";
-import { Button } from "../../components/general/ui/Button/Button";
+import { Button } from "../../components/general/Button/Button";
+import { observable } from "@fobx/core";
 
 export interface IBattleEntity {
   onBattleStart?(battle: Battle): void;
@@ -22,6 +23,11 @@ export class Battle {
   constructor(music: string, monsters: IMonster[]) {
     this.music = music;
     this.monsters = monsters;
+    observable(this, {
+      Component: "none",
+      monsters: "observable.shallow",
+      playerTeam: "observable.shallow",
+    });
   }
 
   async start() {

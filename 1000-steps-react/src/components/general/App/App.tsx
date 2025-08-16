@@ -1,10 +1,10 @@
-import { useEffect } from "react";
 import { Initialize, Particles } from "../ScreenParticles/ScreenParticles";
-import { ScreenCoverComponent } from "../ScreenCover/ScreenCover";
+import { screenCover } from "../ScreenCover/ScreenCover";
 import { screenRouter } from "../../screens/ScreenRouter/ScreenRouter";
 import { observable } from "@fobx/core";
 import { Cursor, type CursorProps } from "../Cursor/Cursor";
 import { observer } from "@fobx/react";
+import { useEffect } from "react";
 
 export type GlobalData = {
   cursor: CursorProps;
@@ -16,7 +16,7 @@ export const globalControl = observable({
   } as any as CursorProps,
 } as GlobalData);
 
-const App = observer(() => {
+export const App = observer(() => {
   useEffect(() => {
     Initialize();
   }, []);
@@ -27,9 +27,7 @@ const App = observer(() => {
       <canvas id="content-canvas"></canvas>
       <Particles />
       <Cursor {...globalControl.cursor} />
-      <ScreenCoverComponent />
+      <screenCover.render />
     </>
   );
 });
-
-export default App;

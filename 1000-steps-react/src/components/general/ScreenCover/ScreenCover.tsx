@@ -1,17 +1,21 @@
-import { observable } from "@fobx/core";
+import { observable, runInAction } from "@fobx/core";
 import { observer } from "@fobx/react";
 import "./screenCover.css";
 
 class ScreenCover {
-  element?: HTMLElement;
-  duration: number;
-  backgroundColor: string;
+  element: HTMLElement | null = null;
+  duration: number = 0;
+  backgroundColor: string = "white";
+  opacity: number = 0;
 
   constructor() {
-    observable(this);
+    observable(this, {
+      element: "observable.ref",
+      render: "none",
+    });
   }
 
-  setRef = (ref: HTMLElement) => {
+  setRef = (ref: HTMLElement | null) => {
     this.element = ref;
   };
 
@@ -23,13 +27,14 @@ class ScreenCover {
     return {
       backgroundColor: this.backgroundColor,
       transitionDuration: `${this.duration}ms`,
+      opacity: this.opacity,
     };
   }
 
   async flash(
     color: string,
-    flashcallback = null,
-    finishcallback = null,
+    flashcallback?: () => void,
+    finishcallback?: () => void,
     time = 500
   ) {
     this.backgroundColor = color;
@@ -45,25 +50,33 @@ class ScreenCover {
         reject();
       } else {
         this.duration = time;
-        this.element.style.opacity = `${opacity}`;
-        const listener = () => {
-          this.element.removeEventListener("transitionend", listener);
-          resolve();
-        };
-        this.element.addEventListener("transitionend", listener);
+        requestAnimationFrame(() => {
+          runInAction(() => {
+            this.opacity = opacity;
+          });
+        });
+        const aborter = new AbortController();
+        this.element.addEventListener(
+          "transitionend",
+          () => {
+            resolve();
+            aborter.abort();
+          },
+          { signal: aborter.signal }
+        );
       }
     });
   }
-}
 
-export const ScreenCoverComponent = observer(() => {
-  return (
-    <div
-      className="screen-cover"
-      style={screenCover.style}
-      ref={screenCover.setRef}
-    />
-  );
-});
+  render = observer(() => {
+    return (
+      <div
+        className="screen-cover"
+        style={screenCover.style}
+        ref={screenCover.setRef}
+      />
+    );
+  });
+}
 
 export const screenCover = new ScreenCover();

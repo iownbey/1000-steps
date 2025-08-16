@@ -15,7 +15,7 @@ export abstract class Area {
 
   constructor() {
     this.events = this.generateEvents();
-    observable(this);
+    observable(this, { Component: "none" });
   }
 
   abstract generateEvents(): (IEvent | null)[];

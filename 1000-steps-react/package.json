@@ -4,16 +4,16 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@fobx/core": "0.10.0",
+    "@fobx/core": "0.10.2",
     "@fobx/react": "0.9.1",
     "@mojs/core": "1.7.1",
-    "@tsparticles/engine": "3.8.1",
+    "@tsparticles/engine": "3.9.1",
     "@tsparticles/preset-snow": "3.2.0",
     "@tsparticles/react": "3.0.0",
     "clsx": "2.1.1",
     "howler": "2.2.4",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.6.3",

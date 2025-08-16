@@ -1,11 +1,14 @@
 import clsx from "clsx";
 import React, { useEffect } from "react";
-import { useAndForwardRef } from "../../../../hooks/useAndForwardRef";
+import { useAndForwardRef } from "../../../hooks/useAndForwardRef";
+import "./fancy.css";
+import "./shrinkBorder.css";
+import "./mainMenu.css";
 
 type ButtonData = Map<
   string | null,
   {
-    refs: Set<React.RefObject<HTMLElement>>;
+    refs: Set<React.RefObject<HTMLElement | null>>;
     lastActive?: React.RefObject<HTMLElement>;
   }
 >;
@@ -33,7 +36,7 @@ function getRefsForActiveLayer() {
 }
 
 function addRefToLayer(
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   layer: string | null
 ) {
   if (!buttonData.has(layer)) {
@@ -43,7 +46,7 @@ function addRefToLayer(
 }
 
 function removeRefFromLayer(
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   layer: string | null
 ) {
   if (buttonData.has(layer)) {
@@ -87,16 +90,14 @@ function onKeyDown(e: React.KeyboardEvent<HTMLElement>) {
 
   const myPoint = centerOfRect(e.currentTarget.getBoundingClientRect());
 
-  const targetRects = [
-    ...getRefsForActiveLayer()
-      .filter((ref) => ref?.current)
-      .map((ref) => {
-        return {
-          ref,
-          point: centerOfRect(ref.current!.getBoundingClientRect()),
-        };
-      }),
-  ] as RefWithPoint[];
+  const targetRects = getRefsForActiveLayer()
+    .filter((ref) => ref?.current)
+    .map((ref) => {
+      return {
+        ref,
+        point: centerOfRect(ref.current!.getBoundingClientRect()),
+      };
+    }) as RefWithPoint[];
 
   const mainAxis = e.key === "ArrowDown" || e.key === "ArrowUp" ? "y" : "x";
   const crossAxis = mainAxis === "y" ? "x" : "y";
@@ -109,21 +110,23 @@ function onKeyDown(e: React.KeyboardEvent<HTMLElement>) {
   const defaultCaseValue =
     e.key === "ArrowDown" || e.key === "ArrowRight" ? Infinity : -Infinity;
 
-  const result = targetRects.reduce<RefWithPoint | null>((prev, current) => {
+  let result: RefWithPoint | null = null;
+
+  for (const target of targetRects) {
     if (
-      current.ref.current === e.currentTarget &&
+      target.ref.current !== e.currentTarget &&
       mainComparator(
         myPoint[mainAxis],
-        prev?.point[mainAxis] ?? defaultCaseValue,
-        current.point[mainAxis]
+        result?.point[mainAxis] ?? defaultCaseValue,
+        target.point[mainAxis]
       )
     ) {
-      if (Math.abs(myPoint[crossAxis] - current.point[crossAxis]) < 25) {
-        return current;
+      console.log(target);
+      if (Math.abs(myPoint[crossAxis] - target.point[crossAxis]) < 25) {
+        result = target;
       }
     }
-    return prev;
-  }, null);
+  }
 
   result?.ref.current?.focus();
 }
@@ -134,7 +137,7 @@ export type ButtonProps = {
   children?: React.ReactNode;
   layer?: string | null;
   ref?: React.Ref<HTMLDivElement>;
-  variant?: "fancy" | "shrinkBorder";
+  variant?: "fancy" | "shrink-border" | "main-menu";
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export const Button = ({
@@ -144,6 +147,7 @@ export const Button = ({
   layer,
   ref,
   variant,
+  className,
   ...divAttr
 }: ButtonProps) => {
   const buttonRef = useAndForwardRef<HTMLDivElement>(ref);
@@ -166,7 +170,7 @@ export const Button = ({
 
   return (
     <div
-      className={clsx("button", activated && "activated")}
+      className={clsx("button", activated && "activated", variant, className)}
       tabIndex={isActive ? 0 : -1}
       ref={buttonRef}
       onKeyDown={onKeyDown}

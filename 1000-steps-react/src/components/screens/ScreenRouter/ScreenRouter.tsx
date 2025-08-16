@@ -1,8 +1,8 @@
 import { observable } from "@fobx/core";
 import { type ReactNode } from "react";
 import { MainMenu } from "../MainMenu/MainMenu";
-import { MainGame } from "../MainGame/MainGame";
 import { CharacterSelect } from "../CharacterSelect/CharacterSelect";
+import { MainGame } from "../MainGame/MainGame";
 
 class ScreenRouter<T extends Record<string, ReactNode>> {
   screens: T;
@@ -15,7 +15,7 @@ class ScreenRouter<T extends Record<string, ReactNode>> {
   constructor(screens: T, initialScreen: keyof T) {
     this.screens = screens;
     this.activeScreen = initialScreen;
-    observable(this);
+    observable(this, { screens: "none" });
   }
 
   get activeScreenNode() {
@@ -26,8 +26,8 @@ class ScreenRouter<T extends Record<string, ReactNode>> {
 export const screenRouter = new ScreenRouter(
   {
     "main menu": <MainMenu />,
-    main: <MainGame />,
     "character select": <CharacterSelect />,
+    main: <MainGame />,
   },
   "main menu"
 );

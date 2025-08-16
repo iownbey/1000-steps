@@ -14,6 +14,8 @@ import characterSprite from "./character.png";
 import "./character.css";
 import { Battle, type IBattleEntity } from "../../battle/Battle";
 import { strike } from "./Abilities";
+import { observable } from "@fobx/core";
+import { Button } from "../../../components/general/Button/Button";
 
 export interface ICharacter<T> {
   Component(): ReactNode;
@@ -26,7 +28,7 @@ export interface ICharacter<T> {
 export type Ability = {
   name: string;
   description: string;
-  happen(battle: Battle): Promise<void>;
+  happen(battle: Battle): Promise<void> | void;
 };
 
 export class Character
@@ -51,6 +53,11 @@ export class Character
     this.animations = animations;
     this.spriteController.animate({ frames: animations.Idle, loop: true });
     Battle.playerTeam = [this];
+
+    observable(this, {
+      Component: "none",
+      UIComponent: "none",
+    });
   }
 
   async turn(battle: Battle): Promise<void> {
@@ -73,6 +80,22 @@ export class Character
   });
 
   UIComponent = observer(() => {
-    return <div></div>;
+    return (
+      <>
+        {this.abilities.forEach((a) => {
+          return (
+            <Button
+              key={a.name}
+              title={a.name}
+              onClick={() => {
+                this.currentBattle?.start();
+                a.happen(this.currentBattle!);
+                this.endTurn?.();
+              }}
+            />
+          );
+        })}
+      </>
+    );
   });
 }

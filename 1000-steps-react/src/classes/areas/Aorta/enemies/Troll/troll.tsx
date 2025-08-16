@@ -9,6 +9,7 @@ import { TimingIndicator } from "../../../../battle/blockSystem/TimingIndicator"
 import { EaseInOutPoint } from "../../../../battle/blockSystem/timingPoints/EaseInOutPoint";
 import { Vector2D } from "../../../../Vector2D";
 import { observer } from "@fobx/react";
+import { observable } from "@fobx/core";
 
 const { getRenderer, animations } = loadAsepriteSpritesheet(
   trollSprite,
@@ -30,6 +31,9 @@ export class Troll implements IMonster {
 
   constructor() {
     this.spriteController.renderer.currentSprite = { x: 0, y: 0 };
+    observable(this, {
+      Component: "none",
+    });
   }
 
   get isDead() {

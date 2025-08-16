@@ -99,3 +99,7 @@ div {
   z-index: 6;
   pointer-events: none;
 }
+
+#tsparticles {
+  pointer-events: none;
+}
